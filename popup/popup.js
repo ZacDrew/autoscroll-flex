@@ -15,11 +15,46 @@ form.addEventListener('change', async (e) => {
     console.log('change: ', { distance, delay});
 });
 
-const toggleScroll = document.getElementById('toggleScroll');
+const toggleBtn = document.getElementById('toggleScroll');
 
-toggleScroll.addEventListener('click', async () => {
-    
-})
+toggleBtn.addEventListener('click', async () => {
+
+    const isRunning = toggleBtn.dataset.running === 'true';
+
+    const [tab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true
+    });
+
+    if (!tab) return;
+
+    if (!isRunning) {
+        // Start scrolling
+        await browser.tabs.sendMessage(
+            tab.id, 
+            {
+            from: 'popup',
+            command: 'start'
+            },
+            () => console.log('callback: start scroll')
+    );
+        toggleBtn.textContent = 'Stop';
+        toggleBtn.dataset.running = 'true';
+    }
+    else {
+        // Stop scrolling
+        await browser.tabs.sendMessage(
+            tab.id, 
+            {
+            from: 'popup',
+            command: 'stop'
+            },
+            () => console.log('callback: stop scroll')
+        );
+        toggleBtn.textContent = 'Start';
+        toggleBtn.dataset.running = 'false';
+    }
+});
 
 async function init() {
     let { distance, delay } = await browser.storage.local.get(['distance', 'delay']);
