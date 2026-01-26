@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Autoscroll Flex",
+  "version": "0.1",
+
+  "description": "Adjustable autoscroll designed for reading manhwa and manga.",
+
+  "icons": {
+    "32": "icons/autoscroll-32.png",
+    "64": "icons/autoscroll-64.png",
+    "96": "icons/autoscroll-96.png"
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["app.js"]
+    }
+  ],
+
+  "permissions" : [
+    "storage"
+  ]
+}
