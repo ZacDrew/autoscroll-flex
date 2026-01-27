@@ -1,17 +1,27 @@
-
-let scrollInterval = null, yPos = 0, distance = 10, delay = 1000;
-
 // TODO:
-// - grab distance and delay from storage to set initial values
 // - update yPos after scrolling manually so that stop starting
 //   doesnt jump around the page
 // - stop scroll when not in tab (but still scroll when unfocused)
 
-if (typeof window !== 'undefined') {
-    yPos = window.scrollY;
-}
+let scrollInterval = null, yPos = 0, distance = 0, delay = 0;
+
+(async function init() {
+    // Set initial y Position
+    if (typeof window !== 'undefined') {
+        yPos = window.scrollY;
+    }
+
+    // get setttings stored values
+    const stored = await browser.storage.local.get(['distance', 'delay']);
+    // set ""/undefined values to 0
+    // distance = !stored.distance ? 0: stored.distance;
+    // delay = !stored.delay ? 0: stored.delay;
+    distance = stored.distance;
+    delay = stored.delay;
+})();
 
 function startScroll() {
+    if (scrollInterval) clearInterval(scrollInterval);
 
     scrollInterval = setInterval(() => {
         yPos += distance;
@@ -21,7 +31,8 @@ function startScroll() {
             behavior: 'smooth'
             }
         );
-    }, delay);
+        }, delay * 1000 // convert to millisec
+    );
 }
 
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -44,16 +55,15 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 
 browser.storage.onChanged.addListener((changes, area) => {
-    if (area == 'local') {
-        if ('distance' in changes) {
-            distance = changes.distance.newValue;
-            console.log('distance updated');
+    if (area == 'local' && 
+        ('distance' in changes || 'delay' in changes)
+    ) {
+        distance = changes.distance.newValue;
+        delay = changes.delay.newValue;
+        console.log('autoscroll settings updated');
 
-        }
-        if ('delay' in changes) {
-            // Fetch and convert from sec to millisec
-            delay = changes.delay.newValue * 1000;
-            console.log('delay updated');
+        if (scrollInterval) {
+            startScroll();
         }
     }
 });
