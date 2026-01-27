@@ -6,9 +6,9 @@
   "description": "Adjustable autoscroll designed for reading manhwa and manga.",
 
   "icons": {
-    "32": "icons/autoscroll-32.png",
-    "64": "icons/autoscroll-64.png",
-    "96": "icons/autoscroll-96.png"
+    "32": "icons/autoscroll-flex-logo-32.png",
+    "64": "icons/autoscroll-flex-logo-64.png",
+    "96": "icons/autoscroll-flex-logo-96.png"
   },
 
   "action": {
