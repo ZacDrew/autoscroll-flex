@@ -1,7 +1,12 @@
-// TODO:
-// - update yPos after scrolling manually so that stop starting
-//   doesnt jump around the page
-// - stop scroll when not in tab (but still scroll when unfocused)
+/* 
+TODO:
+- stop scroll when not in tab (but still scroll when unfocused)
+- add feature to detect a scroll target so it works on more sites
+     - detect section mouse is over
+     - auto-detect largest section
+- add a disable switch in popup/hot key and/or add a website blacklist 
+  (for sites with conflicts ie youtube)
+*/
 
 let scrollInterval = null, yPos = 0, distance = 0, delay = 0;
 
@@ -20,8 +25,19 @@ let scrollInterval = null, yPos = 0, distance = 0, delay = 0;
     delay = stored.delay;
 })();
 
+function toggleScroll() {
+
+    if (!scrollInterval) {
+        startScroll();
+    }
+    else {
+        stopScroll();
+    }
+}
+
 function startScroll() {
     if (scrollInterval) clearInterval(scrollInterval);
+    yPos = window.scrollY;
 
     scrollInterval = setInterval(() => {
         yPos += distance;
@@ -33,8 +49,17 @@ function startScroll() {
         );
         }, delay * 1000 // convert to millisec
     );
+    console.log('Started Autoscroll');
+
 }
 
+function stopScroll() {
+    clearInterval(scrollInterval);
+    scrollInterval = null;
+    console.log('Stopped Autoscroll');
+}
+
+// Listen for commands from popup
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.command === 'start') {
         if (scrollInterval) return;
@@ -42,8 +67,7 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         return;
     }
     if (msg.command === 'stop') {
-        clearInterval(scrollInterval);
-        scrollInterval = null;
+        stopScroll();
         return;
     }
     if (msg.command === 'status') {
@@ -53,7 +77,7 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 });
 
-
+// Listen for changes to the settings
 browser.storage.onChanged.addListener((changes, area) => {
     if (area == 'local' && 
         ('distance' in changes || 'delay' in changes)
@@ -62,8 +86,27 @@ browser.storage.onChanged.addListener((changes, area) => {
         delay = changes.delay.newValue;
         console.log('autoscroll settings updated');
 
+        // if scrolling, update the scroll values
         if (scrollInterval) {
             startScroll();
         }
     }
 });
+
+// Listen for Override Hotkeys (i.e. spacebar)
+document.addEventListener('keydown', (e) => {
+
+    // ignore inputs related to typing
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || 
+        tag === 'TEXTAREA' || 
+        e.target.isContentEditable
+        ) {
+        return;
+    }
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        toggleScroll();
+    }
+})
