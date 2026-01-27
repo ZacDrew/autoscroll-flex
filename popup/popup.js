@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
 
-    const [tab] = await browser.tabs.query({
+    const [activeTab] = await browser.tabs.query({
         active: true,
         currentWindow: true
     });
@@ -25,51 +25,93 @@ async function init() {
     });
 
     // Scroll toggle button listener
-    const toggleBtn = document.getElementById('toggleScroll');
-    toggleBtn.addEventListener('click', async () => {
+    const scrollToggleBtn = document.getElementById('toggleScroll');
 
-        const isRunning = toggleBtn.dataset.running === 'true';
+    // Button listener
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
 
-        if (!tab) return;
 
-        if (!isRunning) {
-            // Start scrolling
-            browser.tabs.sendMessage(
-                tab.id, 
-                {
-                    from: 'popup',
-                    command: 'start'
-                }
-        );
-            toggleBtn.textContent = 'Stop';
-            toggleBtn.dataset.running = 'true';
+        // Enable/disable button logic
+        if (btn.id === 'toggleEnable') {
+            
+            let scrollingEnabled = btn.dataset.enabled === 'true';
 
-            console.log('callback: start scroll')
+            if (!activeTab) return;
+
+            if (!scrollingEnabled) {
+                // enable scrolling
+                scrollingEnabled = true;
+                await browser.storage.local.set({ scrollingEnabled });
+
+                btn.textContent = 'Disable';
+                btn.dataset.enabled = 'true';
+            }
+            else {
+                // disable scrolling
+                scrollingEnabled = false;
+                await browser.storage.local.set({ scrollingEnabled });
+
+                btn.textContent = 'Enable';
+                btn.dataset.enabled = 'false';
+            }
         }
-        else {
-            // Stop scrolling
-            browser.tabs.sendMessage(
-                tab.id, 
-                {
-                    from: 'popup',
-                    command: 'stop'
-                }
-            );
-            toggleBtn.textContent = 'Start';
-            toggleBtn.dataset.running = 'false';
 
-            console.log('callback: stop scroll')
+
+        // Scroll Toggle Button logic
+        if (btn === scrollToggleBtn) {
+
+            const isRunning = scrollToggleBtn.dataset.running === 'true';
+
+            if (!activeTab) return;
+
+            if (!isRunning) {
+                // Start scrolling
+                browser.tabs.sendMessage(
+                    activeTab.id, 
+                    {
+                        from: 'popup',
+                        command: 'start'
+                    }
+            );
+                scrollToggleBtn.textContent = 'Stop';
+                scrollToggleBtn.dataset.running = 'true';
+
+                console.log('callback: start scroll')
+            }
+            else {
+                // Stop scrolling
+                browser.tabs.sendMessage(
+                    activeTab.id, 
+                    {
+                        from: 'popup',
+                        command: 'stop'
+                    }
+                );
+                scrollToggleBtn.textContent = 'Start';
+                scrollToggleBtn.dataset.running = 'false';
+
+                console.log('callback: stop scroll')
+            }
         }
     });
 
     syncPopupSettings();
-    syncScrollState(tab, toggleBtn);
+    syncScrollState(activeTab, scrollToggleBtn);
 }
 
 // Set popup setting values to those in local storage
 async function syncPopupSettings() {
     
-    let { distance, delay } = await browser.storage.local.get(['distance', 'delay']);
+    let { distance, 
+        delay,
+        scrollingEnabled    
+    } = await browser.storage.local.get([
+        'distance',
+        'delay',
+        'scrollingEnabled'
+        ]);
 
     // set ""/undefined values to 0
     distance = !distance ? 0: distance;
@@ -80,10 +122,16 @@ async function syncPopupSettings() {
     document.getElementById('delay').value = delay;
 
     console.log('init: ', { distance, delay});
+    
+
+    if (scrollingEnabled === false) {
+        document.getElementById('toggleEnable').textContent = 'Enable';
+        document.getElementById('toggleEnable').dataset.enabled = 'false';
+    }
 }
 
 // Sync popup scroll toggle button to autoscroll state
-async function syncScrollState(tab, toggleBtn) {
+async function syncScrollState(tab, scrollToggleBtn) {
 
     if (!tab) return;
 
@@ -96,14 +144,14 @@ async function syncScrollState(tab, toggleBtn) {
             }
         );
 
-        toggleBtn.textContent = status.running ? 'Stop' : 'Start';
-        toggleBtn.dataset.running = status.running ? 'true' : 'false';
+        scrollToggleBtn.textContent = status.running ? 'Stop' : 'Start';
+        scrollToggleBtn.dataset.running = status.running ? 'true' : 'false';
 
         console.log('callback: request scroll status')
 
     } catch {
-        toggleBtn.textContent = 'Start';
-        toggleBtn.dataset.running = 'false';
+        scrollToggleBtn.textContent = 'Start';
+        scrollToggleBtn.dataset.running = 'false';
     }
 }
 

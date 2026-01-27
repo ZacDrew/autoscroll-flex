@@ -5,10 +5,11 @@ TODO:
      - detect section mouse is over
      - auto-detect largest section
 - add a disable switch in popup/hot key and/or add a website blacklist 
-  (for sites with conflicts ie youtube)
+  (for sites with conflicts ie youtube). maybe the blacklist is just for 
+  the override hotkeys like spacebar
 */
 
-let scrollInterval = null, yPos = 0, distance = 0, delay = 0;
+let scrollingEnabled = true; scrollInterval = null, yPos = 0, distance = 0, delay = 0;
 
 (async function init() {
     // Set initial y Position
@@ -36,6 +37,8 @@ function toggleScroll() {
 }
 
 function startScroll() {
+    if (!scrollingEnabled) return;
+
     if (scrollInterval) clearInterval(scrollInterval);
     yPos = window.scrollY;
 
@@ -77,18 +80,28 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 });
 
-// Listen for changes to the settings
+// Listen for changes to the settings and update them
 browser.storage.onChanged.addListener((changes, area) => {
-    if (area == 'local' && 
-        ('distance' in changes || 'delay' in changes)
-    ) {
-        distance = changes.distance.newValue;
-        delay = changes.delay.newValue;
-        console.log('autoscroll settings updated');
+    if (area == 'local') {
 
-        // if scrolling, update the scroll values
-        if (scrollInterval) {
-            startScroll();
+        if ('distance' in changes || 'delay' in changes) {
+            distance = changes.distance.newValue;
+            delay = changes.delay.newValue;
+            console.log('autoscroll settings updated');
+
+            // if scrolling, update the scroll values
+            if (scrollInterval) {
+                startScroll();
+            }
+        }
+
+        if ('scrollingEnabled' in changes) {
+            scrollingEnabled = changes.scrollingEnabled.newValue;
+
+            // if scrolling, stop scroll
+            if (scrollInterval) {
+                stopScroll();
+            }
         }
     }
 });

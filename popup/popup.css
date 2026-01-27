@@ -2,3 +2,8 @@
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.center {
+  display: block;
+  margin: 0 auto;
+}
