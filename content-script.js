@@ -102,7 +102,7 @@ browser.storage.onChanged.addListener((changes, area) => {
         if ('disabledSites' in changes) {
             disabledSites = changes.disabledSites.newValue;
 
-            updateScrollingEnabled(disabledSites)
+            updateScrollingEnabled(disabledSites);
 
             if (!scrollingEnabled && scrollInterval) {
                 stopScroll();
