@@ -18,12 +18,10 @@ let scrollingEnabled = true; scrollInterval = null, yPos = 0, distance = 0, dela
     }
 
     // get setttings stored values
-    const stored = await browser.storage.local.get(['distance', 'delay']);
-    // set ""/undefined values to 0
-    // distance = !stored.distance ? 0: stored.distance;
-    // delay = !stored.delay ? 0: stored.delay;
+    const stored = await browser.storage.local.get(['distance', 'delay', 'disabledSites']);
     distance = stored.distance;
     delay = stored.delay;
+    updateScrollingEnabled(stored.disabledSites)
 })();
 
 function toggleScroll() {
@@ -62,6 +60,12 @@ function stopScroll() {
     console.log('Stopped Autoscroll');
 }
 
+function updateScrollingEnabled(disabledSites) {
+
+    hostname = window.location.hostname;
+    scrollingEnabled = disabledSites.includes(hostname) ?  false : true;
+}
+
 // Listen for commands from popup
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.command === 'start') {
@@ -95,11 +99,12 @@ browser.storage.onChanged.addListener((changes, area) => {
             }
         }
 
-        if ('scrollingEnabled' in changes) {
-            scrollingEnabled = changes.scrollingEnabled.newValue;
+        if ('disabledSites' in changes) {
+            disabledSites = changes.disabledSites.newValue;
 
-            // if scrolling, stop scroll
-            if (scrollInterval) {
+            updateScrollingEnabled(disabledSites)
+
+            if (!scrollingEnabled && scrollInterval) {
                 stopScroll();
             }
         }
@@ -108,6 +113,8 @@ browser.storage.onChanged.addListener((changes, area) => {
 
 // Listen for Override Hotkeys (i.e. spacebar)
 document.addEventListener('keydown', (e) => {
+
+    if (!scrollingEnabled) return;
 
     // ignore inputs related to typing
     const tag = e.target.tagName;

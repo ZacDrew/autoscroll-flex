@@ -2,10 +2,13 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
 
-    const [activeTab] = await browser.tabs.query({
+    // get currently active tab
+    const [tab] = await browser.tabs.query({
         active: true,
         currentWindow: true
     });
+
+    const hostname = new URL(tab.url).hostname;
 
     // settings changes listener
     const form = document.getElementById('popupForm');
@@ -33,25 +36,31 @@ async function init() {
         if (!btn) return;
 
 
-        // Enable/disable button logic
+        // Master enable/disable button logic
         if (btn.id === 'toggleEnable') {
             
             let scrollingEnabled = btn.dataset.enabled === 'true';
+            let { disabledSites = [] } = 
+                await browser.storage.local.get('disabledSites');
 
-            if (!activeTab) return;
+            if (!tab) return;
 
+            // enable scrolling
             if (!scrollingEnabled) {
-                // enable scrolling
-                scrollingEnabled = true;
-                await browser.storage.local.set({ scrollingEnabled });
+                
+                // Remove current site from disabled list
+                disabledSites = disabledSites.filter(site => site !== hostname);
+                await browser.storage.local.set({ disabledSites });
 
                 btn.textContent = 'Disable';
                 btn.dataset.enabled = 'true';
             }
+            // disable scrolling
             else {
-                // disable scrolling
-                scrollingEnabled = false;
-                await browser.storage.local.set({ scrollingEnabled });
+                
+                // Add current site to disabled list
+                disabledSites.push(hostname);
+                await browser.storage.local.set({ disabledSites });
 
                 btn.textContent = 'Enable';
                 btn.dataset.enabled = 'false';
@@ -64,12 +73,12 @@ async function init() {
 
             const isRunning = scrollToggleBtn.dataset.running === 'true';
 
-            if (!activeTab) return;
+            if (!tab) return;
 
             if (!isRunning) {
                 // Start scrolling
                 browser.tabs.sendMessage(
-                    activeTab.id, 
+                    tab.id, 
                     {
                         from: 'popup',
                         command: 'start'
@@ -83,7 +92,7 @@ async function init() {
             else {
                 // Stop scrolling
                 browser.tabs.sendMessage(
-                    activeTab.id, 
+                    tab.id, 
                     {
                         from: 'popup',
                         command: 'stop'
@@ -97,20 +106,20 @@ async function init() {
         }
     });
 
-    syncPopupSettings();
-    syncScrollState(activeTab, scrollToggleBtn);
+    syncPopupSettings(hostname);
+    syncScrollState(tab, scrollToggleBtn);
 }
 
 // Set popup setting values to those in local storage
-async function syncPopupSettings() {
+async function syncPopupSettings(hostname) {
     
     let { distance, 
         delay,
-        scrollingEnabled    
+        disabledSites = []   
     } = await browser.storage.local.get([
         'distance',
         'delay',
-        'scrollingEnabled'
+        'disabledSites'
         ]);
 
     // set ""/undefined values to 0
@@ -121,13 +130,17 @@ async function syncPopupSettings() {
     document.getElementById('distance').value = distance;
     document.getElementById('delay').value = delay;
 
-    console.log('init: ', { distance, delay});
-    
-
-    if (scrollingEnabled === false) {
+    if (disabledSites.includes(hostname)) {
         document.getElementById('toggleEnable').textContent = 'Enable';
         document.getElementById('toggleEnable').dataset.enabled = 'false';
     }
+
+    console.log('init: ', { distance, delay});
+    
+    // if (scrollingEnabled === false) {
+    //     document.getElementById('toggleEnable').textContent = 'Enable';
+    //     document.getElementById('toggleEnable').dataset.enabled = 'false';
+    // }
 }
 
 // Sync popup scroll toggle button to autoscroll state
