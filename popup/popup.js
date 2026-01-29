@@ -1,173 +1,133 @@
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", () => {
+    new PopupController().init();
+});
 
-async function init() {
+class PopupController {
+    constructor() {
+        this.form = document.getElementById('popupForm');
+        this.scrollToggleBtn = document.getElementById('toggleScroll');
+        this.store = new SettingsStore();
+        this.tab = null;
+        this.hostname = null;
+    }
 
-    // get currently active tab
-    const [tab] = await browser.tabs.query({
-        active: true,
-        currentWindow: true
-    });
+    async init() {
+        await this.initTab();
+        this.bindEvents();
+        await this.syncPopupSettings();
+        await this.syncScrollState();
+    }
 
-    const hostname = new URL(tab.url).hostname;
+    async initTab() {
+        const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+        if (!tab) return;
 
-    const form = document.getElementById('popupForm');
-    const scrollToggleBtn = document.getElementById('toggleScroll');
+        this.tab = tab;
+        this.hostname = new URL(tab.url).hostname;
+    }
 
-    // settings changes listener
-    form.addEventListener('change', async (e) => {
-        e.preventDefault();
+    bindEvents() {
+        this.form.addEventListener('change', e => this.handleFormChange(e));
+        document.addEventListener('click', e => this.handleButtonClick(e));
+    }
 
+    // Handles changes to settings in popup
+    async handleFormChange(e) {
         const updates = {};
 
-        if (e.target.id === 'distance' || e.target.id === 'delay') {
-
-            let distance = Number(document.getElementById('distance').value); 
-            let delay = Number(document.getElementById('delay').value);
-
-            updates.distance = distance;
-            updates.delay = delay;
+        // grab values from UI
+        if (['distance', 'delay'].includes(e.target.id)) {
+            updates.distance = Number(distance.value);
+            updates.delay = Number(delay.value);
         }
 
         if (e.target.id === 'scrollingEnable') {
+            const scrollingEnabled = e.target.checked;
+            updates.disabledSites =
+                await this.store.toggleSite(this.hostname, scrollingEnabled);
 
-            let scrollingEnabled = e.target.checked === true;
-            let { disabledSites = [] } = 
-                await browser.storage.local.get('disabledSites');
-
-            if (!tab) return;
-
-            // enable scrolling
-            if (scrollingEnabled) {
-                
-                // Remove current site from disabled list
-                disabledSites = disabledSites.filter(site => site !== hostname);
-
-                scrollToggleBtn.disabled = false;
-            }
-            // disable scrolling
-            else {
-                
-                // Add current site to disabled list
-                disabledSites.push(hostname);
-
-                scrollToggleBtn.disabled = true;
-            }
-            updates.disabledSites = disabledSites;
+            this.scrollToggleBtn.disabled = !scrollingEnabled;
         }
 
-        await browser.storage.local.set(updates);
-        syncScrollState();
+        await this.store.set(updates);
+        await this.syncScrollState();
 
         console.log('change:', updates);
-    });
+    }
 
-    
-
-    // Button listener
-    document.addEventListener('click', async (e) => {
+    async handleButtonClick(e) {
         const btn = e.target.closest('button');
         if (!btn) return;
 
+        // scroll start/stop button
+        if (btn === this.scrollToggleBtn) {
+            const running = btn.dataset.running === 'true';
+            const command = running ? 'stop' : 'start';
 
-        // Scroll Toggle Button logic
-        if (btn === scrollToggleBtn) {
-
-            const isRunning = scrollToggleBtn.dataset.running === 'true';
-
-            if (!tab) return;
-
-            if (!isRunning) {
-                // Start scrolling
-                browser.tabs.sendMessage(
-                    tab.id, 
-                    {
-                        from: 'popup',
-                        command: 'start'
-                    }
+            await browser.tabs.sendMessage(
+                this.tab.id,
+                { 
+                    from: 'popup',
+                    command
+                }
             );
-                scrollToggleBtn.textContent = 'Stop';
-                scrollToggleBtn.dataset.running = 'true';
-
-                console.log('callback: start scroll')
-            }
-            else {
-                // Stop scrolling
-                browser.tabs.sendMessage(
-                    tab.id, 
-                    {
-                        from: 'popup',
-                        command: 'stop'
-                    }
-                );
-                scrollToggleBtn.textContent = 'Start';
-                scrollToggleBtn.dataset.running = 'false';
-
-                console.log('callback: stop scroll')
-            }
+            btn.textContent = running ? 'Start' : 'Stop';
+            btn.dataset.running = String(!running);
         }
-    });
+    }
 
-    syncPopupSettings();
-    syncScrollState();
-
-
-
-
-
-    // Set popup setting values to those in local storage
-    async function syncPopupSettings() {
-        
-        let { distance, 
-            delay,
-            disabledSites = []   
-        } = await browser.storage.local.get([
-            'distance',
-            'delay',
-            'disabledSites'
-            ]);
-
-        // set ""/undefined values to 0
-        distance = !distance ? 0: distance;
-        delay = !delay ? 0: delay;
+    async syncPopupSettings() {
+        const { distance = 0, delay = 0, disabledSites = [] } =
+            await this.store.get();
 
         // Set UI values
         document.getElementById('distance').value = distance;
         document.getElementById('delay').value = delay;
 
-        if (disabledSites.includes(hostname)) {
-            
-            document.getElementById('scrollingEnable').checked = false;
-            scrollToggleBtn.disabled = true;
+        if (disabledSites.includes(this.hostname)) {
+            scrollingEnable.checked = false;
+            this.scrollToggleBtn.disabled = true;
         }
-
         console.log('init: ', { distance, delay});
     }
 
-    // Sync popup scroll toggle button to autoscroll state
-    async function syncScrollState() {
-
-        if (!tab) return;
+    async syncScrollState() {
+        if (!this.tab) return;
 
         try {
-            const status = await browser.tabs.sendMessage(
-                tab.id,
-                {
-                    from: 'popup',
-                    command: 'status'
-                }
-            );
+            const { running } = await browser.tabs.sendMessage(this.tab.id, {
+                command: 'status'
+            });
 
-            scrollToggleBtn.textContent = status.running ? 'Stop' : 'Start';
-            scrollToggleBtn.dataset.running = status.running ? 'true' : 'false';
-
-            console.log('callback: request scroll status', status.running)
-
+            this.scrollToggleBtn.textContent = running ? 'Stop' : 'Start';
+            this.scrollToggleBtn.dataset.running = String(running);
         } catch {
-            scrollToggleBtn.textContent = 'Start';
-            scrollToggleBtn.dataset.running = 'false';
+            this.scrollToggleBtn.textContent = 'Start';
+            this.scrollToggleBtn.dataset.running = 'false';
         }
     }
 }
 
+class SettingsStore {
+    async get() {
+        return browser.storage.local.get(['distance', 'delay', 'disabledSites']);
+    }
 
+    async set(values) {
+        return browser.storage.local.set(values);
+    }
 
+    async toggleSite(hostname, scrollingEnabled) {
+        let { disabledSites = [] } = await this.get();
+
+        // enable scrolling
+        if (scrollingEnabled) {
+            // Remove current site from disabled list
+            return disabledSites.filter(site => site !== hostname)
+        }
+        // disable scrolling
+        else {
+            return [...new Set([...disabledSites, hostname])]
+        }
+    }
+}
