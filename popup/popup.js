@@ -9,6 +9,10 @@ class PopupController {
         this.store = new SettingsStore();
         this.tab = null;
         this.hostname = null;
+
+        // tabs
+        this.tabButtons = document.querySelectorAll('.tab-btn');
+        this.tabContents = document.querySelectorAll('.tab-content');
     }
 
     async init() {
@@ -16,6 +20,7 @@ class PopupController {
         this.bindEvents();
         await this.syncPopupSettings();
         await this.syncScrollState();
+        this.bindTabs();
     }
 
     async initTab() {
@@ -29,6 +34,24 @@ class PopupController {
     bindEvents() {
         this.form.addEventListener('change', e => this.handleFormChange(e));
         document.addEventListener('click', e => this.handleButtonClick(e));
+
+    }
+
+    bindTabs() {
+        this.tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                this.tabButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Hide all tab content
+                this.tabContents.forEach(tc => (tc.style.display = 'none'));
+
+                // Show content for selected tab
+                const tabId = btn.dataset.tab;
+                document.getElementById(tabId).style.display = 'block';
+            });
+        });
     }
 
     // Handles changes to settings in popup

@@ -19,38 +19,48 @@
     <form id="popupForm">
 
         <label class="toggle-row">
-        <span class="toggle-text"><strong>Enabled for site</strong></span>
-
-        <span class="toggle">
-            <input id="scrollingEnable" type="checkbox" checked>
-            <span class="slider"></span>
-        </span>
+            <span class="toggle-text"><strong>Enabled for site</strong></span>
+            <span class="toggle">
+                <input id="scrollingEnable" type="checkbox" checked>
+                <span class="slider"></span>
+            </span>
         </label>
 
         <hr>
-        <br>
-        <label for="speed">Scroll Speed</label>
-        <input type="number" name="speed" id="speed"> pixels/sec
 
-        <label for="distance">Scroll Distance</label>
-        <input type="number" name="distance" id="distance"> pixels
+        <!-- Tabs -->
+        <div class="tabs">
+            <button type="button" class="tab-btn active" data-tab="glide-tab">Glide Scroll</button>
+            <button type="button" class="tab-btn" data-tab="step-tab">Step Scroll</button>
+        </div>
 
-        <label for="delay">Scroll Time Interval</label>
-        <input type="number" name="delay" id="delay"> seconds
+        <!-- Tab contents -->
+        <div class="tab-content" id="glide-tab">
+            <label for="speed">Scroll Speed</label>
+            <input type="number" name="speed" id="speed"> pixels/sec
+        </div>
 
+        <div class="tab-content" id="step-tab" style="display:none;">
+            <label for="distance">Scroll Distance</label>
+            <input type="number" name="distance" id="distance"> pixels
+
+            <label for="delay">Scroll Time Interval</label>
+            <input type="number" name="delay" id="delay"> seconds
+        </div>
 
         <label class="toggle-row">
-        <span class="toggle">
-            <input id="spaceEnable" type="checkbox" checked>
-            <span class="slider"></span>
-        </span>
-        <span class="toggle-text">Autoscroll with spacebar</span>
+            <span class="toggle">
+                <input id="spaceEnable" type="checkbox" checked>
+                <span class="slider"></span>
+            </span>
+            <span class="toggle-text">Toggle scroll with spacebar</span>
         </label>
 
     </form>
-    
-    <br>
+
+    <hr>
     <button id="toggleScroll" data-running="false">Start</button>
+
 
     <script src="popup.js"></script>
 </body>

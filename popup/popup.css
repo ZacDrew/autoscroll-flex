@@ -1,3 +1,10 @@
+body {
+    min-width: 265px; /* your desired minimum width */
+    max-width: 400px; /* optional maximum */
+    padding: 1rem;    /* optional spacing */
+    box-sizing: border-box;
+}
+
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
@@ -8,6 +15,9 @@ input[type="number"] {
   margin: 0 auto;
 }
 
+
+
+/* Toglle slider */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -56,4 +66,31 @@ input[type="number"] {
 
 .toggle input:checked + .slider::before {
   transform: translateX(20.4px);
+}
+
+
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    background-color: #40363a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+.tab-btn.active {
+    background-color: #EB99A1;
+}
+
+.tab-content {
+    padding-top: 0.5rem;
 }
