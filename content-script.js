@@ -12,33 +12,50 @@ class AutoScroller {
     constructor() {
         this.interval = null;
         this.yPos = window.scrollY;
+        this.speed = 0;
         this.distance = 0;
         this.delay = 0;
         this.enabled = true;
+        this.rafId = null;
     }
 
     start() {
         if (!this.enabled) return;
+        // cancel current scroll if already active
+        this.stop()
 
-        this.stop();
+        let lastTime = performance.now();
         this.yPos = window.scrollY;
 
-        this.interval = setInterval(() => {
-            this.yPos += this.distance;
-            window.scroll({ top: this.yPos, behavior: 'smooth' });
-        }, this.delay * 1000); // convert to millisec
+        const step = (now) => {
+            if (!this.enabled) return;
+
+            const deltaTime = (now - lastTime) / 1000;
+            lastTime = now;
+
+            this.yPos += this.speed * deltaTime;
+            window.scrollTo(0, this.yPos);
+
+            this.rafId = requestAnimationFrame(step);
+        };
+
+        this.enabled = true;
+        this.rafId = requestAnimationFrame(step);
     }
 
     stop() {
-        clearInterval(this.interval);
-        this.interval = null;
+        if (this.running) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
     }
 
     toggle() {
-        this.interval ? this.stop() : this.start();
+        this.running ? this.stop() : this.start();
     }
 
-    setSettings({ distance, delay }) {
+    setSettings({ speed, distance, delay }) {
+        this.speed = speed;
         this.distance = distance;
         this.delay = delay;
 
@@ -51,17 +68,17 @@ class AutoScroller {
     }
 
     get running() {
-        return !!this.interval;
+        return !!this.rafId;
     }
 }
 
 const scroller = new AutoScroller();
 
 (async function init() {
-    const { distance, delay, disabledSites = [] } =
-        await browser.storage.local.get(['distance', 'delay', 'disabledSites']);
+    const { speed, distance, delay, disabledSites = [] } =
+        await browser.storage.local.get(['speed', 'distance', 'delay', 'disabledSites']);
 
-    scroller.setSettings({ distance, delay });
+    scroller.setSettings({ speed, distance, delay });
     scroller.setEnabled(!disabledSites.includes(location.hostname));
 })();
 
@@ -80,6 +97,10 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 // Listen for changes to the settings and update them
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
+
+    if (changes.speed) {
+        scroller.setSettings({ speed: changes.speed?.newValue ?? scroller.speed })
+    }
 
     if (changes.distance || changes.delay) {
         scroller.setSettings({
