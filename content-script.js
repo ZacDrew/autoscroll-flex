@@ -15,6 +15,7 @@ class AutoScroller {
         this.speed = 0;
         this.distance = 0;
         this.delay = 0;
+        this.spaceEnabled = false;
         this.enabled = true;
         this.rafId = null;
     }
@@ -54,12 +55,11 @@ class AutoScroller {
         this.running ? this.stop() : this.start();
     }
 
-    setSettings({ speed, distance, delay }) {
-        this.speed = speed;
-        this.distance = distance;
-        this.delay = delay;
-
-        if (this.interval) this.start();
+    setSettings(settings = {}) {
+        if ('speed' in settings) this.speed = settings.speed;
+        if ('distance' in settings) this.distance = settings.distance;
+        if ('delay' in settings) this.delay = settings.delay;
+        if ('spaceEnabled' in settings) this.spaceEnabled = settings.spaceEnabled;
     }
 
     setEnabled(enabled) {
@@ -75,10 +75,10 @@ class AutoScroller {
 const scroller = new AutoScroller();
 
 (async function init() {
-    const { speed, distance, delay, disabledSites = [] } =
-        await browser.storage.local.get(['speed', 'distance', 'delay', 'disabledSites']);
+    const { speed, distance, delay, spaceEnabled, disabledSites = [] } =
+        await browser.storage.local.get(['speed', 'distance', 'delay', 'spaceEnabled', 'disabledSites']);
 
-    scroller.setSettings({ speed, distance, delay });
+    scroller.setSettings({ speed, distance, delay, spaceEnabled });
     scroller.setEnabled(!disabledSites.includes(location.hostname));
 })();
 
@@ -100,6 +100,7 @@ browser.storage.onChanged.addListener((changes, area) => {
 
     if (changes.speed) {
         scroller.setSettings({ speed: changes.speed?.newValue ?? scroller.speed })
+        if (scroller.running) scroller.start();
     }
 
     if (changes.distance || changes.delay) {
@@ -107,6 +108,12 @@ browser.storage.onChanged.addListener((changes, area) => {
             distance: changes.distance?.newValue ?? scroller.distance,
             delay: changes.delay?.newValue ?? scroller.delay
         });
+        if (scroller.running) scroller.start();
+    }
+
+    if (changes.spaceEnabled) {
+        scroller.setSettings({ spaceEnabled: changes.spaceEnabled.newValue });
+        console.log('space enabled: ', scroller.spaceEnabled);
     }
 
     if (changes.disabledSites) {
@@ -126,7 +133,7 @@ document.addEventListener('keydown', e => {
         e.target.isContentEditable
     ) return;
 
-    if (e.code === 'Space') {
+    if (e.code === 'Space' && scroller.spaceEnabled) {
         e.preventDefault();
         scroller.toggle();
     }

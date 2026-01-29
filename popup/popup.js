@@ -45,6 +45,10 @@ class PopupController {
             updates.delay = Number(delay.value);
         }
 
+        if (e.target.id === 'spaceEnable') {
+            updates.spaceEnabled = e.target.checked;
+        }
+
         if (e.target.id === 'scrollingEnable') {
             const scrollingEnabled = e.target.checked;
             updates.disabledSites =
@@ -81,16 +85,17 @@ class PopupController {
     }
 
     async syncPopupSettings() {
-        const { speed = 0, distance = 0, delay = 0, disabledSites = [] } =
+        const { speed = 0, distance = 0, delay = 0, spaceEnabled = false, disabledSites = [] } =
             await this.store.get();
 
         // Set UI values
         document.getElementById('speed').value = speed;
         document.getElementById('distance').value = distance;
         document.getElementById('delay').value = delay;
+        document.getElementById('spaceEnable').checked = spaceEnabled;
 
         if (disabledSites.includes(this.hostname)) {
-            scrollingEnable.checked = false;
+            document.getElementById('scrollingEnable').checked = false;
             this.scrollToggleBtn.disabled = true;
         }
         console.log('init: ', { speed, distance, delay});
@@ -118,7 +123,8 @@ class SettingsStore {
         return browser.storage.local.get([
             'speed', 
             'distance', 
-            'delay', 
+            'delay',
+            'spaceEnabled', 
             'disabledSites'
         ]);
     }
