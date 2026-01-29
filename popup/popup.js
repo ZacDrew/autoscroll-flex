@@ -36,6 +36,10 @@ class PopupController {
         const updates = {};
 
         // grab values from UI
+        if (e.target.id === 'speed') {
+            updates.speed = Number(e.target.value);
+        }
+
         if (['distance', 'delay'].includes(e.target.id)) {
             updates.distance = Number(distance.value);
             updates.delay = Number(delay.value);
@@ -77,10 +81,11 @@ class PopupController {
     }
 
     async syncPopupSettings() {
-        const { distance = 0, delay = 0, disabledSites = [] } =
+        const { speed = 0, distance = 0, delay = 0, disabledSites = [] } =
             await this.store.get();
 
         // Set UI values
+        document.getElementById('speed').value = speed;
         document.getElementById('distance').value = distance;
         document.getElementById('delay').value = delay;
 
@@ -88,7 +93,7 @@ class PopupController {
             scrollingEnable.checked = false;
             this.scrollToggleBtn.disabled = true;
         }
-        console.log('init: ', { distance, delay});
+        console.log('init: ', { speed, distance, delay});
     }
 
     async syncScrollState() {
@@ -110,7 +115,12 @@ class PopupController {
 
 class SettingsStore {
     async get() {
-        return browser.storage.local.get(['distance', 'delay', 'disabledSites']);
+        return browser.storage.local.get([
+            'speed', 
+            'distance', 
+            'delay', 
+            'disabledSites'
+        ]);
     }
 
     async set(values) {
