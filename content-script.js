@@ -1,6 +1,5 @@
 /* 
 TODO:
-- stop scroll when not in tab (but still scroll when unfocused)
 - add feature to detect a scroll target so it works on more sites
      - detect section mouse is over
      - auto-detect largest section
@@ -111,3 +110,9 @@ document.addEventListener('keydown', e => {
         scroller.toggle();
     }
 });
+
+
+// Listen for for when page is hidden
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) scroller.stop();
+})
