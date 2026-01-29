@@ -29,16 +29,27 @@
 
         <hr>
         <br>
-        <div>
-            <label for="distance">Scroll Distance</label>
-            <input type="number" name="distance" id="distance"> pixels
-        </div>
-        <div>
-            <label for="delay">Scroll Time Interval</label>
-            <input type="number" name="delay" id="delay"> seconds
-        </div>
-    </form>
+        <label for="speed">Scroll Speed</label>
+        <input type="number" name="speed" id="speed"> pixels/sec
 
+        <label for="distance">Scroll Distance</label>
+        <input type="number" name="distance" id="distance"> pixels
+
+        <label for="delay">Scroll Time Interval</label>
+        <input type="number" name="delay" id="delay"> seconds
+
+
+        <label class="toggle-row">
+        <span class="toggle">
+            <input id="spaceEnable" type="checkbox" checked>
+            <span class="slider"></span>
+        </span>
+        <span class="toggle-text">Autoscroll with spacebar</span>
+        </label>
+
+    </form>
+    
+    <br>
     <button id="toggleScroll" data-running="false">Start</button>
 
     <script src="popup.js"></script>
