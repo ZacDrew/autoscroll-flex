@@ -1,5 +1,3 @@
-// import * as C from './constants.storage.js';
-
 /* 
 TODO:
 - add feature to detect a scroll target so it works on more sites
@@ -14,47 +12,111 @@ async function getConstants() {
     return browser.runtime.sendMessage({ command: 'getConstants' });
 }
 
-class AutoScroller {
-    constructor() {
-        this.interval = null;
-        this.yPos = window.scrollY;
-        this.speed = 0;
-        this.distance = 0;
-        this.delay = 0;
-        this.spaceEnabled = false;
-        this.enabled = true;
+class GlideScroller {
+    constructor(parent) {
+        this.parent = parent;
         this.rafId = null;
+        this.yPos = window.scrollY;
     }
 
     start() {
-        if (!this.enabled) return;
-        // cancel current scroll if already active
-        this.stop()
+        if (!this.parent.enabled) return;
+
+        this.stop();
 
         let lastTime = performance.now();
         this.yPos = window.scrollY;
 
         const step = (now) => {
-            if (!this.enabled) return;
+            if (!this.parent.enabled) return;
 
-            const deltaTime = (now - lastTime) / 1000;
+            const delta = (now - lastTime) / 1000;
             lastTime = now;
 
-            this.yPos += this.speed * deltaTime;
+            this.yPos += this.parent.speed * delta;
             window.scrollTo(0, this.yPos);
 
             this.rafId = requestAnimationFrame(step);
         };
 
-        this.enabled = true;
         this.rafId = requestAnimationFrame(step);
     }
 
     stop() {
-        if (this.running) {
+        if (this.rafId) {
             cancelAnimationFrame(this.rafId);
             this.rafId = null;
         }
+    }
+
+    get running() {
+        return !!this.rafId;
+    }
+}
+
+class StepScroller {
+    constructor(parent) {
+        this.parent = parent;
+        this.intervalId = null;
+    }
+
+    start() {
+        if (!this.parent.enabled) return;
+
+        this.stop();
+
+        this.intervalId = setInterval(() => {
+            if (!this.parent.enabled) return;
+
+            window.scrollBy({
+                top: this.parent.distance,
+                behavior: "smooth"
+            });
+        }, this.parent.delay * 1000);
+    }
+
+    stop() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+
+    get running() {
+        return !!this.intervalId;
+    }
+}
+
+
+
+class AutoScroller {
+    constructor() {
+        this.scrollType = null;
+        this.speed = 0;
+        this.distance = 0;
+        this.delay = 0;
+        this.spaceEnabled = false;
+        this.enabled = true;
+
+        this.glide = new GlideScroller(this);
+        this.step = new StepScroller(this);
+    }
+
+    get currentScroller() {
+        return this.scrollType === 'glide'
+            ? this.glide
+            : this.step;
+    }
+
+    start() {
+        if (!this.enabled) return;
+        this.stop();
+        this.currentScroller.start();
+    }
+
+    stop() {
+        this.glide.stop();
+        this.step.stop();
     }
 
     toggle() {
@@ -62,10 +124,19 @@ class AutoScroller {
     }
 
     setSettings(settings = {}) {
-        if ('speed' in settings) this.speed = settings.speed;
-        if ('distance' in settings) this.distance = settings.distance;
-        if ('delay' in settings) this.delay = settings.delay;
-        if ('spaceEnabled' in settings) this.spaceEnabled = settings.spaceEnabled;
+
+        const scrolling = this.running;
+
+        if (
+            'scrollType' in settings &&
+            settings.scrollType !== this.scrollType
+        ) {
+            this.stop();
+            this.scrollType = settings.scrollType;
+        }
+
+        Object.assign(this, settings);
+        if (scrolling) this.start();
     }
 
     setEnabled(enabled) {
@@ -74,7 +145,7 @@ class AutoScroller {
     }
 
     get running() {
-        return !!this.rafId;
+        return this.currentScroller.running;
     }
 }
 
@@ -85,12 +156,14 @@ const scroller = new AutoScroller();
     const C = await getConstants(); // Import Constants
 
     const { 
+        scrollType = C.DEFAULT_VAL.SCROLL_TYPE,
         speed = C.DEFAULT_VAL.SPEED, 
-        distance, 
-        delay, 
-        spaceEnabled, 
-        disabledSites = [] 
+        distance = C.DEFAULT_VAL.DISTANCE, 
+        delay = C.DEFAULT_VAL.DELAY, 
+        spaceEnabled = C.DEFAULT_VAL.SPACE_ENABLED, 
+        disabledSites = C.DEFAULT_VAL.DISABLED_SITES
     } = await browser.storage.local.get([
+            'scrollType',
             'speed', 
             'distance', 
             'delay', 
@@ -98,7 +171,7 @@ const scroller = new AutoScroller();
             'disabledSites'
         ]);
     
-    scroller.setSettings({ speed, distance, delay, spaceEnabled });
+    scroller.setSettings({ scrollType, speed, distance, delay, spaceEnabled });
     scroller.setEnabled(!disabledSites.includes(location.hostname));
 })();
 
@@ -117,6 +190,11 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 // Listen for changes to the settings and update them
 browser.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
+
+    if (changes.scrollType) {
+        scroller.setSettings({ scrollType: changes.scrollType.newValue })
+        if (scroller.running) scroller.start();
+    }
 
     if (changes.speed) {
         scroller.setSettings({ speed: changes.speed?.newValue ?? scroller.speed })
