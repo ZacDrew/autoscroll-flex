@@ -1,3 +1,5 @@
+import * as C from '../constants/storage.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     new PopupController().init();
 });
@@ -20,7 +22,7 @@ class PopupController {
         this.bindEvents();
         await this.syncPopupSettings();
         await this.syncScrollState();
-        this.bindTabs();
+        // this.bindTabs();
     }
 
     async initTab() {
@@ -34,25 +36,12 @@ class PopupController {
     bindEvents() {
         this.form.addEventListener('change', e => this.handleFormChange(e));
         document.addEventListener('click', e => this.handleButtonClick(e));
-
-    }
-
-    bindTabs() {
         this.tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all buttons
-                this.tabButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Hide all tab content
-                this.tabContents.forEach(tc => (tc.style.display = 'none'));
-
-                // Show content for selected tab
-                const tabId = btn.dataset.tab;
-                document.getElementById(tabId).style.display = 'block';
-            });
+            btn.addEventListener('click', e => this.handleTabs(e))
         });
     }
+
+
 
     // Handles changes to settings in popup
     async handleFormChange(e) {
@@ -68,11 +57,11 @@ class PopupController {
             updates.delay = Number(delay.value);
         }
 
-        if (e.target.id === 'spaceEnable') {
+        if (e.target.id === 'spaceEnabled') {
             updates.spaceEnabled = e.target.checked;
         }
 
-        if (e.target.id === 'scrollingEnable') {
+        if (e.target.id === 'scrollingEnabled') {
             const scrollingEnabled = e.target.checked;
             updates.disabledSites =
                 await this.store.toggleSite(this.hostname, scrollingEnabled);
@@ -107,18 +96,63 @@ class PopupController {
         }
     }
 
-    async syncPopupSettings() {
-        const { speed = 0, distance = 0, delay = 0, spaceEnabled = false, disabledSites = [] } =
-            await this.store.get();
+    async handleTabs(e) {
+        const btn = e.currentTarget;
 
-        // Set UI values
+        // store selected scroll type
+        if (btn.dataset.tab === C.UI_ID.GLIDE_TAB) {
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.GLIDE });
+        }
+        if (btn.dataset.tab === C.UI_ID.STEP_TAB) {
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.STEP });
+        }
+        
+        this.setActiveTab(btn);
+    }
+
+    setActiveTab(btn) {
+        // Remove active class from all buttons
+        this.tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Hide all tab content
+        this.tabContents.forEach(tc => (tc.style.display = 'none'));
+
+        // Show content for selected tab
+        const tabId = btn.dataset.tab;
+        document.getElementById(tabId).style.display = 'block';
+    }
+
+    async syncPopupSettings() {
+        const {
+            scrollType = C.DEFAULT_VAL.SCROLL_TYPE,
+            speed = C.DEFAULT_VAL.SPEED, 
+            distance = C.DEFAULT_VAL.DISTANCE, 
+            delay = C.DEFAULT_VAL.DELAY, 
+            spaceEnabled = C.DEFAULT_VAL.SPACE_ENABLED, 
+            disabledSites = C.DEFAULT_VAL.DISABLED_SITES 
+        } = await this.store.get();
+
+        // Set active scroll tab
+        if (scrollType === C.SCROLL_TYPE.GLIDE) {
+            this.setActiveTab(document.querySelector(
+                '.tab-btn[data-tab="glide-tab"]'
+            ));
+        }
+        else if (scrollType === C.SCROLL_TYPE.STEP) {
+            this.setActiveTab(document.querySelector(
+                '.tab-btn[data-tab="step-tab"]'
+            ));
+        }
+
+        // Set UI setting values
         document.getElementById('speed').value = speed;
         document.getElementById('distance').value = distance;
         document.getElementById('delay').value = delay;
-        document.getElementById('spaceEnable').checked = spaceEnabled;
+        document.getElementById('spaceEnabled').checked = spaceEnabled;
 
         if (disabledSites.includes(this.hostname)) {
-            document.getElementById('scrollingEnable').checked = false;
+            document.getElementById('scrollingEnabled').checked = false;
             this.scrollToggleBtn.disabled = true;
         }
         console.log('init: ', { speed, distance, delay});
@@ -144,6 +178,7 @@ class PopupController {
 class SettingsStore {
     async get() {
         return browser.storage.local.get([
+            'scrollType',
             'speed', 
             'distance', 
             'delay',
