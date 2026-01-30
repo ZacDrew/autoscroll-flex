@@ -11,6 +11,11 @@
     "96": "icons/autoscroll-flex-logo-96.png"
   },
 
+  "background": {
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+
   "action": {
     "default_popup": "popup/popup.html"
   },

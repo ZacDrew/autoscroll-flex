@@ -1,3 +1,5 @@
+// import * as C from './constants.storage.js';
+
 /* 
 TODO:
 - add feature to detect a scroll target so it works on more sites
@@ -7,6 +9,10 @@ TODO:
   (for sites with conflicts ie youtube). maybe the blacklist is just for 
   the override hotkeys like spacebar
 */
+
+async function getConstants() {
+    return browser.runtime.sendMessage({ command: 'getConstants' });
+}
 
 class AutoScroller {
     constructor() {
@@ -75,9 +81,23 @@ class AutoScroller {
 const scroller = new AutoScroller();
 
 (async function init() {
-    const { speed, distance, delay, spaceEnabled, disabledSites = [] } =
-        await browser.storage.local.get(['speed', 'distance', 'delay', 'spaceEnabled', 'disabledSites']);
 
+    const C = await getConstants(); // Import Constants
+
+    const { 
+        speed = C.DEFAULT_VAL.SPEED, 
+        distance, 
+        delay, 
+        spaceEnabled, 
+        disabledSites = [] 
+    } = await browser.storage.local.get([
+            'speed', 
+            'distance', 
+            'delay', 
+            'spaceEnabled', 
+            'disabledSites'
+        ]);
+    
     scroller.setSettings({ speed, distance, delay, spaceEnabled });
     scroller.setEnabled(!disabledSites.includes(location.hostname));
 })();
