@@ -61,7 +61,7 @@ class StepScroller {
     }
 
     start() {
-        if (!this.parent.enabled) return;
+        if (!this.parent.enabled || !this.parent.delay) return;
 
         this.stop();
 
