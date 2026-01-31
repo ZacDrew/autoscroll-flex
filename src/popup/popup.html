@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoscroll Flex</title>
+    <!-- normalize.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <!-- sakura vader theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" type="text/css">
+    <!-- sakura vader theme -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" media="screen and (prefers-color-scheme: dark)"> -->
+    <!-- custom -->
+     <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <!-- <h2 id="heading">autoscroll flex</h2> -->
+
+    <form id="popupForm">
+
+        <label class="toggle-row">
+            <span class="toggle-text"><strong>Enabled for site</strong></span>
+            <span class="toggle">
+                <input id="scrollingEnabled" type="checkbox" checked>
+                <span class="slider"></span>
+            </span>
+        </label>
+
+        <hr>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button type="button" class="tab-btn active" data-tab="glide-tab">Glide Scroll</button>
+            <button type="button" class="tab-btn" data-tab="step-tab">Step Scroll</button>
+        </div>
+
+        <!-- Tab contents -->
+        <div class="tab-content" id="glide-tab">
+            <label for="speed">Scroll Speed</label>
+            <input type="number" name="speed" id="speed"> pixels/sec
+        </div>
+
+        <div class="tab-content" id="step-tab" style="display:none;">
+            <label for="distance">Scroll Distance</label>
+            <input type="number" name="distance" id="distance"> pixels
+
+            <label for="delay">Scroll Time Interval</label>
+            <input type="number" name="delay" id="delay"> seconds
+        </div>
+
+        <label class="toggle-row">
+            <span class="toggle">
+                <input id="spaceEnabled" type="checkbox" checked>
+                <span class="slider"></span>
+            </span>
+            <span class="toggle-text">Toggle scroll with spacebar</span>
+        </label>
+
+    </form>
+
+    <hr>
+    <button id="toggleScroll" data-running="false">Start</button>
+
+
+    <script type="module" src="./popup.js"></script>
+</body>
+</html>
