@@ -1,5 +1,3 @@
-// import { SCROLL_TYPE, STORAGE_KEY, DEFAULT_VAL } from './constants/storage.js';
-
 /* 
 TODO:
 - add feature to detect a scroll target so it works on more sites
@@ -9,10 +7,6 @@ TODO:
   (for sites with conflicts ie youtube). maybe the blacklist is just for 
   the override hotkeys like spacebar
 */
-
-// async function getConstants() {
-//     return browser.runtime.sendMessage({ command: 'getConstants' });
-// }
 
 class GlideScroller {
     constructor(parent) {
@@ -27,7 +21,8 @@ class GlideScroller {
         this.stop();
 
         let lastTime = performance.now();
-        this.yPos = window.scrollY;
+         const target = this.parent.scrollTarget;
+        this.yPos = target.scrollTop;
 
         const step = (now) => {
             if (!this.parent.enabled) return;
@@ -36,7 +31,7 @@ class GlideScroller {
             lastTime = now;
 
             this.yPos += this.parent.speed * delta;
-            window.scrollTo(0, this.yPos);
+            target.scrollTo(0, this.yPos);
 
             this.rafId = requestAnimationFrame(step);
         };
@@ -70,7 +65,7 @@ class StepScroller {
         this.intervalId = setInterval(() => {
             if (!this.parent.enabled) return;
 
-            window.scrollBy({
+            this.parent.scrollTarget.scrollBy({
                 top: this.parent.distance,
                 behavior: "smooth"
             });
@@ -102,6 +97,9 @@ class AutoScroller {
 
         this.glide = new GlideScroller(this);
         this.step = new StepScroller(this);
+
+        this.mouseTarget = null;
+        this.scrollTarget = null;
     }
 
     get currentScroller() {
@@ -113,6 +111,8 @@ class AutoScroller {
     start() {
         if (!this.enabled) return;
         this.stop();
+
+        this.findScrollTarget();
         this.currentScroller.start();
     }
 
@@ -141,6 +141,33 @@ class AutoScroller {
         if (scrolling) this.start();
     }
 
+    findScrollableParent(el) {
+        while (el && el !== document.body) {
+            const style = getComputedStyle(el);
+
+            if (
+                (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
+                el.scrollHeight > el.clientHeight
+            ) {
+                return el;
+            }
+
+            el = el.parentElement;
+        }
+        return document.scrollingElement;
+    }
+
+    findScrollTarget() {
+
+        if (this.mouseTarget) {
+            const target = this.findScrollableParent(this.mouseTarget);
+            if (target) this.scrollTarget = target; 
+        }
+        else {
+            this.scrollTarget = document.scrollingElement;
+        }
+    }
+
     setEnabled(enabled) {
         this.enabled = enabled;
         if (!enabled) this.stop();
@@ -154,8 +181,6 @@ class AutoScroller {
 const scroller = new AutoScroller();
 
 (async function init() {
-
-    // const C = await getConstants(); // Import Constants
 
     const { 
         scrollType = DEFAULT_VAL.SCROLL_TYPE,
@@ -239,8 +264,13 @@ document.addEventListener('keydown', e => {
     }
 });
 
+// Record mouse target
+document.addEventListener('mouseover', e => {
+    scroller.mouseTarget = e.target;
+}, { passive: true });
+
 
 // Listen for for when page is hidden
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) scroller.stop();
-})
+});
