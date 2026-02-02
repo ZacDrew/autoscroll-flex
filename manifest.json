@@ -12,17 +12,22 @@
   },
 
   "background": {
-    "scripts": ["./background.js"]
+    "scripts": ["./dist/background.js"]
   },
 
   "action": {
-    "default_popup": "./popup.html"
+    "default_popup": "./src/popup/popup.html"
+  },
+
+  "options_ui": {
+    "page": "./src/options/options.html",
+    "open_in_tab": true
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["./content-script.js"]
+      "js": ["./dist/content-script.js"]
     }
   ],
 
