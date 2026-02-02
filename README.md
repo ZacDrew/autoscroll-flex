@@ -1,4 +1,4 @@
-# Autorscroll Flex
+# Autoscroll Flex
 
 This is a tool primarily designed to assist with reading vertical scrolling comics like manhwa (and sometimes manga). It is meant to be a flexible autoscroll where the user can easily set the speeds and adjust them while reading without having to interrupt their reading and click through a menu.
 
