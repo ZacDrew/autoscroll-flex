@@ -4,6 +4,8 @@ import { SCROLL_TYPE, STORAGE_KEY, DEFAULT_VAL } from './src/constants/storage.j
 
 export default defineConfig({
   build: {
+    sourcemap: 'inline',
+    minify: false,
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
