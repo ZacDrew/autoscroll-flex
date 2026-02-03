@@ -20,7 +20,7 @@ class PopupController {
     async init() {
         await this.initTab();
         this.bindEvents();
-        await this.setPopupSettingsValues();
+        await this.setInitialUIValues();
         await this.syncScrollState();
         // this.bindTabs();
     }
@@ -40,8 +40,6 @@ class PopupController {
             btn.addEventListener('click', e => this.handleTabs(e))
         });
     }
-
-
 
     // Handles changes to settings in popup
     async handleFormChange(e) {
@@ -130,7 +128,7 @@ class PopupController {
         document.getElementById(tabId).style.display = 'block';
     }
 
-    async setPopupSettingsValues() {
+    async setInitialUIValues() {
         const {
             scrollType = C.DEFAULT.SCROLL_TYPE,
             speed = C.DEFAULT.SPEED, 

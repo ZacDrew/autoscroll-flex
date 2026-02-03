@@ -12,7 +12,8 @@ export const UI_ID = {
     SPACE_ENABLED: 'spaceEnabled',
     SCROLLING_ENABLED: 'scrollingEnabled',
     TOGGLE_SCROLL: 'toggleScroll',
-    OPEN_SETTINGS: 'openSettings'
+    OPEN_SETTINGS: 'openSettings',
+    DISABLED_SITES: 'disabledSites'
 };
 
 export const STORAGE_KEY = {
