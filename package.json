@@ -5,7 +5,7 @@
   "main": "background.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "vite build && xcopy /Y src\\popup\\popup.html dist\\ && xcopy /Y src\\popup\\popup.css dist\\ && xcopy /E /I /Y src\\icons dist\\icons && xcopy /Y src\\manifest.json dist\\"
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
