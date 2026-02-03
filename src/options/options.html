@@ -13,12 +13,15 @@
     <h1>Autoscroll Flex</h1>
     <hr>
     <h5>Disabled Sites</h5>
-    <label style="font-size: 17px;" for="disabledSites">
+    <label style="font-size: 17px;">
         Websites where this extension is disabled.<br>
         <p style="font-size: 14px; color: #A8A8A8;">
-        NOTE - one domain name per line. Don't include URL info before "www" or after the domain suffix (like ".com" or ".org"). <br>
-        &nbsp&nbsp&nbsp&nbsp   Good example: www.google.com <br>
-        &nbsp&nbsp&nbsp&nbsp   Bad example: https://www.google.com/search?client=firefox-b-d&q=wikipedia
+        NOTE - one domain name per line. you can include more URL info after the 
+        domain suffix (i.e. ".com" or ".org") to narrow down what you want 
+        disabled. However, said link won't be affected by the site-domain-toggle in
+        the popup menu. Regex is not supported.<br>
+        &nbsp&nbsp&nbsp&nbsp   simple domain link: www.youtube.com <br>
+        &nbsp&nbsp&nbsp&nbsp   specific site link: https://www.youtube.com/watch (disables only video pages)
         </p>
     </label>
     <textarea 

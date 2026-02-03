@@ -168,9 +168,21 @@ class AutoScroller {
         }
     }
 
-    setEnabled(enabled) {
-        this.enabled = enabled;
-        if (!enabled) this.stop();
+    setEnabled(disabledSites) {
+        const url = location.href;
+        this.enabled = true;
+
+        // check if url of current tab is in the list of disabled sites
+        for (const site of disabledSites) {
+            if (url === site ||
+                url.includes(site) ||
+                location.hostname === site
+            ) {
+                this.enabled = false;
+                break;
+            }
+        }
+        if (!this.enabled) this.stop();
     }
 
     get running() {
@@ -199,7 +211,8 @@ const scroller = new AutoScroller();
         ]);
     
     scroller.setSettings({ scrollType, speed, distance, delay, spaceEnabled });
-    scroller.setEnabled(!disabledSites.includes(location.hostname));
+    // scroller.setEnabled(!disabledSites.includes(location.hostname));
+    scroller.setEnabled(disabledSites);
 })();
 
 
@@ -242,9 +255,7 @@ browser.storage.onChanged.addListener((changes, area) => {
     }
 
     if (changes.disabledSites) {
-        scroller.setEnabled(
-            !changes.disabledSites.newValue.includes(location.hostname)
-        );
+        scroller.setEnabled(changes.disabledSites.newValue);
     }
 });
 
