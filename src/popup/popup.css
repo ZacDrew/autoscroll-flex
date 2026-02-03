@@ -15,7 +15,11 @@ input[type="number"] {
   margin: 0 auto;
 }
 
-
+.button-row {
+    display: flex;
+    justify-content: space-between; /* left + right */
+    align-items: center;
+}
 
 /* Toglle slider */
 .toggle-row {

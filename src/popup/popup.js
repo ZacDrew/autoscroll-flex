@@ -67,6 +67,8 @@ class PopupController {
                 await this.store.toggleSite(this.hostname, scrollingEnabled);
 
             this.scrollToggleBtn.disabled = !scrollingEnabled;
+            console.log('disabled sites: ', updates.disabledSites);
+
         }
 
         await this.store.set(updates);
@@ -93,6 +95,11 @@ class PopupController {
             );
             btn.textContent = running ? 'Start' : 'Stop';
             btn.dataset.running = String(!running);
+        }
+
+        // open settings menu
+        if (btn === document.getElementById(C.UI_ID.OPEN_SETTINGS)) {
+            browser.runtime.openOptionsPage();
         }
     }
 
@@ -203,5 +210,6 @@ class SettingsStore {
         else {
             return [...new Set([...disabledSites, hostname])]
         }
+        
     }
 }
