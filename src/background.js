@@ -1,8 +1,14 @@
-// import { SCROLL_TYPE, STORAGE_KEY, DEFAULT_VAL } from './constants/storage.js';
+import * as C from './constants/storage.js';
 
-// browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-//     if (msg.command === 'getConstants') {
-//         sendResponse({ SCROLL_TYPE, STORAGE_KEY, DEFAULT_VAL });
-//         return true;
-//     }
-// });
+browser.runtime.onInstalled.addListener(async () => {
+
+    // Set default disabled sites if not already set
+    const result = await browser.storage.local.get(
+        C.STORAGE_KEY.DISABLED_SITES
+    );
+    if (!result[C.STORAGE_KEY.DISABLED_SITES]) {
+        await browser.storage.local.set({ 
+            [C.STORAGE_KEY.DISABLED_SITES]: C.DEFAULT_VAL.DISABLED_SITES
+        });
+    }
+})
