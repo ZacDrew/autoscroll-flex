@@ -10,7 +10,9 @@ export const UI_ID = {
     DISTANCE: 'distance',
     DELAY: 'delay',
     SPACE_ENABLED: 'spaceEnabled',
-    SCROLLING_ENABLED: 'scrollingEnabled'
+    SCROLLING_ENABLED: 'scrollingEnabled',
+    TOGGLE_SCROLL: 'toggleScroll',
+    OPEN_SETTINGS: 'openSettings'
 };
 
 export const STORAGE_KEY = {

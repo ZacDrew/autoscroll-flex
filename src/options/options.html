@@ -10,8 +10,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" type="text/css">
 </head>
 <body>
-    <h1>Settings</h1>
-
+    <h1>Autoscroll Flex</h1>
+    <hr>
+    <h5>Disabled Sites</h5>
+    <label style="font-size: 17px;" for="disabledSites">
+        Websites where this extension is disabled.<br>
+        <p style="font-size: 14px; color: #A8A8A8;">
+        NOTE - one domain name per line. Don't include URL info before "www" or after the domain suffix (like ".com" or ".org"). <br>
+        &nbsp&nbsp&nbsp&nbsp   Good example: www.google.com <br>
+        &nbsp&nbsp&nbsp&nbsp   Bad example: https://www.google.com/search?client=firefox-b-d&q=wikipedia
+        </p>
+    </label>
+    <textarea name="disabledSites" id="disabledSites" rows="8"></textarea>
 
 
     <script type="module" src="../../dist/options.js"></script>
