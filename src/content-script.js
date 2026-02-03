@@ -183,12 +183,12 @@ const scroller = new AutoScroller();
 (async function init() {
 
     const { 
-        scrollType = DEFAULT_VAL.SCROLL_TYPE,
-        speed = DEFAULT_VAL.SPEED, 
-        distance = DEFAULT_VAL.DISTANCE, 
-        delay = DEFAULT_VAL.DELAY, 
-        spaceEnabled = DEFAULT_VAL.SPACE_ENABLED, 
-        disabledSites = DEFAULT_VAL.DISABLED_SITES
+        scrollType = DEFAULT.SCROLL_TYPE,
+        speed = DEFAULT.SPEED, 
+        distance = DEFAULT.DISTANCE, 
+        delay = DEFAULT.DELAY, 
+        spaceEnabled = DEFAULT.SPACE_ENABLED, 
+        disabledSites = DEFAULT.DISABLED_SITES
     } = await browser.storage.local.get([
             'scrollType',
             'speed', 

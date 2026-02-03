@@ -20,7 +20,7 @@ class PopupController {
     async init() {
         await this.initTab();
         this.bindEvents();
-        await this.syncPopupSettings();
+        await this.setPopupSettingsValues();
         await this.syncScrollState();
         // this.bindTabs();
     }
@@ -130,14 +130,14 @@ class PopupController {
         document.getElementById(tabId).style.display = 'block';
     }
 
-    async syncPopupSettings() {
+    async setPopupSettingsValues() {
         const {
-            scrollType = C.DEFAULT_VAL.SCROLL_TYPE,
-            speed = C.DEFAULT_VAL.SPEED, 
-            distance = C.DEFAULT_VAL.DISTANCE, 
-            delay = C.DEFAULT_VAL.DELAY, 
-            spaceEnabled = C.DEFAULT_VAL.SPACE_ENABLED, 
-            disabledSites = C.DEFAULT_VAL.DISABLED_SITES 
+            scrollType = C.DEFAULT.SCROLL_TYPE,
+            speed = C.DEFAULT.SPEED, 
+            distance = C.DEFAULT.DISTANCE, 
+            delay = C.DEFAULT.DELAY, 
+            spaceEnabled = C.DEFAULT.SPACE_ENABLED, 
+            disabledSites = C.DEFAULT.DISABLED_SITES 
         } = await this.store.get();
 
         // Set active scroll tab

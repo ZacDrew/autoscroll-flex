@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { SCROLL_TYPE, STORAGE_KEY, DEFAULT_VAL } from './src/constants/storage.js';
+import { SCROLL_TYPE, STORAGE_KEY, DEFAULT } from './src/constants/storage.js';
 
 export default defineConfig({
   build: {
@@ -25,6 +25,6 @@ export default defineConfig({
   define: {
     SCROLL_TYPE: JSON.stringify(SCROLL_TYPE),
     STORAGE_KEY: JSON.stringify(STORAGE_KEY),
-    DEFAULT_VAL: JSON.stringify(DEFAULT_VAL)
+    DEFAULT: JSON.stringify(DEFAULT)
   }
 });

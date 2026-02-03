@@ -25,7 +25,7 @@ export const STORAGE_KEY = {
 };
 
 // default setting values
-export const DEFAULT_VAL = {
+export const DEFAULT = {
     SCROLL_TYPE: SCROLL_TYPE.GLIDE,
     SPEED: 100,
     DISTANCE: 300,

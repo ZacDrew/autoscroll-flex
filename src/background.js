@@ -8,7 +8,7 @@ browser.runtime.onInstalled.addListener(async () => {
     );
     if (!result[C.STORAGE_KEY.DISABLED_SITES]) {
         await browser.storage.local.set({ 
-            [C.STORAGE_KEY.DISABLED_SITES]: C.DEFAULT_VAL.DISABLED_SITES
+            [C.STORAGE_KEY.DISABLED_SITES]: C.DEFAULT.DISABLED_SITES
         });
     }
 })
