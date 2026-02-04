@@ -1,12 +1,86 @@
-body {
-    min-width: 265px; /* your desired minimum width */
-    max-width: 400px; /* optional maximum */
-    padding: 1rem;    /* optional spacing */
-    box-sizing: border-box;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
+body {
+  font-size: 14px;
+  min-width: 265px; 
+  max-width: 265px; 
+  padding: 1rem;   
+  box-sizing: border-box;
+}
+
+
+
+/* Toggle slider*/
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 42.5px;
+  height: 22px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #40363a;
+  border-radius: 22px;
+  transition: background-color 0.25s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 17px;
+  width: 17px;
+  left: 2.5px;
+  top: 2.5px;
+  background-color: #d9d8dc;
+  border-radius: 50%;
+  transition: transform 0.25s;
+}
+
+.toggle input:checked + .slider {
+  background-color: #EB99A1;
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(20.4px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --------------pre-tailwind ---------------*/
+
+/* 
+body {
+    min-width: 265px; 
+    max-width: 400px; 
+    padding: 1rem;   
+    box-sizing: border-box;
+} */
+
 /* Firefox */
-input[type="number"] {
+/* input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -17,7 +91,7 @@ input[type="number"] {
 
 .button-row {
     display: flex;
-    justify-content: space-between; /* left + right */
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -46,12 +120,12 @@ input[type="number"] {
   opacity: 0.7;
   font-size: 0.75rem;
   margin-top: 0.15rem;
-}
+} */
 
 
 
 /* Toglle slider */
-.toggle-row {
+/* .toggle-row {
   display: flex;
   align-items: center;
   gap: 0.64rem;
@@ -99,12 +173,12 @@ input[type="number"] {
 
 .toggle input:checked + .slider::before {
   transform: translateX(20.4px);
-}
+} */
 
 
 
 /* Tabs */
-.tabs {
+/* .tabs {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
@@ -126,4 +200,5 @@ input[type="number"] {
 
 .tab-content {
     padding-top: 0.5rem;
-}
+} 
+*/

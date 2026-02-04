@@ -127,8 +127,10 @@ class PopupController {
 
     setActiveTab(btn) {
         // Remove active class from all buttons
-        this.tabButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        this.tabButtons.forEach(b => {
+            b.dataset.active = "false";   // remove active
+        });
+        btn.dataset.active = "true";    // mark clicked
 
         // Hide all tab content
         this.tabContents.forEach(tc => (tc.style.display = 'none'));

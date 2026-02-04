@@ -8,72 +8,101 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <!-- sakura vader theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" type="text/css">
-    <!-- sakura vader theme -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" media="screen and (prefers-color-scheme: dark)"> -->
     <!-- custom -->
     <link rel="stylesheet" href="popup.css">
     <!-- tailwind -->
     <link rel="stylesheet" href="./tailwind.css">
 </head>
+
 <body>
-    <!-- <h2 class="text-blue-500" >autoscroll flex</h2> -->
 
-    <form id="popupForm">
+  <!-- <h2 class="mb-3 text-lg font-semibold text-red-500">Autoscroll Flex</h2> -->
+  <!-- <input type="number" id="test" class="w-20 rounded border border-white/20 bg-transparent px-2 py-1"> -->
 
-        <!-- Enable Domain Toggle -->
-        <label class="toggle-row">
-            <span class="toggle-text"><strong>Enabled for site domain</strong></span>
-            <span class="toggle">
-                <input id="scrollingEnabled" type="checkbox" checked>
-                <span class="slider"></span>
-            </span>
-        </label>
+  <form id="popupForm" class="space-y-4">
 
-        <hr>
+    <!-- Enable domain -->
+    <label class="toggle-row flex items-center gap-3 cursor-pointer">
+      <span class="toggle-text font-medium">Enabled for site domain</span>
+      <span class="toggle">
+        <input id="scrollingEnabled" type="checkbox" checked>
+        <span class="slider"></span>
+      </span>
+    </label>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button type="button" class="tab-btn active" data-tab="glide-tab">Glide Scroll</button>
-            <button type="button" class="tab-btn" data-tab="step-tab">Step Scroll</button>
-        </div>
+    <hr class="opacity-40">
 
-        <!-- Tab contents -->
-        <!-- Glide -->
-        <div class="tab-content" id="glide-tab">
-            <label for="speed">Scroll Speed</label>
-            <input type="number" name="speed" id="speed"> pixels/sec
-        </div>
-
-        <!-- Step -->
-        <div class="tab-content" id="step-tab" style="display:none;">
-            <div class="menu-card">
-                <label for="distance">Scroll Distance</label>
-                <input type="number" name="distance" id="distance"> pixels
-
-                <label for="delay">Scroll Time Interval</label>
-                <input type="number" name="delay" id="delay"> seconds
-            </div>
-        </div>
-
-        <!-- Scapebar toggle -->
-        <label class="toggle-row">
-            <span class="toggle">
-                <input id="spaceEnabled" type="checkbox" checked>
-                <span class="slider"></span>
-            </span>
-            <span class="toggle-text">Toggle scroll with spacebar</span>
-        </label>
-
-    </form>
-
-    <hr>
-    <!-- bottom Row -->
-    <div class="button-row">
-        <button id="toggleScroll" data-running="false">Start</button>
-        <button id="openSettings">Settings</button>
+    <!-- Tabs -->
+    <div class="tabs flex gap-2">
+        <button type="button"
+                class="tab-btn flex-1 rounded px-2 py-1 text-white bg-[#40363a] data-[active=true]:bg-[#EB99A1]"
+                data-tab="glide-tab">
+            Glide Scroll
+        </button>
+        <button type="button"
+                class="tab-btn flex-1 rounded px-2 py-1 text-white bg-[#40363a] data-[active=true]:bg-[#EB99A1]"
+                data-tab="step-tab">
+            Step Scroll
+        </button>
     </div>
 
+    <!-- Glide -->
+    <div id="glide-tab" class="tab-content space-y-2">
+      <div class="menu-card rounded-lg border border-white/20 bg-white/5 p-3">
+        <label class="block">
+          <span class="block mb-1">Scroll Speed</span>
+          <div class="flex items-center gap-2">
+            <input type="number" id="speed" class="w-40 rounded border border-white/20 bg-transparent px-2 py-1">
+            <span class="opacity-70">px/sec</span>
+          </div>
+        </label>
+      </div>
+    </div>
 
-    <script type="module" src="./popup.js"></script>
+    <!-- Step -->
+    <div id="step-tab" class="tab-content hidden">
+      <div class="menu-card rounded-lg border border-white/20 bg-white/5 p-3 flex gap-3">
+
+        <!-- Scroll Distance -->
+        <label class="flex-1 min-w-30">
+          <span class="block mb-1">Scroll Distance</span>
+          <div class="flex items-center gap-2">
+            <input type="number" id="distance" class="w-full rounded border border-white/20 bg-transparent px-2 py-1">
+            <span class="opacity-70">px</span>
+          </div>
+        </label>
+
+        <!-- Scroll Time Interval -->
+        <label class="flex-1 min-w-30">
+          <span class="block mb-1">Scroll Interval</span>
+          <div class="flex items-center gap-2">
+            <input type="number" id="delay" class="w-full rounded border border-white/20 bg-transparent px-2 py-1">
+            <span class="opacity-70">sec</span>
+          </div>
+        </label>
+
+      </div>
+    </div>
+
+    <!-- Spacebar toggle -->
+    <label class="toggle-row flex items-center gap-3 cursor-pointer">
+      <span class="toggle">
+        <input id="spaceEnabled" type="checkbox" checked>
+        <span class="slider"></span>
+      </span>
+      <span class="toggle-text">Toggle scroll with spacebar</span>
+    </label>
+
+  </form>
+
+  <hr class="my-4 opacity-40">
+
+  <!-- Bottom buttons -->
+  <div class="button-row flex justify-between items-center">
+    <button id="toggleScroll" data-running="false" class="rounded bg-[#40363a] text-white">Start</button>
+    <button id="openSettings" class="rounded bg-[#40363a] text-white">Settings</button>
+  </div>
+
+  <script type="module" src="./popup.js"></script>
 </body>
 </html>
