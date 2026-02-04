@@ -1,4 +1,6 @@
 import * as C from '../constants/storage.js';
+import "../tailwind.css";
+
 
 document.addEventListener("DOMContentLoaded", () => {
     new PopupController().init();
@@ -165,12 +167,12 @@ class PopupController {
         document.getElementById('spaceEnabled').checked = spaceEnabled;
 
         const url = this.tab.url; 
-        // disable both start button and domain toggle if domain in list
+        // disable both start button and domain toggle if matching domain in list
         if (disabledSites.includes(this.siteKey)) {
             document.getElementById('scrollingEnabled').checked = false;
             this.scrollToggleBtn.disabled = true;
         }
-        // disable start button if longer link is in list.
+        // disable only start button if matching longer link is in list.
         else if (disabledSites.some(site => url.includes(site))) {
             this.scrollToggleBtn.disabled = true;
         }

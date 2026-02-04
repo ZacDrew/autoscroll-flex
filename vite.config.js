@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { SCROLL_TYPE, STORAGE_KEY, DEFAULT } from './src/constants/storage.js';
 
 export default defineConfig({
@@ -20,8 +22,22 @@ export default defineConfig({
         chunkFileNames: '[name].js',
         assetFileNames: '[name][extname]'
       }
-    }
+    },
   },
+
+
+  plugins: [
+    tailwindcss(),
+    viteStaticCopy({
+      targets: [
+        { src: 'src/popup/popup.html', dest: '.' },
+        { src: 'src/popup/popup.css', dest: '.' },
+        { src: 'src/options/options.html', dest: '.' }
+      ]
+    })
+  ],
+  
+
   define: {
     SCROLL_TYPE: JSON.stringify(SCROLL_TYPE),
     STORAGE_KEY: JSON.stringify(STORAGE_KEY),

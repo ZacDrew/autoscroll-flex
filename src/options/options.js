@@ -1,4 +1,6 @@
 import * as C from '../constants/storage.js';
+import "../tailwind.css";
+
 
 document.addEventListener("DOMContentLoaded", () => {
     new SettingsController().init();

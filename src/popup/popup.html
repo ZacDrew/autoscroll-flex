@@ -11,13 +11,16 @@
     <!-- sakura vader theme -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" media="screen and (prefers-color-scheme: dark)"> -->
     <!-- custom -->
-     <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="popup.css">
+    <!-- tailwind -->
+    <link rel="stylesheet" href="./tailwind.css">
 </head>
 <body>
-    <!-- <h2 id="heading">autoscroll flex</h2> -->
+    <!-- <h2 class="text-blue-500" >autoscroll flex</h2> -->
 
     <form id="popupForm">
 
+        <!-- Enable Domain Toggle -->
         <label class="toggle-row">
             <span class="toggle-text"><strong>Enabled for site domain</strong></span>
             <span class="toggle">
@@ -35,19 +38,24 @@
         </div>
 
         <!-- Tab contents -->
+        <!-- Glide -->
         <div class="tab-content" id="glide-tab">
             <label for="speed">Scroll Speed</label>
             <input type="number" name="speed" id="speed"> pixels/sec
         </div>
 
+        <!-- Step -->
         <div class="tab-content" id="step-tab" style="display:none;">
-            <label for="distance">Scroll Distance</label>
-            <input type="number" name="distance" id="distance"> pixels
+            <div class="menu-card">
+                <label for="distance">Scroll Distance</label>
+                <input type="number" name="distance" id="distance"> pixels
 
-            <label for="delay">Scroll Time Interval</label>
-            <input type="number" name="delay" id="delay"> seconds
+                <label for="delay">Scroll Time Interval</label>
+                <input type="number" name="delay" id="delay"> seconds
+            </div>
         </div>
 
+        <!-- Scapebar toggle -->
         <label class="toggle-row">
             <span class="toggle">
                 <input id="spaceEnabled" type="checkbox" checked>
@@ -59,12 +67,13 @@
     </form>
 
     <hr>
+    <!-- bottom Row -->
     <div class="button-row">
         <button id="toggleScroll" data-running="false">Start</button>
         <button id="openSettings">Settings</button>
     </div>
 
 
-    <script type="module" src="../../dist/popup.js"></script>
+    <script type="module" src="./popup.js"></script>
 </body>
 </html>
