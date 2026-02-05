@@ -8,24 +8,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 class PopupController {
     constructor() {
-        this.form = document.getElementById('popupForm');
-        this.scrollToggleBtn = document.getElementById('toggleScroll');
+
         this.store = new SettingsStore();
         this.tab = null;
-        // this.hostname = null;
         this.siteKey = null;
 
-        // tabs
-        this.tabButtons = document.querySelectorAll('.tab-btn');
-        this.tabContents = document.querySelectorAll('.tab-content');
+        this.scrollTypeTabs = new ScrollTypeTabs(this.store);
+
+        this.form = document.getElementById('popupForm');
+        this.scrollToggleBtn = document.getElementById('toggleScroll');
+        
     }
 
     async init() {
         await this.initTab();
+
+        this.scrollTypeTabs.init();
+
         this.bindEvents();
         await this.setInitialUIValues();
         await this.syncScrollState();
-        // this.bindTabs();
     }
 
     async initTab() {
@@ -40,9 +42,6 @@ class PopupController {
     bindEvents() {
         this.form.addEventListener('change', e => this.handleFormChange(e));
         document.addEventListener('click', e => this.handleButtonClick(e));
-        this.tabButtons.forEach(btn => {
-            btn.addEventListener('click', e => this.handleTabs(e))
-        });
     }
 
     // Handles changes to settings in popup
@@ -111,35 +110,6 @@ class PopupController {
         }
     }
 
-    async handleTabs(e) {
-        const btn = e.currentTarget;
-
-        // store selected scroll type
-        if (btn.dataset.tab === C.UI_ID.GLIDE_TAB) {
-            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.GLIDE });
-        }
-        if (btn.dataset.tab === C.UI_ID.STEP_TAB) {
-            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.STEP });
-        }
-        
-        this.setActiveTab(btn);
-    }
-
-    setActiveTab(btn) {
-        // Remove active class from all buttons
-        this.tabButtons.forEach(b => {
-            b.dataset.active = "false";   // remove active
-        });
-        btn.dataset.active = "true";    // mark clicked
-
-        // Hide all tab content
-        this.tabContents.forEach(tc => (tc.style.display = 'none'));
-
-        // Show content for selected tab
-        const tabId = btn.dataset.tab;
-        document.getElementById(tabId).style.display = 'block';
-    }
-
     async setInitialUIValues() {
         const {
             scrollType = C.DEFAULT.SCROLL_TYPE,
@@ -149,18 +119,6 @@ class PopupController {
             spaceEnabled = C.DEFAULT.SPACE_ENABLED, 
             disabledSites = C.DEFAULT.DISABLED_SITES 
         } = await this.store.get();
-
-        // Set active scroll tab
-        if (scrollType === C.SCROLL_TYPE.GLIDE) {
-            this.setActiveTab(document.querySelector(
-                '.tab-btn[data-tab="glide-tab"]'
-            ));
-        }
-        else if (scrollType === C.SCROLL_TYPE.STEP) {
-            this.setActiveTab(document.querySelector(
-                '.tab-btn[data-tab="step-tab"]'
-            ));
-        }
 
         // Set UI setting values
         document.getElementById('speed').value = speed;
@@ -210,6 +168,65 @@ class PopupController {
 
         return null;
     }
+}
+
+class ScrollTypeTabs {
+    constructor(store) {
+        this.store = store;
+        this.buttons = document.querySelectorAll('.tab-btn');
+        this.contents = document.querySelectorAll('.tab-content')
+    }
+
+    async init() {
+        this.buttons.forEach(btn =>
+            btn.addEventListener('click', () => this.handleTabs(btn))
+        );
+        this.loadTab();
+    }
+
+    async loadTab() {
+        const { scrollType } = await this.store.get();
+
+        if (scrollType === C.SCROLL_TYPE.GLIDE) {
+            this.setActiveTab(document.querySelector(
+                '.tab-btn[data-tab="glide-tab"]'
+            ));
+        }
+        else if (scrollType === C.SCROLL_TYPE.STEP) {
+            this.setActiveTab(document.querySelector(
+                '.tab-btn[data-tab="step-tab"]'
+            ));
+        }
+    }
+
+    async handleTabs(btn) {
+
+        // store selected scroll type
+        if (btn.dataset.tab === C.UI_ID.GLIDE_TAB) {
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.GLIDE });
+        }
+        if (btn.dataset.tab === C.UI_ID.STEP_TAB) {
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.STEP });
+        }
+        
+        this.setActiveTab(btn);
+    }
+
+    setActiveTab(btn) {
+        // Remove active class from all buttons
+        this.buttons.forEach(b => {
+            b.dataset.active = "false";   // remove active
+        });
+        btn.dataset.active = "true";    // mark clicked
+
+        // Hide all tab content
+        this.contents.forEach(tc => (tc.style.display = 'none'));
+
+        // Show content for selected tab
+        const tabId = btn.dataset.tab;
+        document.getElementById(tabId).style.display = 'block';
+    }
+
 }
 
 class SettingsStore {
