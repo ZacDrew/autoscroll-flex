@@ -46,52 +46,95 @@
         </button>
     </div>
 
-    <!-- Glide -->
+    <!-- Glide Tab -->
     <div id="glide-tab" class="tab-content space-y-3">
-      <div class="menu-card rounded-lg border border-white/20 bg-white/5 p-3">
+      
+      <div id="preset-rows" class="space-y-2">
 
-        <div id="speed-rows" class="space-y-2">
-          <label class="block">
-            <span class="block mb-1">Scroll Speed 1</span>
-            <div class="flex items-center gap-2">
-              <input type="number" id="speed" class="w-40 rounded border border-white/20 bg-transparent px-2 py-1">
-              <span class="opacity-70">px/sec</span>
-            </div>
-          </label>
+        <div class="preset-card flex items-stretch cursor-pointer
+                    rounded-lg border border-white/20 bg-white/5 hover:border-[#EB99A1]">
+          <!-- Left: card content -->
+          <div class="flex-1 px-3">
+            <label class="block">
+              <span class="block text-[13px]">Scroll Speed</span>
+              <div class="flex items-center gap-2 mb-0">
+                <input type="number" id="speed"
+                      class="w-40 rounded border border-white/20 bg-transparent px-2 py-1 mb-0">
+                <span class="opacity-70">px/sec</span>
+              </div>
+            </label>
+          </div>
+          <!-- Right: delete button -->
+          <button type="button"
+                  class="delete-preset w-8
+                        flex items-center justify-center
+                        border-l border-white/20
+                        text-black hover:text-red-400
+                        hover:bg-white/10">
+            ✕
+          </button>
         </div>
 
-        <!-- Add row button -->
-        <button id="add-speed-row" type="button"
-                class="mt-2 rounded bg-[#EB99A1] px-3 py-1 transition-colors">
-          Add Speed
-        </button>
-
       </div>
+
+      <!-- Add Preset button -->
+      <button id="addPreset" type="button"
+              class="rounded bg-[#EB99A1] px-3 py-1 mt-0">
+        Add Preset
+      </button>
+
     </div>
 
-    <!-- Step -->
-    <div id="step-tab" class="tab-content hidden">
-      <div class="menu-card rounded-lg border border-white/20 bg-white/5 p-3 flex gap-3">
+    <!-- Step Tab -->
+    <div id="step-tab" class="tab-content hidden space-y-3">
 
-        <!-- Scroll Distance -->
-        <label class="flex-1 min-w-30">
-          <span class="block mb-1">Scroll Distance</span>
-          <div class="flex items-center gap-2">
-            <input type="number" id="distance" class="w-30 rounded border border-white/20 bg-transparent px-2 py-1">
-            <span class="opacity-70">px</span>
+      <div id="preset-rows" class="space-y-2">
+
+        <div class="preset-card flex items-stretch cursor-pointer
+                    rounded-lg border border-white/20 bg-white/5
+                    hover:border-[#EB99A1] transition-colors">
+          <!-- Left: card content -->
+          <div class="preset-main flex flex-1 gap-4 px-3">
+            <!-- Scroll Distance -->
+            <label class="flex flex-col">
+              <span class="text-[13px]">Scroll Distance</span>
+              <div class="flex items-center gap-2">
+                <input type="number" id="distance"
+                      class="w-30 flex-none rounded border border-white/20
+                              bg-transparent px-2 py-1 mb-0">
+                <span class="opacity-70">px</span>
+              </div>
+            </label>
+            <!-- Scroll Interval -->
+            <label class="flex flex-col">
+              <span class="text-[13px]">Scroll Interval</span>
+              <div class="flex items-center gap-2">
+                <input type="number" id="delay"
+                      class="w-30 flex-none rounded border border-white/20
+                              bg-transparent px-2 py-1 mb-0">
+                <span class="opacity-70">sec</span>
+              </div>
+            </label>
           </div>
-        </label>
-
-        <!-- Scroll Time Interval -->
-        <label class="flex-1 min-w-30">
-          <span class="block mb-1">Scroll Interval</span>
-          <div class="flex items-center gap-2">
-            <input type="number" id="delay" class="w-30 rounded border border-white/20 bg-transparent px-2 py-1">
-            <span class="opacity-70">sec</span>
-          </div>
-        </label>
-
+          <!-- Right: delete button -->
+          <button type="button"
+                  class="delete-preset w-8
+                        flex items-center justify-center
+                        border-l border-white/20
+                        hover:bg-white/10
+                        hover:text-[#DA4453]">
+            ✕
+          </button>
+        </div>
+        
       </div>
+
+      <!-- Add Preset button -->
+      <button id="addPreset" type="button"
+              class="rounded bg-[#EB99A1] px-3 py-1 mt-0">
+        Add Preset
+      </button>
+
     </div>
 
     <!-- Spacebar toggle -->
@@ -112,6 +155,7 @@
     <button id="toggleScroll" data-running="false" class="rounded bg-[#EB99A1]">Start</button>
     <button id="openSettings" class="rounded bg-[#EB99A1]">Settings</button>
   </div>
+
 
   <script type="module" src="./popup.js"></script>
 </body>

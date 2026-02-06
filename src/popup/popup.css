@@ -11,6 +11,12 @@ body {
 }
 
 
+.preset-card.selected {
+  border-color: #EB99A1;
+  background: rgba(235, 153, 161, 0.12);
+}
+
+
 
 /* Toggle slider*/
 .toggle {
