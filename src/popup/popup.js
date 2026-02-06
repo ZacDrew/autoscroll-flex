@@ -1,10 +1,36 @@
 import * as C from '../constants/storage.js';
+import { TabController } from './TabController.js';
 import "../tailwind.css";
 
 
 document.addEventListener("DOMContentLoaded", () => {
     new PopupController().init();
 });
+
+// // add tab qualifyer to make it per tab active
+// document.getElementById('preset-rows').addEventListener('click', e => {
+//   // delete button
+//   if (e.target.closest('.delete-preset')) {
+//     const card = e.target.closest('.preset-card');
+//     card.remove();
+//     return;
+//   }
+
+//   // card selection
+//   const card = e.target.closest('.preset-card');
+//   if (!card) return;
+
+//   document.querySelectorAll('.preset-card')
+//     .forEach(c => c.classList.remove('selected'));
+
+//   card.classList.add('selected');
+// });
+
+// document.querySelectorAll('.preset-card input').forEach(input => {
+//   input.addEventListener('click', e => e.stopPropagation());
+// });
+
+
 
 class PopupController {
     constructor() {
@@ -17,7 +43,7 @@ class PopupController {
 
         this.form = document.getElementById('popupForm');
         this.scrollToggleBtn = document.getElementById('toggleScroll');
-        
+
     }
 
     async init() {
@@ -95,7 +121,7 @@ class PopupController {
 
             await browser.tabs.sendMessage(
                 this.tab.id,
-                { 
+                {
                     from: 'popup',
                     command
                 }
@@ -113,11 +139,11 @@ class PopupController {
     async setInitialUIValues() {
         const {
             scrollType = C.DEFAULT.SCROLL_TYPE,
-            speed = C.DEFAULT.SPEED, 
-            distance = C.DEFAULT.DISTANCE, 
-            delay = C.DEFAULT.DELAY, 
-            spaceEnabled = C.DEFAULT.SPACE_ENABLED, 
-            disabledSites = C.DEFAULT.DISABLED_SITES 
+            speed = C.DEFAULT.SPEED,
+            distance = C.DEFAULT.DISTANCE,
+            delay = C.DEFAULT.DELAY,
+            spaceEnabled = C.DEFAULT.SPACE_ENABLED,
+            disabledSites = C.DEFAULT.DISABLED_SITES
         } = await this.store.get();
 
         // Set UI setting values
@@ -126,7 +152,7 @@ class PopupController {
         document.getElementById('delay').value = delay;
         document.getElementById('spaceEnabled').checked = spaceEnabled;
 
-        const url = this.tab.url; 
+        const url = this.tab.url;
         // disable both start button and domain toggle if matching domain in list
         if (disabledSites.includes(this.siteKey)) {
             document.getElementById('scrollingEnabled').checked = false;
@@ -136,7 +162,7 @@ class PopupController {
         else if (disabledSites.some(site => url.includes(site))) {
             this.scrollToggleBtn.disabled = true;
         }
-        console.log('init: ', { speed, distance, delay});
+        console.log('init: ', { speed, distance, delay });
     }
 
     async syncScrollState() {
@@ -170,18 +196,15 @@ class PopupController {
     }
 }
 
-class ScrollTypeTabs {
-    constructor(store) {
-        this.store = store;
-        this.buttons = document.querySelectorAll('.tab-btn');
-        this.contents = document.querySelectorAll('.tab-content')
-    }
+
+
+class ScrollTypeTabs extends TabController {
 
     async init() {
         this.buttons.forEach(btn =>
             btn.addEventListener('click', () => this.handleTabs(btn))
         );
-        this.loadTab();
+        await this.loadTab();
     }
 
     async loadTab() {
@@ -203,42 +226,36 @@ class ScrollTypeTabs {
 
         // store selected scroll type
         if (btn.dataset.tab === C.UI_ID.GLIDE_TAB) {
-            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.GLIDE });
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE]: C.SCROLL_TYPE.GLIDE });
         }
         if (btn.dataset.tab === C.UI_ID.STEP_TAB) {
-            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE] : C.SCROLL_TYPE.STEP });
+            await this.store.set({ [C.STORAGE_KEY.SCROLL_TYPE]: C.SCROLL_TYPE.STEP });
         }
-        
+
         this.setActiveTab(btn);
     }
-
-    setActiveTab(btn) {
-        // Remove active class from all buttons
-        this.buttons.forEach(b => {
-            b.dataset.active = "false";   // remove active
-        });
-        btn.dataset.active = "true";    // mark clicked
-
-        // Hide all tab content
-        this.contents.forEach(tc => (tc.style.display = 'none'));
-
-        // Show content for selected tab
-        const tabId = btn.dataset.tab;
-        document.getElementById(tabId).style.display = 'block';
-    }
-
 }
+
+// class GlidePanel {
+//     constructor(store) {
+//         this.store = store;
+//         this.root = document.querySelector('#glide-tab');
+//         this.rows = this.root.querySelector('#speed-rows');
+//         this.addBtn = this.root.querySelector('#add-speed-row');
+//     }
+
+//     async init() {
+//         this.addBtn.addEventListener('click', () => this.addRow());
+//         this.root.addEventListener('change', e => this.onChange(e));
+//         await this.loadProfiles();
+//     }
+// }
+
+
 
 class SettingsStore {
     async get() {
-        return browser.storage.local.get([
-            'scrollType',
-            'speed', 
-            'distance', 
-            'delay',
-            'spaceEnabled', 
-            'disabledSites'
-        ]);
+        return browser.storage.local.get();
     }
 
     async set(values) {
@@ -257,6 +274,6 @@ class SettingsStore {
         else {
             return [...new Set([...disabledSites, siteKey])]
         }
-        
+
     }
 }
