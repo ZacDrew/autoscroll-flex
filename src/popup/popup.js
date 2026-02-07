@@ -7,28 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     new PopupController().init();
 });
 
-// // add tab qualifyer to make it per tab active
-// document.getElementById('preset-rows').addEventListener('click', e => {
-//   // delete button
-//   if (e.target.closest('.delete-preset')) {
-//     const card = e.target.closest('.preset-card');
-//     card.remove();
-//     return;
-//   }
 
-//   // card selection
-//   const card = e.target.closest('.preset-card');
-//   if (!card) return;
-
-//   document.querySelectorAll('.preset-card')
-//     .forEach(c => c.classList.remove('selected'));
-
-//   card.classList.add('selected');
-// });
-
-// document.querySelectorAll('.preset-card input').forEach(input => {
-//   input.addEventListener('click', e => e.stopPropagation());
-// });
 
 
 
@@ -40,6 +19,8 @@ class PopupController {
         this.siteKey = null;
 
         this.scrollTypeTabs = new ScrollTypeTabs(this.store);
+        this.glidePresets = new GlidePresets(this.store, document.querySelector(`#${C.UI_ID.GLIDE_TAB}`));
+        this.stepPresets = new StepPresets(this.store, document.querySelector(`#${C.UI_ID.STEP_TAB}`));
 
         this.form = document.getElementById('popupForm');
         this.scrollToggleBtn = document.getElementById('toggleScroll');
@@ -50,6 +31,8 @@ class PopupController {
         await this.initTab();
 
         this.scrollTypeTabs.init();
+        this.glidePresets.init();
+        this.stepPresets.init();
 
         this.bindEvents();
         await this.setInitialUIValues();
@@ -197,7 +180,6 @@ class PopupController {
 }
 
 
-
 class ScrollTypeTabs extends TabController {
 
     async init() {
@@ -236,20 +218,116 @@ class ScrollTypeTabs extends TabController {
     }
 }
 
-// class GlidePanel {
-//     constructor(store) {
-//         this.store = store;
-//         this.root = document.querySelector('#glide-tab');
-//         this.rows = this.root.querySelector('#speed-rows');
-//         this.addBtn = this.root.querySelector('#add-speed-row');
-//     }
 
-//     async init() {
-//         this.addBtn.addEventListener('click', () => this.addRow());
-//         this.root.addEventListener('change', e => this.onChange(e));
-//         await this.loadProfiles();
-//     }
-// }
+class Presets {
+    // scrollTab is a div element
+    constructor(store, scrollTab) {
+        this.store = store;
+        this.scrollTab = scrollTab;
+        this.rows = this.scrollTab.querySelector(`#${C.UI_ID.PRESET_ROWS}`);
+        this.addBtn = this.scrollTab.querySelector(`#${C.UI_ID.ADD_PRESET_ROW}`);
+    }
+
+    async init() {
+        this.scrollTab.addEventListener('change', e => this.onChange(e));
+        this.addBtn.addEventListener('click', () => this.addRow());
+
+        this.rows.addEventListener('click', e => this.handleSelection(e));
+        // prevent clicks on text input from selecting Preset
+        this.rows.querySelectorAll('.preset-card input').forEach(input => {
+            input.addEventListener('click', e => e.stopPropagation());
+        });
+
+        await this.loadPresets();
+    }
+
+    onChange() {
+        throw new Error('onChange() must be implemented by child class');
+    }
+
+    handleSelection(e) {
+        const card = e.target.closest('.preset-card');
+        if (!card) return;
+
+        // delete button
+        if (e.target.closest('.delete-preset')) {
+            card.remove();
+            this.save();
+            return;
+        }
+
+        // card selection
+        document.querySelectorAll('.preset-card')
+            .forEach(c => c.classList.remove('selected'));
+
+        card.classList.add('selected');
+    }
+
+    addRow() {
+        throw new Error('addRow() must be implemented by child class');
+    }
+
+    async loadPresets() {
+        throw new Error('loadPresets() must be implemented by child class');
+
+    }
+
+    renderRow() {
+        throw new Error('renderRow() must be implemented by child class');
+    }
+
+    save() {
+        throw new Error('save() must be implemented by child class');
+    }
+}
+
+class GlidePresets extends Presets {
+
+    onChange() {
+        
+    }
+
+    addRow() {
+
+    }
+
+    async loadPresets() {
+        const { [C.STORAGE_KEY.GLIDE_PRESETS]: presets } = await this.store.get();
+        presets.forEach(p => this.renderRow(p));
+    }
+
+    renderRow() {
+    
+    }
+
+    save() {
+    
+    }
+}
+
+class StepPresets extends Presets {
+
+    onChange() {
+        
+    }
+
+    addRow() {
+
+    }
+
+    async loadPresets() {
+        const { [C.STORAGE_KEY.STEP_PRESETS]: presets } = await this.store.get();
+        presets.forEach(p => this.renderRow(p));
+    }
+
+    renderRow() {
+    
+    }
+
+    save() {
+    
+    }
+}
 
 
 
