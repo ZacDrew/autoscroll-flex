@@ -23,6 +23,9 @@ export const STORAGE_KEY = {
     GLIDE_PRESETS: 'glidePresets',
     STEP_PRESETS: 'stepPresets',
 
+    GLIDE_PRESET_SELCTED: 'glidePresetSelected',
+    STEP_PRESET_SELECTED: 'glidePresetSelected',
+
     SPEED: 'speed',
     DISTANCE: 'distance',
     DELAY: 'delay',
@@ -34,8 +37,11 @@ export const STORAGE_KEY = {
 // default setting values
 export const DEFAULT = {
     SCROLL_TYPE: SCROLL_TYPE.GLIDE,
-    GLIDE_PRESETS: [ { [STORAGE_KEY.SPEED]: 100 } ],
-    STEP_PRESETS: [ { [STORAGE_KEY.DISTANCE]: 200, [STORAGE_KEY.DELAY]: 0.5 } ],
+    GLIDE_PRESETS: [{ [STORAGE_KEY.SPEED]: 100 }],
+    STEP_PRESETS: [{ [STORAGE_KEY.DISTANCE]: 200, [STORAGE_KEY.DELAY]: 0.5 }],
+
+    GLIDE_PRESET_SELCTED: 0,
+    STEP_PRESET_SELECTED: 0,
 
     SPEED: 100,
     DISTANCE: 300,

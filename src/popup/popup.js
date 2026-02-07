@@ -233,10 +233,10 @@ class Presets {
         this.addBtn.addEventListener('click', () => this.addRow());
 
         this.rows.addEventListener('click', e => this.handleSelection(e));
-        // prevent clicks on text input from selecting Preset
-        this.rows.querySelectorAll('.preset-card input').forEach(input => {
-            input.addEventListener('click', e => e.stopPropagation());
-        });
+
+        // Grab the template and remove it from the DOM
+        this.templateCard = this.rows.querySelector('.preset-card');
+        this.rows.removeChild(this.templateCard);
 
         await this.loadPresets();
     }
@@ -264,12 +264,19 @@ class Presets {
     }
 
     addRow() {
-        throw new Error('addRow() must be implemented by child class');
+        this.renderRow();
+        this.save();
     }
 
     async loadPresets() {
         throw new Error('loadPresets() must be implemented by child class');
-        //test
+    }
+
+    // prevent clicks on text input from selecting Preset
+    applyInputIndependence(card) {
+        card.querySelectorAll('input').forEach(input => {
+            input.addEventListener('click', e => e.stopPropagation());
+        });
     }
 
     renderRow() {
@@ -287,17 +294,20 @@ class GlidePresets extends Presets {
         
     }
 
-    addRow() {
-
-    }
-
     async loadPresets() {
         const { [C.STORAGE_KEY.GLIDE_PRESETS]: presets } = await this.store.get();
         presets.forEach(p => this.renderRow(p));
     }
 
     renderRow() {
-    
+        // Clone the existing template card
+        const card = this.templateCard.cloneNode(true); // deep clone
+
+        // set input value
+        card.querySelector(`#${C.UI_ID.SPEED}`).value = 0;
+
+        this.rows.appendChild(card);
+        this.applyInputIndependence(card);
     }
 
     save() {
@@ -311,17 +321,21 @@ class StepPresets extends Presets {
         
     }
 
-    addRow() {
-
-    }
-
     async loadPresets() {
         const { [C.STORAGE_KEY.STEP_PRESETS]: presets } = await this.store.get();
         presets.forEach(p => this.renderRow(p));
     }
 
     renderRow() {
-    
+        // Clone the existing template card
+        const card = this.templateCard.cloneNode(true); // deep clone
+
+        // set input value
+        card.querySelector(`#${C.UI_ID.DISTANCE}`).value = 0;
+        card.querySelector(`#${C.UI_ID.DELAY}`).value = 0;
+
+        this.rows.appendChild(card);
+        this.applyInputIndependence(card);
     }
 
     save() {
