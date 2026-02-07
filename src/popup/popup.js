@@ -58,9 +58,9 @@ class PopupController {
         const updates = {};
 
         // grab values from UI
-        if (e.target.id === 'speed') {
-            updates.speed = Number(e.target.value);
-        }
+        // if (e.target.id === 'speed') {
+        //     updates.speed = Number(e.target.value);
+        // }
 
         if (['distance', 'delay'].includes(e.target.id)) {
             updates.distance = Number(distance.value);
@@ -130,7 +130,7 @@ class PopupController {
         } = await this.store.get();
 
         // Set UI setting values
-        document.getElementById('speed').value = speed;
+        // document.getElementById('speed').value = speed;
         document.getElementById('distance').value = distance;
         document.getElementById('delay').value = delay;
         document.getElementById('spaceEnabled').checked = spaceEnabled;
@@ -226,6 +226,8 @@ class Presets {
         this.scrollTab = scrollTab;
         this.rows = this.scrollTab.querySelector(`#${C.UI_ID.PRESET_ROWS}`);
         this.addBtn = this.scrollTab.querySelector(`#${C.UI_ID.ADD_PRESET_ROW}`);
+
+        this.numRows = 0;
     }
 
     async init() {
@@ -241,7 +243,7 @@ class Presets {
         await this.loadPresets();
     }
 
-    onChange() {
+    onChange(e) {
         throw new Error('onChange() must be implemented by child class');
     }
 
@@ -252,20 +254,31 @@ class Presets {
         // delete button
         if (e.target.closest('.delete-preset')) {
             card.remove();
-            this.save();
+
+            // relabel card positions in DOM
+            this.rows.querySelectorAll('.preset-card')
+                .forEach((card, index) => card.dataset.position = index);
+            
+            this.saveValues();
+            this.numRows--;
             return;
         }
 
         // card selection
-        document.querySelectorAll('.preset-card')
+        this.rows.querySelectorAll('.preset-card')
             .forEach(c => c.classList.remove('selected'));
 
         card.classList.add('selected');
+        this.saveSelection(card);
+    }
+
+    saveSelection(card) {
+        throw new Error('saveSelection() must be implemented by child class');
     }
 
     addRow() {
         this.renderRow();
-        this.save();
+        this.saveValues();
     }
 
     async loadPresets() {
@@ -283,35 +296,69 @@ class Presets {
         throw new Error('renderRow() must be implemented by child class');
     }
 
-    save() {
-        throw new Error('save() must be implemented by child class');
+    saveValues() {
+        throw new Error('saveValues() must be implemented by child class');
     }
 }
 
 class GlidePresets extends Presets {
 
-    onChange() {
-        
+    async onChange(e) {
+        if (e.target.id !== C.UI_ID.SPEED) return
+        this.saveValues();
+
+        const { glidePresets } = await this.store.get('glidePresets');
+        console.dir('from storage: ', glidePresets);
+        // glidePresets.forEach((p, i) => {
+        //     console.log(`preset ${i}`, p);
+        // });
+    }
+
+    saveSelection(card) {
+        const position = Number(card.dataset.position);
+        this.store.set({ [C.STORAGE_KEY.GLIDE_PRESET_SELCTED]: position });
     }
 
     async loadPresets() {
-        const { [C.STORAGE_KEY.GLIDE_PRESETS]: presets } = await this.store.get();
+        const { 
+            [C.STORAGE_KEY.GLIDE_PRESETS]: presets,
+            [C.STORAGE_KEY.GLIDE_PRESET_SELCTED]: position 
+        } = await this.store.get();
+
         presets.forEach(p => this.renderRow(p));
+
+        const cards = this.rows.querySelectorAll('.preset-card');
+        cards[position].classList.add('selected');
     }
 
-    renderRow() {
+    renderRow(preset = null) {
         // Clone the existing template card
         const card = this.templateCard.cloneNode(true); // deep clone
 
+        // Note position in DOM
+        card.dataset.position = String(this.numRows);
+
         // set input value
-        card.querySelector(`#${C.UI_ID.SPEED}`).value = 0;
+        const speed = preset ? preset[C.STORAGE_KEY.SPEED] : 0;
+        card.querySelector(`#${C.UI_ID.SPEED}`).value = speed;
 
         this.rows.appendChild(card);
         this.applyInputIndependence(card);
+        this.numRows++;
     }
 
-    save() {
-    
+    saveValues() {
+        const cards = this.rows.querySelectorAll('.preset-card');
+        const presets = [];
+
+        for (const card of cards) {
+            const speed = Number(card.querySelector(`#${C.UI_ID.SPEED}`).value);
+            presets.push({
+                [C.STORAGE_KEY.SPEED]: speed
+            });
+        }
+
+        this.store.set( { [C.STORAGE_KEY.GLIDE_PRESETS]: presets } );
     }
 }
 
@@ -319,6 +366,11 @@ class StepPresets extends Presets {
 
     onChange() {
         
+    }
+
+    saveSelection(card) {
+        const position = Number(card.dataset.position);
+        this.store.set({ [C.STORAGE_KEY.STEP_PRESET_SELECTED]: position });
     }
 
     async loadPresets() {
@@ -330,15 +382,19 @@ class StepPresets extends Presets {
         // Clone the existing template card
         const card = this.templateCard.cloneNode(true); // deep clone
 
+        // Note position in DOM
+        card.dataset.position = String(this.numRows);
+
         // set input value
         card.querySelector(`#${C.UI_ID.DISTANCE}`).value = 0;
         card.querySelector(`#${C.UI_ID.DELAY}`).value = 0;
 
         this.rows.appendChild(card);
         this.applyInputIndependence(card);
+        this.numRows++;
     }
 
-    save() {
+    saveValues() {
     
     }
 }
@@ -346,8 +402,8 @@ class StepPresets extends Presets {
 
 
 class SettingsStore {
-    async get() {
-        return browser.storage.local.get();
+    async get(settings) {
+        return browser.storage.local.get(settings);
     }
 
     async set(values) {
