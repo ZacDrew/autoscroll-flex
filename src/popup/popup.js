@@ -253,14 +253,32 @@ class Presets {
 
         // delete button
         if (e.target.closest('.delete-preset')) {
-            card.remove();
 
-            // relabel card positions in DOM
+            this.numRows--;
+            // grab position of card to be deleted if its selected
+            let position = null;
+            
+            if (card.classList.contains('selected')) {
+                position = Number(card.dataset.position);
+            }
+            card.remove();
+            // disables delete button for lone row (must be after the deletion)
+            if (this.numRows === 1) {
+                position = 0;
+                this.rows.querySelector('.delete-preset').disabled = true;
+            }
+
+            // relabel card positions in DOM and select new card if needed
             this.rows.querySelectorAll('.preset-card')
-                .forEach((card, index) => card.dataset.position = index);
+                .forEach((c, index) => {
+                    c.dataset.position = index
+                    if (index === position) {
+                        c.classList.add('selected');
+                        this.saveSelection(c);
+                    }
+                });
             
             this.saveValues();
-            this.numRows--;
             return;
         }
 
@@ -279,6 +297,7 @@ class Presets {
     addRow() {
         this.renderRow();
         this.saveValues();
+        this.rows.querySelector('.delete-preset').disabled = false;
     }
 
     async loadPresets() {
@@ -327,8 +346,13 @@ class GlidePresets extends Presets {
 
         presets.forEach(p => this.renderRow(p));
 
+        // Select card
         const cards = this.rows.querySelectorAll('.preset-card');
         cards[position].classList.add('selected');
+
+        if (this.numRows === 1) {
+            cards[0].querySelector('.delete-preset').disabled = true;
+        }
     }
 
     renderRow(preset = null) {
