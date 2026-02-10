@@ -1,12 +1,3 @@
-/* 
-TODO:
-- add feature to detect a scroll target so it works on more sites
-     - detect section mouse is over
-     - auto-detect largest section
-- add a disable switch in popup/hot key and/or add a website blacklist 
-  (for sites with conflicts ie youtube). maybe the blacklist is just for 
-  the override hotkeys like spacebar
-*/
 
 class GlideScroller {
     constructor(parent) {
@@ -21,7 +12,7 @@ class GlideScroller {
         this.stop();
 
         let lastTime = performance.now();
-         const target = this.parent.scrollTarget;
+        const target = this.parent.scrollTarget;
         this.yPos = target.scrollTop;
 
         const step = (now) => {
@@ -89,9 +80,17 @@ class StepScroller {
 class AutoScroller {
     constructor() {
         this.scrollType = null;
+
+        this.glidePresets = null;
+        this.stepPresets = null;
+
+        this.glidePresetSelected = 0;
+        this.stepPresetSelected = 0;
+
         this.speed = 0;
         this.distance = 0;
         this.delay = 0;
+
         this.spaceEnabled = false;
         this.enabled = true;
 
@@ -127,17 +126,15 @@ class AutoScroller {
 
     setSettings(settings = {}) {
 
+        this.setEnabled(settings.disabledSites);
         const scrolling = this.running;
 
-        if (
-            'scrollType' in settings &&
-            settings.scrollType !== this.scrollType
-        ) {
-            this.stop();
-            this.scrollType = settings.scrollType;
+        for (const [key, value] of Object.entries(settings)) {
+            if (key in this) {
+                this[key] = value;
+            }
         }
-
-        Object.assign(this, settings);
+        this.setGlideSettings(settings.glidePresetSelected, settings.glidePresets)
         if (scrolling) this.start();
     }
 
@@ -168,7 +165,15 @@ class AutoScroller {
         }
     }
 
-    setEnabled(disabledSites) {
+    setGlideSettings(glidePresetSelected, glidePresets) {
+        if (!glidePresetSelected && !glidePresets) return;
+        
+        this.glidePresetSelected = glidePresetSelected;
+        this.glidePresets = glidePresets;
+        this.speed = glidePresets[glidePresetSelected].speed;
+    }
+
+    setEnabled(disabledSites = []) {
         const url = location.href;
         this.enabled = true;
 
@@ -196,23 +201,23 @@ const scroller = new AutoScroller();
 
     const { 
         scrollType = DEFAULT.SCROLL_TYPE,
-        speed = DEFAULT.SPEED, 
+        glidePresets,
+        glidePresetSelected, 
         distance = DEFAULT.DISTANCE, 
         delay = DEFAULT.DELAY, 
         spaceEnabled = DEFAULT.SPACE_ENABLED, 
         disabledSites = DEFAULT.DISABLED_SITES
-    } = await browser.storage.local.get([
-            'scrollType',
-            'speed', 
-            'distance', 
-            'delay', 
-            'spaceEnabled', 
-            'disabledSites'
-        ]);
+    } = await browser.storage.local.get();
     
-    scroller.setSettings({ scrollType, speed, distance, delay, spaceEnabled });
-    // scroller.setEnabled(!disabledSites.includes(location.hostname));
-    scroller.setEnabled(disabledSites);
+    scroller.setSettings({ 
+        scrollType, 
+        glidePresets, 
+        glidePresetSelected,
+        distance, 
+        delay, 
+        spaceEnabled,
+        disabledSites
+    });
 })();
 
 
@@ -236,8 +241,11 @@ browser.storage.onChanged.addListener((changes, area) => {
         if (scroller.running) scroller.start();
     }
 
-    if (changes.speed) {
-        scroller.setSettings({ speed: changes.speed?.newValue ?? scroller.speed })
+    if (changes.glidePresetSelected || changes.glidePresets) {
+        scroller.setSettings({ 
+            glidePresetSelected: changes.glidePresetSelected?.newValue ?? scroller.glidePresetSelected,
+            glidePresets: changes.glidePresets?.newValue ?? scroller.glidePresets
+        })
         if (scroller.running) scroller.start();
     }
 
