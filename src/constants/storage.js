@@ -23,7 +23,7 @@ export const STORAGE_KEY = {
     GLIDE_PRESETS: 'glidePresets',
     STEP_PRESETS: 'stepPresets',
 
-    GLIDE_PRESET_SELCTED: 'glidePresetSelected',
+    GLIDE_PRESET_SELECTED: 'glidePresetSelected',
     STEP_PRESET_SELECTED: 'stepPresetSelected',
 
     SPEED: 'speed',

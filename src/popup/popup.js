@@ -62,10 +62,10 @@ class PopupController {
         //     updates.speed = Number(e.target.value);
         // }
 
-        if (['distance', 'delay'].includes(e.target.id)) {
-            updates.distance = Number(distance.value);
-            updates.delay = Number(delay.value);
-        }
+        // if (['distance', 'delay'].includes(e.target.id)) {
+        //     updates.distance = Number(distance.value);
+        //     updates.delay = Number(delay.value);
+        // }
 
         if (e.target.id === 'spaceEnabled') {
             updates.spaceEnabled = e.target.checked;
@@ -131,8 +131,8 @@ class PopupController {
 
         // Set UI setting values
         // document.getElementById('speed').value = speed;
-        document.getElementById('distance').value = distance;
-        document.getElementById('delay').value = delay;
+        // document.getElementById('distance').value = distance;
+        // document.getElementById('delay').value = delay;
         document.getElementById('spaceEnabled').checked = spaceEnabled;
 
         const url = this.tab.url;
@@ -260,6 +260,7 @@ class Presets {
             
             if (card.classList.contains('selected')) {
                 position = Number(card.dataset.position);
+                if (position === this.numRows) position--;
             }
             card.remove();
             // disables delete button for lone row (must be after the deletion)
@@ -311,8 +312,25 @@ class Presets {
         });
     }
 
-    renderRow() {
-        throw new Error('renderRow() must be implemented by child class');
+    renderRow(preset = null) {
+        // Clone the existing template card
+        const card = this.templateCard.cloneNode(true); // deep clone
+
+        // Note position in DOM
+        card.dataset.position = String(this.numRows);
+
+        // set input value
+        // const speed = preset ? preset[C.STORAGE_KEY.SPEED] : 0;
+        // card.querySelector(`#${C.UI_ID.SPEED}`).value = speed;
+        this.setInputValue(card, preset);
+        
+        this.rows.appendChild(card);
+        this.applyInputIndependence(card);
+        this.numRows++;
+    }
+
+    setInputValue(card, preset) {
+        throw new Error('setInputValue() must be implemented by child class');
     }
 
     saveValues() {
@@ -328,20 +346,17 @@ class GlidePresets extends Presets {
 
         const { glidePresets } = await this.store.get('glidePresets');
         console.dir('from storage: ', glidePresets);
-        // glidePresets.forEach((p, i) => {
-        //     console.log(`preset ${i}`, p);
-        // });
     }
 
     saveSelection(card) {
         const position = Number(card.dataset.position);
-        this.store.set({ [C.STORAGE_KEY.GLIDE_PRESET_SELCTED]: position });
+        this.store.set({ [C.STORAGE_KEY.GLIDE_PRESET_SELECTED]: position });
     }
 
     async loadPresets() {
         const { 
             [C.STORAGE_KEY.GLIDE_PRESETS]: presets,
-            [C.STORAGE_KEY.GLIDE_PRESET_SELCTED]: position 
+            [C.STORAGE_KEY.GLIDE_PRESET_SELECTED]: position 
         } = await this.store.get();
 
         presets.forEach(p => this.renderRow(p));
@@ -355,20 +370,9 @@ class GlidePresets extends Presets {
         }
     }
 
-    renderRow(preset = null) {
-        // Clone the existing template card
-        const card = this.templateCard.cloneNode(true); // deep clone
-
-        // Note position in DOM
-        card.dataset.position = String(this.numRows);
-
-        // set input value
+    setInputValue(card, preset) {
         const speed = preset ? preset[C.STORAGE_KEY.SPEED] : 0;
         card.querySelector(`#${C.UI_ID.SPEED}`).value = speed;
-
-        this.rows.appendChild(card);
-        this.applyInputIndependence(card);
-        this.numRows++;
     }
 
     saveValues() {
@@ -388,8 +392,14 @@ class GlidePresets extends Presets {
 
 class StepPresets extends Presets {
 
-    onChange() {
-        
+    async onChange(e) {
+        if (e.target.id !== C.UI_ID.DISTANCE && e.target.id !== C.UI_ID.DELAY) {
+            return;
+        }
+        this.saveValues();
+
+        const { stepPresets } = await this.store.get('stepPresets');
+        console.dir('from storage: ', stepPresets);
     }
 
     saveSelection(card) {
@@ -398,28 +408,44 @@ class StepPresets extends Presets {
     }
 
     async loadPresets() {
-        const { [C.STORAGE_KEY.STEP_PRESETS]: presets } = await this.store.get();
+        const { 
+            [C.STORAGE_KEY.STEP_PRESETS]: presets,
+            [C.STORAGE_KEY.STEP_PRESET_SELECTED]: position 
+        } = await this.store.get(); //refactor this line to be part of store class and make loadPresets() a parent method?
+
         presets.forEach(p => this.renderRow(p));
+
+        // Select card
+        const cards = this.rows.querySelectorAll('.preset-card');
+        cards[position].classList.add('selected');
+
+        if (this.numRows === 1) {
+            cards[0].querySelector('.delete-preset').disabled = true;
+        }
     }
 
-    renderRow() {
-        // Clone the existing template card
-        const card = this.templateCard.cloneNode(true); // deep clone
+    setInputValue(card, preset) {
+        const distance = preset ? preset[C.STORAGE_KEY.DISTANCE] : 0;
+        const delay = preset ? preset[C.STORAGE_KEY.DELAY] : 0;
 
-        // Note position in DOM
-        card.dataset.position = String(this.numRows);
-
-        // set input value
-        card.querySelector(`#${C.UI_ID.DISTANCE}`).value = 0;
-        card.querySelector(`#${C.UI_ID.DELAY}`).value = 0;
-
-        this.rows.appendChild(card);
-        this.applyInputIndependence(card);
-        this.numRows++;
+        card.querySelector(`#${C.UI_ID.DISTANCE}`).value = distance;
+        card.querySelector(`#${C.UI_ID.DELAY}`).value = delay;
     }
 
     saveValues() {
-    
+        const cards = this.rows.querySelectorAll('.preset-card');
+        const presets = [];
+
+        for (const card of cards) {
+            const distance = Number(card.querySelector(`#${C.UI_ID.DISTANCE}`).value);
+            const delay = Number(card.querySelector(`#${C.UI_ID.DELAY}`).value);
+            presets.push({
+                [C.STORAGE_KEY.DISTANCE]: distance,
+                [C.STORAGE_KEY.DELAY]: delay,
+            });
+        }
+
+        this.store.set( { [C.STORAGE_KEY.STEP_PRESETS]: presets } );
     }
 }
 

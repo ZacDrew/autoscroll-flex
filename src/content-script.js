@@ -135,6 +135,7 @@ class AutoScroller {
             }
         }
         this.setGlideSettings(settings.glidePresetSelected, settings.glidePresets)
+        this.setStepSettings(settings.stepPresetSelected, settings.stepPresets)
         if (scrolling) this.start();
     }
 
@@ -167,10 +168,19 @@ class AutoScroller {
 
     setGlideSettings(glidePresetSelected, glidePresets) {
         if (!glidePresetSelected && !glidePresets) return;
-        
+
         this.glidePresetSelected = glidePresetSelected;
         this.glidePresets = glidePresets;
         this.speed = glidePresets[glidePresetSelected].speed;
+    }
+
+    setStepSettings(stepPresetSelected, stepPresets) {
+        if (!stepPresetSelected && !stepPresets) return;
+
+        this.stepPresetSelected = stepPresetSelected;
+        this.stepPresets = stepPresets;
+        this.distance = stepPresets[stepPresetSelected].distance;
+        this.delay = stepPresets[stepPresetSelected].delay;
     }
 
     setEnabled(disabledSites = []) {
@@ -202,7 +212,9 @@ const scroller = new AutoScroller();
     const { 
         scrollType = DEFAULT.SCROLL_TYPE,
         glidePresets,
-        glidePresetSelected, 
+        glidePresetSelected,
+        stepPresets,
+        stepPresetSelected,  
         distance = DEFAULT.DISTANCE, 
         delay = DEFAULT.DELAY, 
         spaceEnabled = DEFAULT.SPACE_ENABLED, 
@@ -213,6 +225,8 @@ const scroller = new AutoScroller();
         scrollType, 
         glidePresets, 
         glidePresetSelected,
+        stepPresets,
+        stepPresetSelected, 
         distance, 
         delay, 
         spaceEnabled,
@@ -249,13 +263,21 @@ browser.storage.onChanged.addListener((changes, area) => {
         if (scroller.running) scroller.start();
     }
 
-    if (changes.distance || changes.delay) {
-        scroller.setSettings({
-            distance: changes.distance?.newValue ?? scroller.distance,
-            delay: changes.delay?.newValue ?? scroller.delay
-        });
+    if (changes.stepPresetSelected || changes.stepPresets) {
+        scroller.setSettings({ 
+            stepPresetSelected: changes.stepPresetSelected?.newValue ?? scroller.stepPresetSelected,
+            stepPresets: changes.stepPresets?.newValue ?? scroller.stepPresets
+        })
         if (scroller.running) scroller.start();
     }
+
+    // if (changes.distance || changes.delay) {
+    //     scroller.setSettings({
+    //         distance: changes.distance?.newValue ?? scroller.distance,
+    //         delay: changes.delay?.newValue ?? scroller.delay
+    //     });
+    //     if (scroller.running) scroller.start();
+    // }
 
     if (changes.spaceEnabled) {
         scroller.setSettings({ spaceEnabled: changes.spaceEnabled.newValue });
