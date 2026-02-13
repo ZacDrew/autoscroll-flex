@@ -32,7 +32,12 @@ class GlideScroller {
             const delta = (now - lastTime) / 1000;
             lastTime = now;
 
-            this.yPos += this.speed * delta;
+            if (this.parent.direction === 'down') {
+                this.yPos += this.speed * delta;
+            }
+            else if (this.parent.direction === 'up') {
+                this.yPos -= this.speed * delta;
+            }
             target.scrollTo(0, this.yPos);
 
             this.rafId = requestAnimationFrame(step);
@@ -79,12 +84,16 @@ class StepScroller {
 
         console.log(this.distance, this.delay);
 
-
         this.intervalId = setInterval(() => {
             if (!this.parent.enabled) return;
+            let signedDistance = this.distance;
+
+            if (this.parent.direction === 'up') {
+                signedDistance *= -1;
+            }
 
             this.parent.scrollTarget.scrollBy({
-                top: this.distance,
+                top: signedDistance,
                 behavior: "smooth"
             });
         }, this.delay * 1000);
@@ -116,6 +125,8 @@ class AutoScroller {
 
         this.glide = new GlideScroller(this);
         this.step = new StepScroller(this);
+
+        this.direction = 'down';
 
         this.mouseTarget = null;
         this.scrollTarget = null;
@@ -359,6 +370,18 @@ document.addEventListener('keydown', e => {
                 currentScroller.setPreset(currentScroller.presetSelected, currentScroller.presets);
             }
             savePreset();
+        }
+    }
+
+    if (scroller.running && scroller.UDEnabled) {
+
+        if (e.code === 'ArrowUp') {
+            scroller.direction = 'up';
+            scroller.start();
+        }
+        if (e.code === 'ArrowDown') {
+            scroller.direction = 'down';
+            scroller.start();
         }
     }
 });
