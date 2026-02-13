@@ -49,9 +49,11 @@ class StepScroller {
     }
 
     start() {
-        if (!this.parent.enabled || !this.parent.delay) return;
-
+        if (!this.parent.enabled) return;
         this.stop();
+
+        console.log(this.parent.distance, this.parent.delay);
+
 
         this.intervalId = setInterval(() => {
             if (!this.parent.enabled) return;
@@ -109,7 +111,6 @@ class AutoScroller {
 
     start() {
         if (!this.enabled) return;
-        this.stop();
 
         this.findScrollTarget();
         this.currentScroller.start();
@@ -183,7 +184,8 @@ class AutoScroller {
         this.delay = stepPresets[stepPresetSelected].delay;
     }
 
-    setEnabled(disabledSites = []) {
+    setEnabled(disabledSites) {
+        if (!disabledSites) return;
         const url = location.href;
         this.enabled = true;
 
@@ -270,14 +272,6 @@ browser.storage.onChanged.addListener((changes, area) => {
         })
         if (scroller.running) scroller.start();
     }
-
-    // if (changes.distance || changes.delay) {
-    //     scroller.setSettings({
-    //         distance: changes.distance?.newValue ?? scroller.distance,
-    //         delay: changes.delay?.newValue ?? scroller.delay
-    //     });
-    //     if (scroller.running) scroller.start();
-    // }
 
     if (changes.spaceEnabled) {
         scroller.setSettings({ spaceEnabled: changes.spaceEnabled.newValue });
