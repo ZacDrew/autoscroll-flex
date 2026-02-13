@@ -4,8 +4,8 @@ input[type="number"] {
 
 body {
   font-size: 14px;
-  min-width: 265px; 
-  max-width: 265px; 
+  min-width: 280px; 
+  max-width: 280px; 
   padding: 1rem;   
   box-sizing: border-box;
 }
@@ -13,7 +13,7 @@ body {
 
 .preset-card.selected {
   border-color: #EB99A1;
-  background: rgba(235, 153, 161, 0.12);
+  background: #eb99a11f;
 }
 
 
@@ -24,6 +24,7 @@ body {
   display: inline-block;
   width: 42.5px;
   height: 22px;
+  flex-shrink: 0;
 }
 
 .toggle input {
@@ -58,6 +59,10 @@ body {
 
 .toggle input:checked + .slider::before {
   transform: translateX(20.4px);
+}
+
+.toggle-text{
+  line-height: 1.0
 }
 
 
