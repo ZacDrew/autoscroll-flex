@@ -4,6 +4,9 @@ export const SCROLL_TYPE = {
 }
 
 export const UI_ID = {
+    DISABLED_SITES: 'disabledSites',
+    SCROLLING_ENABLED: 'scrollingEnabled',
+
     GLIDE_TAB: 'glide-tab',
     STEP_TAB: 'step-tab',
     PRESET_ROWS: 'preset-rows',
@@ -11,14 +14,21 @@ export const UI_ID = {
     DISTANCE: 'distance',
     DELAY: 'delay',
     ADD_PRESET_ROW: 'add-preset-row',
+
+    OPTIONS: 'options',
+    HIJACKS_ENABLED: 'hijacksEnabled',
+    HIJACKS: 'hijacks',
     SPACE_ENABLED: 'spaceEnabled',
-    SCROLLING_ENABLED: 'scrollingEnabled',
+    LR_ENABLED: 'LREnabled',
+    UD_ENABLED: 'UDEnabled',
+
     TOGGLE_SCROLL: 'toggleScroll',
-    OPEN_SETTINGS: 'openSettings',
-    DISABLED_SITES: 'disabledSites'
+    OPEN_SETTINGS: 'openSettings'
 };
 
 export const STORAGE_KEY = {
+    DISABLED_SITES: 'disabledSites',
+
     SCROLL_TYPE: 'scrollType',
     GLIDE_PRESETS: 'glidePresets',
     STEP_PRESETS: 'stepPresets',
@@ -30,23 +40,29 @@ export const STORAGE_KEY = {
     DISTANCE: 'distance',
     DELAY: 'delay',
 
+    HIJACKS_ENABLED: 'hijacksEnabled',
     SPACE_ENABLED: 'spaceEnabled',
-    DISABLED_SITES: 'disabledSites'
+    LR_ENABLED: 'LREnabled',
+    UD_ENABLED: 'UDEnabled',
 };
 
 // default setting values
 export const DEFAULT = {
+    DISABLED_SITES: ['www.youtube.com', 'www.twitch.tv'],
+
     SCROLL_TYPE: SCROLL_TYPE.GLIDE,
     GLIDE_PRESETS: [{ [STORAGE_KEY.SPEED]: 100 }],
     STEP_PRESETS: [{ [STORAGE_KEY.DISTANCE]: 200, [STORAGE_KEY.DELAY]: 0.5 }],
 
-    GLIDE_PRESET_SELCTED: 0,
+    GLIDE_PRESET_SELECTED: 0,
     STEP_PRESET_SELECTED: 0,
 
     SPEED: 100,
     DISTANCE: 300,
     DELAY: 2,
 
-    SPACE_ENABLED: false,
-    DISABLED_SITES: ['www.youtube.com', 'www.twitch.tv']
+    HIJACKS_ENABLED: false,
+    SPACE_ENABLED: true,
+    LR_ENABLED: true,
+    UD_ENABLED: true,
 }

@@ -132,43 +132,45 @@
 
     </div>
 
+    <div class="options p-3 rounded-lg border border-white/20 bg-white/5">
 
-    <!-- Enable Hijacked Keys -->
-    <label class="toggle-row flex items-center gap-3 cursor-pointer">
-      <span class="toggle">
-        <input id="hijackedEnabled" type="checkbox" checked>
-        <span class="slider"></span>
-      </span>
-      <span class="toggle-text">Enable Hijacked keys</span>
-    </label>
-
-    <div class="ml-4 mt-6 flex flex-col gap-y-4">
-      <!-- Spacebar toggle -->
+      <!-- Hijacked Keys Master Toggle -->
       <label class="toggle-row flex items-center gap-3 cursor-pointer">
         <span class="toggle">
-          <input id="spaceEnabled" type="checkbox" checked>
+          <input id="hijacksEnabled" type="checkbox" checked>
           <span class="slider"></span>
         </span>
-        <span class="toggle-text">Toggle scroll with spacebar</span>
+        <span class="toggle-text">Enable hijacked hotkeys</span>
       </label>
 
-      <!-- L/R Arrow toggle -->
-      <label class="toggle-row flex items-center gap-3 cursor-pointer">
-        <span class="toggle">
-          <input id="LREnabled" type="checkbox" checked>
-          <span class="slider"></span>
-        </span>
-        <span class="toggle-text">Cycle presets with L/R Arrows</span>
-      </label>
+      <div class="hijacks ml-4 mt-6 flex flex-col gap-y-4">
+        <!-- Spacebar toggle -->
+        <label class="toggle-row flex items-center gap-3 cursor-pointer">
+          <span class="toggle">
+            <input id="spaceEnabled" type="checkbox" checked>
+            <span class="slider"></span>
+          </span>
+          <span class="toggle-text">Toggle scroll with spacebar</span>
+        </label>
 
-      <!-- U/D Arrow toggle -->
-      <label class="toggle-row flex items-center gap-3 cursor-pointer">
-        <span class="toggle">
-          <input id="UDEnabled" type="checkbox" checked>
-          <span class="slider"></span>
-        </span>
-        <span class="toggle-text">Change direction with U/D Arrows</span>
-      </label>
+        <!-- L/R Arrow toggle -->
+        <label class="toggle-row flex items-center gap-3 cursor-pointer">
+          <span class="toggle">
+            <input id="LREnabled" type="checkbox" checked>
+            <span class="slider"></span>
+          </span>
+          <span class="toggle-text">Cycle presets with L/R Arrows</span>
+        </label>
+
+        <!-- U/D Arrow toggle -->
+        <label class="toggle-row flex items-center gap-3 cursor-pointer">
+          <span class="toggle">
+            <input id="UDEnabled" type="checkbox" checked>
+            <span class="slider"></span>
+          </span>
+          <span class="toggle-text">Change direction with U/D Arrows</span>
+        </label>
+      </div>
     </div>
 
   </form>

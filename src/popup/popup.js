@@ -22,6 +22,8 @@ class PopupController {
         this.glidePresets = new GlidePresets(this.store, document.querySelector(`#${C.UI_ID.GLIDE_TAB}`));
         this.stepPresets = new StepPresets(this.store, document.querySelector(`#${C.UI_ID.STEP_TAB}`));
 
+        this.options = new Options(this.store);
+
         this.form = document.getElementById('popupForm');
         this.scrollToggleBtn = document.getElementById('toggleScroll');
 
@@ -33,6 +35,8 @@ class PopupController {
         this.scrollTypeTabs.init();
         this.glidePresets.init();
         this.stepPresets.init();
+
+        this.options.init();
 
         this.bindEvents();
         await this.setInitialUIValues();
@@ -57,19 +61,9 @@ class PopupController {
     async handleFormChange(e) {
         const updates = {};
 
-        // grab values from UI
-        // if (e.target.id === 'speed') {
-        //     updates.speed = Number(e.target.value);
+        // if (e.target.id === 'spaceEnabled') {
+        //     updates.spaceEnabled = e.target.checked;
         // }
-
-        // if (['distance', 'delay'].includes(e.target.id)) {
-        //     updates.distance = Number(distance.value);
-        //     updates.delay = Number(delay.value);
-        // }
-
-        if (e.target.id === 'spaceEnabled') {
-            updates.spaceEnabled = e.target.checked;
-        }
 
         if (e.target.id === 'scrollingEnabled') {
             const scrollingEnabled = e.target.checked;
@@ -133,7 +127,7 @@ class PopupController {
         // document.getElementById('speed').value = speed;
         // document.getElementById('distance').value = distance;
         // document.getElementById('delay').value = delay;
-        document.getElementById('spaceEnabled').checked = spaceEnabled;
+        // document.getElementById('spaceEnabled').checked = spaceEnabled;
 
         const url = this.tab.url;
         // disable both start button and domain toggle if matching domain in list
@@ -319,9 +313,6 @@ class Presets {
         // Note position in DOM
         card.dataset.position = String(this.numRows);
 
-        // set input value
-        // const speed = preset ? preset[C.STORAGE_KEY.SPEED] : 0;
-        // card.querySelector(`#${C.UI_ID.SPEED}`).value = speed;
         this.setInputValue(card, preset);
         
         this.rows.appendChild(card);
@@ -426,7 +417,7 @@ class StepPresets extends Presets {
 
     setInputValue(card, preset) {
         const distance = preset ? preset[C.STORAGE_KEY.DISTANCE] : 0;
-        const delay = preset ? preset[C.STORAGE_KEY.DELAY] : 0;
+        const delay = preset ? preset[C.STORAGE_KEY.DELAY] : C.DEFAULT.DELAY;
 
         card.querySelector(`#${C.UI_ID.DISTANCE}`).value = distance;
         card.querySelector(`#${C.UI_ID.DELAY}`).value = delay;
@@ -449,6 +440,65 @@ class StepPresets extends Presets {
     }
 }
 
+
+class Options {
+    constructor(store) {
+        this.store = store;
+        this.options = document.querySelector(`.${C.UI_ID.OPTIONS}`);
+        this.hijacks = this.options.querySelector(`.${C.UI_ID.HIJACKS}`)
+
+        // this.hijacksEnabled;
+    }
+
+    init() {
+        this.options.addEventListener('change', e => this.onChange(e));
+        this.loadOptions();
+    }
+
+    async onChange(e) {
+
+        if (e.target.id === C.UI_ID.HIJACKS_ENABLED) {
+            await this.store.set({ [C.STORAGE_KEY.HIJACKS_ENABLED]: e.target.checked });
+            this.setHijackTogglesDisabled(!e.target.checked);
+        }
+        if (e.target.id === C.UI_ID.SPACE_ENABLED) {
+            await this.store.set({ [C.STORAGE_KEY.SPACE_ENABLED]: e.target.checked });
+        }
+        if (e.target.id === C.UI_ID.LR_ENABLED) {
+            await this.store.set({ [C.STORAGE_KEY.LR_ENABLED]: e.target.checked });
+        }
+        if (e.target.id === C.UI_ID.UD_ENABLED) {
+            await this.store.set({ [C.STORAGE_KEY.UD_ENABLED]: e.target.checked });
+        }
+
+        console.dir(await this.store.get());
+    }
+
+    async loadOptions() {
+        const {
+            [C.STORAGE_KEY.HIJACKS_ENABLED]: hijacksEnabled,
+            [C.STORAGE_KEY.SPACE_ENABLED]: spaceEnabled,
+            [C.STORAGE_KEY.LR_ENABLED]: LREnabled,
+            [C.STORAGE_KEY.UD_ENABLED]: UDEnabled
+        } = await this.store.get();
+
+        this.hijacks.querySelector(`#${C.UI_ID.SPACE_ENABLED}`).checked = spaceEnabled;
+        this.hijacks.querySelector(`#${C.UI_ID.LR_ENABLED}`).checked = LREnabled;
+        this.hijacks.querySelector(`#${C.UI_ID.UD_ENABLED}`).checked = UDEnabled;
+
+        if (!hijacksEnabled) {
+            this.options.querySelector(`#${C.UI_ID.HIJACKS_ENABLED}`).checked = false;
+            this.setHijackTogglesDisabled(true);
+        }
+    }
+
+    setHijackTogglesDisabled(disabled) {
+        this.hijacks.querySelectorAll(`.toggle-row`).forEach(t => {
+            t.querySelector('input').disabled = disabled;
+        })
+    }
+
+}
 
 
 class SettingsStore {
