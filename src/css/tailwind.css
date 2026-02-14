@@ -1,0 +1,24 @@
+@tailwind utilities;
+@import "tailwindcss";
+@import "./components.css";
+
+/* Assign Sakura variables to Tailwind */
+@theme {
+  --color-blossom: var(--color-blossom);
+  --color-fade: var(--color-fade);
+  --color-bg: var(--color-bg);
+  --color-bg-alt: var(--color-bg-alt);
+  --color-bg-highlight: var(--color-bg-highlight);
+  --color-text: var(--color-text);
+  --color-force: var(--color-force);
+
+  --font-sans: var(--font-family-base);
+}
+
+/* Remove white focus outline on inputs */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: none;
+}

@@ -5,12 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autoscroll Flex</title>
-  <!-- normalize.css -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <!-- sakura vader theme -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" type="text/css">
-  <!-- custom -->
-  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="./sakura-vader.css" type="text/css">
   <!-- tailwind -->
   <link rel="stylesheet" href="./tailwind.css">
 </head>
@@ -34,14 +30,14 @@
     <hr class="opacity-80">
 
     <!-- Tab Buttons -->
-    <div class="tabs flex gap-2">
+    <div class="tabs flex gap-0.5 bg-white/10 p-1.5 rounded-lg">
       <button type="button"
-        class="tab-btn flex-1 rounded px-2 py-1 bg-[#40363a] data-[active=true]:bg-[#EB99A1] text-white data-[active=true]:text-black"
+        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent border-none data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
         data-tab="glide-tab">
         Glide Scroll
       </button>
       <button type="button"
-        class="tab-btn flex-1 rounded px-2 py-1 bg-[#40363a] data-[active=true]:bg-[#EB99A1] text-white data-[active=true]:text-black"
+        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent border-none data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
         data-tab="step-tab">
         Step Scroll
       </button>
@@ -53,7 +49,7 @@
       <div id="preset-rows" class="space-y-2">
 
         <div class="preset-card flex items-stretch cursor-pointer
-                    rounded-lg border border-white/20 bg-white/5 hover:bg-[#eb99a11f]">
+                    rounded-lg border border-white/20 bg-white/5 hover:bg-bg-highlight">
           <!-- Left: card content -->
           <div class="flex-1 px-3">
             <label class="block">
@@ -67,10 +63,10 @@
           </div>
           <!-- Right: delete button -->
           <button type="button" class="delete-preset w-8
-                        flex items-center justify-center
-                        border-l border-white/20
+                        flex items-center justify-center rounded-r-lg
+                        rounded-l-none border-l border-white/20
                         text-black hover:text-red-400
-                        hover:bg-white/10">
+                        hover:bg-white/5">
             ✕
           </button>
         </div>
@@ -91,7 +87,7 @@
 
         <div class="preset-card flex items-stretch cursor-pointer
                     rounded-lg border border-white/20 bg-white/5
-                    hover:bg-[#eb99a11f] transition-colors">
+                    hover:bg-bg-highlight transition-colors">
           <!-- Left: card content -->
           <div class="preset-main flex flex-1 gap-4 px-3">
             <!-- Scroll Distance -->
@@ -115,9 +111,9 @@
           </div>
           <!-- Right: delete button -->
           <button type="button" class="delete-preset w-8
-                        flex items-center justify-center
-                        border-l border-white/20
-                        hover:bg-white/10
+                        flex items-center justify-center rounded-r-lg
+                        rounded-l-none border-l border-white/20
+                        hover:bg-white/5
                         hover:text-[#DA4453]">
             ✕
           </button>
@@ -179,8 +175,8 @@
 
   <!-- Bottom buttons -->
   <div class="button-row flex justify-between items-center">
-    <button id="toggleScroll" data-running="false" class="rounded bg-[#EB99A1]">Start</button>
-    <button id="openSettings" class="rounded bg-[#EB99A1]">Settings</button>
+    <button id="toggleScroll" data-running="false" class="rounded">Start</button>
+    <button id="openSettings" class="rounded">Settings</button>
   </div>
 
 

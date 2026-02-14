@@ -1,0 +1,76 @@
+
+/* Remove number input arrows (Firefox) */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Body */
+body {
+  @apply text-[14px] min-w-[280px] max-w-[280px] p-4 box-border;
+}
+
+/* Selected preset card */
+.preset-card.selected {
+  @apply border-blossom bg-bg-highlight;
+}
+
+/* Toggle wrapper */
+.toggle {
+  @apply relative inline-block flex-shrink-0;
+  width: 42.5px;
+  height: 22px;
+}
+
+/* Hide checkbox */
+.toggle input {
+  @apply opacity-0 w-0 h-0;
+}
+
+/* Slider track */
+.slider {
+  @apply absolute inset-0 bg-[#40363a] rounded-[22px] transition-colors duration-[250ms];
+}
+
+/* Slider knob */
+.slider::before {
+  content: "";
+  @apply absolute bg-[#d9d8dc] rounded-full transition-transform duration-[250ms];
+  height: 17px;
+  width: 17px;
+  left: 2.5px;
+  top: 2.5px;
+}
+
+/* Checked state */
+.toggle input:checked + .slider {
+  @apply bg-[#EB99A1];
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(20.4px);
+}
+
+/* Toggle text */
+.toggle-text {
+  @apply leading-[1];
+}
+
+/* Disabled base */
+.toggle input:disabled + .slider {
+  @apply opacity-45;
+}
+
+/* Muted slider (checked + disabled) */
+.toggle input:checked:disabled + .slider {
+  @apply bg-[#EB99A1] opacity-45;
+}
+
+/* Muted knob */
+.toggle input:disabled + .slider::before {
+  @apply bg-[#d9d8dc] opacity-60;
+}
+
+/* Fade label text */
+.toggle-row input:disabled ~ .toggle-text {
+  @apply opacity-45;
+}

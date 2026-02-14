@@ -1,5 +1,5 @@
 import * as C from '../constants/storage.js';
-import "../tailwind.css";
+import "../css/tailwind.css";
 
 
 document.addEventListener("DOMContentLoaded", () => {

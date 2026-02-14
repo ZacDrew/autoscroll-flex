@@ -1,6 +1,7 @@
 import * as C from '../constants/storage.js';
 import { TabController } from './TabController.js';
-import "../tailwind.css";
+import "../css/tailwind.css";
+import '../css/sakura-vader.css';
 
 
 document.addEventListener("DOMContentLoaded", () => {
