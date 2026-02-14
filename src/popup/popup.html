@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="./tailwind.css">
 </head>
 
-<body>
+<body class="text-[14px] min-w-[280px] max-w-[280px] p-4 pb-3 mb-0">
 
   <!-- <h2 class="mb-3 text-lg font-semibold text-red-500">Autoscroll Flex</h2> -->
   <!-- <input type="number" id="test" class="w-20 rounded border border-white/20 bg-transparent px-2 py-1"> -->
@@ -32,12 +32,12 @@
     <!-- Tab Buttons -->
     <div class="tabs flex gap-0.5 bg-white/10 p-1.5 rounded-lg">
       <button type="button"
-        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent border-none data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
+        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
         data-tab="glide-tab">
         Glide Scroll
       </button>
       <button type="button"
-        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent border-none data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
+        class="tab-btn flex-1 rounded-lg px-2 py-0 bg-transparent data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white"
         data-tab="step-tab">
         Step Scroll
       </button>
@@ -171,12 +171,36 @@
 
   </form>
 
-  <hr class="my-4 opacity-80">
+  <div class="mt-30"></div>
+
+  <!-- <hr class="my-4 opacity-80"> -->
 
   <!-- Bottom buttons -->
-  <div class="button-row flex justify-between items-center">
-    <button id="toggleScroll" data-running="false" class="rounded">Start</button>
-    <button id="openSettings" class="rounded">Settings</button>
+  <div class="button-row flex justify-between items-center bg-bg-alt border-blossom border-y-2 fixed inset-x-0 bottom-0 mx-4 my-1 py-1 px-20 rounded-lg">
+
+    <div class="flex flex-col p-0 my-0">
+      <!-- Up Button -->
+      <button class="w-20 h-10 p-0 my-0 rounded-t-lg bg-transparent data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white">
+        <svg class="w-full h-full scale-170"  viewBox="0 0 24 23">
+          <path fill="currentColor" d="m12 10.8l-4.6 4.6L6 14l6-6l6 6l-1.4 1.4z"/>
+        </svg>
+      </button>
+      <!-- Down Button -->
+      <button class="w-20 h-10 p-0 my-0 rounded-b-lg bg-transparent data-[active=true]:bg-blossom text-white data-[active=true]:text-black hover:bg-bg-highlight hover:text-white">
+        <svg class="w-full h-full scale-170"  viewBox="0 0 24 24">
+          <path fill="currentColor" d="m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z"/>
+        </svg>
+      </button>    
+    </div>
+
+    <!-- <button id="toggleScroll" data-running="false" class="rounded">Start</button> -->
+
+    <button id="openSettings" 
+      class="w-20 h-20 rounded-lg bg-transparent text-white hover:bg-bg-highlight hover:text-white">
+      <svg class="w-full h-full scale-100"  viewBox="0 0 24 24">
+          <path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zM11 20h1.975l.35-2.65q.775-.2 1.438-.587t1.212-.938l2.475 1.025l.975-1.7l-2.15-1.625q.125-.35.175-.737T17.5 12t-.05-.787t-.175-.738l2.15-1.625l-.975-1.7l-2.475 1.05q-.55-.575-1.212-.962t-1.438-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7l2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625l.975 1.7l2.475-1.05q.55.575 1.213.963t1.437.587zm1.05-4.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5M12 12"/>
+        </svg>
+    </button>
   </div>
 
 

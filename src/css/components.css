@@ -5,9 +5,9 @@ input[type="number"] {
 }
 
 /* Body */
-body {
+/* body {
   @apply text-[14px] min-w-[280px] max-w-[280px] p-4 box-border;
-}
+} */
 
 /* Selected preset card */
 .preset-card.selected {
