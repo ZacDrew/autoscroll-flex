@@ -82,7 +82,7 @@ class StepScroller {
         if (!this.parent.enabled) return;
         this.stop();
 
-        console.log(this.distance, this.delay);
+        // console.log(this.distance, this.delay);
 
         this.intervalId = setInterval(() => {
             if (!this.parent.enabled) return;
@@ -263,10 +263,16 @@ const scroller = new AutoScroller();
 
 // Listen for commands from popup
 browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (['up', 'down'].includes(msg.direction)) {
+        scroller.direction = msg.direction;
+    }
     if (msg.command === 'start') scroller.start();
     if (msg.command === 'stop') scroller.stop();
     if (msg.command === 'status') {
-        sendResponse({ running: scroller.running });
+        sendResponse({ 
+            running: scroller.running, 
+            direction: scroller.direction 
+        });
         return true;
     }
 });
@@ -306,7 +312,6 @@ browser.storage.onChanged.addListener((changes, area) => {
 
     if (changes.spaceEnabled) {
         scroller.setSettings({ spaceEnabled: changes.spaceEnabled.newValue });
-        console.log('space enabled: ', scroller.spaceEnabled);
     }
 
     if (changes[STORAGE_KEY.LR_ENABLED]) {
@@ -334,6 +339,9 @@ document.addEventListener('keydown', e => {
 
     if (e.code === 'Space' && scroller.spaceEnabled) {
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
         scroller.toggle();
     }
 
@@ -341,6 +349,8 @@ document.addEventListener('keydown', e => {
         
         if (e.code === 'ArrowRight') {
             e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
 
             const currentScroller = scroller.currentScroller;
             const numPresets = currentScroller.presets.length;
@@ -357,6 +367,8 @@ document.addEventListener('keydown', e => {
         }
         if (e.code === 'ArrowLeft') {
             e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
 
             const currentScroller = scroller.currentScroller;
             const numPresets = currentScroller.presets.length;
@@ -384,7 +396,7 @@ document.addEventListener('keydown', e => {
             scroller.start();
         }
     }
-});
+}, true);
 
 function savePreset() {
     if (scroller.scrollType == SCROLL_TYPE.GLIDE) {
