@@ -71,6 +71,7 @@ class ScrollingEnable {
         this.scrollingEnableCard = document.querySelector(`#scrollingEnableCard`);
         this.scrollingEnableToggle = document.querySelector(`#scrollingEnableToggle`);
         this.disabledWarning = document.querySelector(`#disabledWarning`);
+        this.disabledWarningText = document.querySelector(`#disabledWarningText`);
         this.urlText = document.querySelector(`#customUrlText`);
     }
 
@@ -85,7 +86,8 @@ class ScrollingEnable {
         let disabledSites =
             await this.popupController.store.toggleSite(this.popupController.siteKey, scrollingEnabled);
 
-        this.popupController.footerBar.setScrollBtnsDisabled(!scrollingEnabled);
+        // this.popupController.footerBar.setScrollBtnsDisabled(!scrollingEnabled);
+        this.checkMatchingDomain(disabledSites);
 
         // if site is disabled (via manual link in settings) start button is disabled
         this.checkMatchingCustomUrl(disabledSites);
@@ -102,29 +104,46 @@ class ScrollingEnable {
         } = await this.popupController.store.get();
 
         const url = this.popupController.tab.url;
+
         // disable both start button and domain toggle if matching domain in list
+        this.checkMatchingDomain(disabledSites);
+
+        // if site is disabled (via manual link in settings) start button is disabled
+        this.checkMatchingCustomUrl(disabledSites);
+    }
+
+    // disable both start button and domain toggle if matching domain in list
+    checkMatchingDomain(disabledSites) {
         if (disabledSites.includes(this.popupController.siteKey)) {
             this.scrollingEnableToggle.checked = false;
             this.popupController.footerBar.setScrollBtnsDisabled(true);
+
+            this.disabledWarning.hidden = false;
+            this.disabledWarningText.textContent = 'Autoscrolling is disabled on domain: ';
+            this.urlText.textContent = this.popupController.siteKey;
         }
-        // if site is disabled (via manual link in settings) start button is disabled
-        this.checkMatchingCustomUrl(disabledSites);
+        else {
+            this.scrollingEnableToggle.checked = true;
+            this.popupController.footerBar.setScrollBtnsDisabled(false);
+
+            this.disabledWarning.hidden = true;
+        }
     }
 
     // if site is disabled (via manual link in settings) start button is disabled
     checkMatchingCustomUrl(disabledSites) {
         // Don't bother if there is already a matching domain
         if (disabledSites.includes(this.popupController.siteKey)) {
-            this.disabledWarning.hidden = true;
+            // this.disabledWarning.hidden = true;
             return;
         }
-
         const url = this.popupController.tab.url;
         const matchedSite = disabledSites.find(site => url.includes(site));  
 
         if (matchedSite) {
             this.popupController.footerBar.setScrollBtnsDisabled(true);
             this.disabledWarning.hidden = false;
+            this.disabledWarningText.textContent = 'Autoscrolling is disabled due to custom URL in the Settings: ';
             this.urlText.textContent = matchedSite;
         }
     }
