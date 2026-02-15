@@ -55,6 +55,11 @@ class PopupController {
         // local files
         if (u.protocol === 'file:') return 'file://';
 
+        if (u.protocol === 'moz-extension:') return 'moz-extension://';
+
+        if (u.protocol === 'about:') return 'about:';
+        about:
+
         // standard URLs
         if (u.protocol === 'http:' || u.protocol === 'https:') {
             return u.hostname;
@@ -88,9 +93,10 @@ class ScrollingEnable {
 
         // this.popupController.footerBar.setScrollBtnsDisabled(!scrollingEnabled);
         this.checkMatchingDomain(disabledSites);
-
         // if site is disabled (via manual link in settings) start button is disabled
         this.checkMatchingCustomUrl(disabledSites);
+        // check if user is on a website retricted by firefox
+        this.checkRestrictedWebsite();
 
         console.log('disabled sites: ', disabledSites);
 
@@ -107,9 +113,10 @@ class ScrollingEnable {
 
         // disable both start button and domain toggle if matching domain in list
         this.checkMatchingDomain(disabledSites);
-
         // if site is disabled (via manual link in settings) start button is disabled
         this.checkMatchingCustomUrl(disabledSites);
+        // check if user is on a website retricted by firefox
+        this.checkRestrictedWebsite();
     }
 
     // disable both start button and domain toggle if matching domain in list
@@ -145,6 +152,15 @@ class ScrollingEnable {
             this.disabledWarning.hidden = false;
             this.disabledWarningText.textContent = 'Autoscrolling is disabled due to custom URL in the Settings: ';
             this.urlText.textContent = matchedSite;
+        }
+    }
+
+    checkRestrictedWebsite() {
+        if (['addons.mozilla.org' ,'moz-extension://', 'about:'].includes(this.popupController.siteKey)) {
+            this.popupController.footerBar.setScrollBtnsDisabled(true);
+            this.disabledWarning.hidden = false;
+            this.disabledWarningText.textContent = 'Firefox disables addons on: ';
+            this.urlText.textContent = this.popupController.siteKey;
         }
     }
 }
