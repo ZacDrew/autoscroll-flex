@@ -18,16 +18,23 @@
 
   <form id="popupForm" class="space-y-4">
 
-    <!-- Enable domain -->
-    <label class="toggle-row flex items-center gap-3 cursor-pointer">
-      <span class="toggle">
-        <input id="scrollingEnabled" type="checkbox" checked>
-        <span class="slider"></span>
-      </span>
-      <span class="toggle-text">Enabled for current site (domain)</span>
-    </label>
-
-    <hr class="opacity-80">
+    <div id="scrollingEnableCard" class="flex rounded-lg p-2 pb-1 border border-white/20 bg-white/5 ">
+      <!-- Enable domain -->
+      <label class="toggle-row flex items-center gap-3 cursor-pointer">
+        <span class="toggle">
+          <input id="scrollingEnableToggle" type="checkbox" checked>
+          <span class="slider"></span>
+        </span>
+        <span class="toggle-text">Enable for current site (domain)</span>
+      </label>
+    </div>
+    <div id="disabledWarning" class="warning-card flex flex-col rounded-lg p-2 pb-1 bg-force" hidden>
+      <div class="text-black font-semibold">
+        Autoscrolling is disabled due to custom URL in the Settings: 
+      </div>
+      <div id="customUrlText" class="text-black"></div>
+    </div>
+    <!-- <hr class="opacity-80"> -->
 
     <!-- Tab Buttons -->
     <div class="tabs flex gap-0.5 bg-white/10 p-1.5 rounded-lg">

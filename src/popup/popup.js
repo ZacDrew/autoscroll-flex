@@ -16,6 +16,8 @@ class PopupController {
         this.tab = null;
         this.siteKey = null;
 
+        this.scrollingEnable = new ScrollingEnable(this);
+
         this.scrollTypeTabs = new ScrollTypeTabs(this.store);
         this.glidePresets = new GlidePresets(this.store, document.querySelector(`#${C.UI_ID.GLIDE_TAB}`));
         this.stepPresets = new StepPresets(this.store, document.querySelector(`#${C.UI_ID.STEP_TAB}`));
@@ -23,13 +25,12 @@ class PopupController {
         this.options = new Options(this.store);
 
         this.footerBar = new FooterBar();
-
-        this.form = document.getElementById('popupForm');
-
     }
 
     async init() {
         await this.initTab();
+
+        this.scrollingEnable.init();
 
         this.scrollTypeTabs.init();
         this.glidePresets.init();
@@ -38,9 +39,6 @@ class PopupController {
         this.options.init();
 
         this.footerBar.init(this.tab);
-
-        this.bindEvents();
-        await this.setInitialUIValues();
     }
 
     async initTab() {
@@ -49,64 +47,6 @@ class PopupController {
 
         this.tab = tab;
         this.siteKey = this.getSiteKey(tab.url);
-    }
-
-    bindEvents() {
-        this.form.addEventListener('change', e => this.handleFormChange(e));
-        document.addEventListener('click', e => this.handleButtonClick(e));
-    }
-
-    // Handles changes to settings in popup
-    async handleFormChange(e) {
-        const updates = {};
-
-        if (e.target.id === 'scrollingEnabled') {
-            const scrollingEnabled = e.target.checked;
-            updates.disabledSites =
-                await this.store.toggleSite(this.siteKey, scrollingEnabled);
-
-            this.footerBar.setScrollBtnsDisabled(!scrollingEnabled);
-
-            // if site is disabled (via manual link in settings) start button stays disabled
-            if (updates.disabledSites.some(site => this.tab.url.includes(site))) {
-                this.footerBar.setScrollBtnsDisabled(true);
-            }
-
-            console.log('disabled sites: ', updates.disabledSites);
-        }
-
-        await this.store.set(updates);
-        await this.footerBar.syncScrollState();
-
-        console.log('change:', updates);
-    }
-
-    async handleButtonClick(e) {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-
-    }
-
-    async setInitialUIValues() {
-        const {
-            scrollType = C.DEFAULT.SCROLL_TYPE,
-            speed = C.DEFAULT.SPEED,
-            distance = C.DEFAULT.DISTANCE,
-            delay = C.DEFAULT.DELAY,
-            spaceEnabled = C.DEFAULT.SPACE_ENABLED,
-            disabledSites = C.DEFAULT.DISABLED_SITES
-        } = await this.store.get();
-
-        const url = this.tab.url;
-        // disable both start button and domain toggle if matching domain in list
-        if (disabledSites.includes(this.siteKey)) {
-            document.getElementById('scrollingEnabled').checked = false;
-            this.footerBar.setScrollBtnsDisabled(true);
-        }
-        // disable only start button if matching longer link is in list.
-        else if (disabledSites.some(site => url.includes(site))) {
-            this.footerBar.setScrollBtnsDisabled(true);
-        }
     }
 
     getSiteKey(url) {
@@ -121,6 +61,72 @@ class PopupController {
         }
 
         return null;
+    }
+}
+
+class ScrollingEnable {
+    constructor(popupController) {
+        this.popupController = popupController
+
+        this.scrollingEnableCard = document.querySelector(`#scrollingEnableCard`);
+        this.scrollingEnableToggle = document.querySelector(`#scrollingEnableToggle`);
+        this.disabledWarning = document.querySelector(`#disabledWarning`);
+        this.urlText = document.querySelector(`#customUrlText`);
+    }
+
+    init() {
+        this.scrollingEnableToggle.addEventListener('change', () => this.handleScrollingEnable());
+        this.setEnableState();
+    }
+
+    async handleScrollingEnable() {
+
+        const scrollingEnabled = this.scrollingEnableToggle.checked;
+        let disabledSites =
+            await this.popupController.store.toggleSite(this.popupController.siteKey, scrollingEnabled);
+
+        this.popupController.footerBar.setScrollBtnsDisabled(!scrollingEnabled);
+
+        // if site is disabled (via manual link in settings) start button is disabled
+        this.checkMatchingCustomUrl(disabledSites);
+
+        console.log('disabled sites: ', disabledSites);
+
+        await this.popupController.store.set({ disabledSites });
+        await this.popupController.footerBar.syncScrollState();
+    }
+
+    async setEnableState() {
+        const {
+            [C.STORAGE_KEY.DISABLED_SITES]: disabledSites
+        } = await this.popupController.store.get();
+
+        const url = this.popupController.tab.url;
+        // disable both start button and domain toggle if matching domain in list
+        if (disabledSites.includes(this.popupController.siteKey)) {
+            this.scrollingEnableToggle.checked = false;
+            this.popupController.footerBar.setScrollBtnsDisabled(true);
+        }
+        // if site is disabled (via manual link in settings) start button is disabled
+        this.checkMatchingCustomUrl(disabledSites);
+    }
+
+    // if site is disabled (via manual link in settings) start button is disabled
+    checkMatchingCustomUrl(disabledSites) {
+        // Don't bother if there is already a matching domain
+        if (disabledSites.includes(this.popupController.siteKey)) {
+            this.disabledWarning.hidden = true;
+            return;
+        }
+
+        const url = this.popupController.tab.url;
+        const matchedSite = disabledSites.find(site => url.includes(site));  
+
+        if (matchedSite) {
+            this.popupController.footerBar.setScrollBtnsDisabled(true);
+            this.disabledWarning.hidden = false;
+            this.urlText.textContent = matchedSite;
+        }
     }
 }
 
