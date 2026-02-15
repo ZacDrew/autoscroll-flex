@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autoscroll Flex Settings</title>
-    <!-- normalize.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <!-- sakura vader theme -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura-vader.css" type="text/css">
+    <link rel="stylesheet" href="./sakura-vader.css" type="text/css">
     <!-- tailwind -->
     <link rel="stylesheet" href="./tailwind.css">
 </head>
 <body>
     <h1>Autoscroll Flex</h1>
     <hr>
-    <h5>Disabled Sites</h5>
-    <label style="font-size: 17px;">
+    <h5>Website Blacklist</h5>
+
+    <label class="block text-[17px] mb-2">
         Websites where this extension is disabled.<br>
-        <p style="font-size: 14px; color: #A8A8A8;">
-        NOTE - one domain name per line. you can include more URL info after the 
-        domain suffix (i.e. ".com" or ".org") to narrow down what you want 
-        disabled. However, said link won't be affected by the site-domain-toggle in
-        the popup menu. Regex is not supported.<br>
-        &nbsp&nbsp&nbsp&nbsp   simple domain link: www.youtube.com <br>
-        &nbsp&nbsp&nbsp&nbsp   specific site link: https://www.youtube.com/watch (disables only video pages)
+        <p class="text-[14px] text-[#A8A8A8] leading-relaxed mb-1">
+            NOTE — one domain name per line. You can include more URL info after the
+            domain suffix (i.e. ".com" or ".org") to narrow down what you want disabled.
+            Regex is not supported.
         </p>
+        <div class="pl-8 text-[14px] text-[#A8A8A8] space-y-1">
+            <div>simple domain link: www.youtube.com</div>
+            <div>specific site link: https://www.youtube.com/watch (disables only video pages)</div>
+        </div>
     </label>
     <textarea 
     name="disabledSites" 
@@ -34,6 +34,8 @@
     autocomplete="off"
     autocorrect="off"
     autocapitalize="off"
+    class="w-full rounded-lg
+         px-3 py-2"
     ></textarea>
 
 
