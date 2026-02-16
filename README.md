@@ -11,7 +11,7 @@ Its purpose is to be a flexible autoscroll where the user can easily set the spe
         <li><strong>Step scroll</strong>
     </ul>
     <li>Speed presets
-    <li>A built-in (optional) hotkeys for:
+    <li>Built-in (optional) hotkeys for:
     <ul>
         <li>toggling scroll on/off (spacebar)
         <li>changing direction (up/down arrows keys)
