@@ -30,8 +30,8 @@ export default defineConfig({
     tailwindcss(),
     viteStaticCopy({
       targets: [
+        { src: 'icons/logo/*', dest: 'icons' },
         { src: 'src/css/sakura-vader.css', dest: '.' },
-        // { src: 'src/css/components.css', dest: '.' },
         { src: 'src/popup/popup.html', dest: '.' },
         { src: 'src/popup/popup.css', dest: '.' },
         { src: 'src/options/options.html', dest: '.' }

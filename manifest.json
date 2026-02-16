@@ -3,12 +3,21 @@
   "name": "Autoscroll Flex",
   "version": "0.1.0",
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "autoscroll-flex@example.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+
   "description": "Adjustable autoscroll designed for reading manhwa and manga.",
 
   "icons": {
-    "32": "icons/autoscroll-flex-logo-32.png",
-    "64": "icons/autoscroll-flex-logo-64.png",
-    "96": "icons/autoscroll-flex-logo-96.png"
+    "32": "dist/icons/autoscroll-flex-logo-32.png",
+    "64": "dist/icons/autoscroll-flex-logo-64.png",
+    "96": "dist/icons/autoscroll-flex-logo-96.png"
   },
 
   "background": {
