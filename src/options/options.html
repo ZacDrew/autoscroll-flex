@@ -9,34 +9,49 @@
     <!-- tailwind -->
     <link rel="stylesheet" href="./tailwind.css">
 </head>
-<body>
+<body class="text-[15px]">
     <h1>Autoscroll Flex</h1>
     <hr>
-    <h5>Website Blacklist</h5>
 
-    <label class="block text-[17px] mb-2">
-        Websites where this extension is disabled.<br>
-        <p class="text-[14px] text-[#A8A8A8] leading-relaxed mb-1">
-            NOTE — one domain name per line. You can include more URL info after the
-            domain suffix (i.e. ".com" or ".org") to narrow down what you want disabled.
-            Regex is not supported.
-        </p>
-        <div class="pl-8 text-[14px] text-[#A8A8A8] space-y-1">
-            <div>simple domain link: www.youtube.com</div>
-            <div>specific site link: https://www.youtube.com/watch (disables only video pages)</div>
-        </div>
-    </label>
-    <textarea 
-    name="disabledSites" 
-    id="disabledSites" 
-    rows="8"
-    spellcheck="false" 
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    class="w-full rounded-lg
-         px-3 py-2"
-    ></textarea>
+    <h5 class="mb-2">Website Blocklist</h5>
+    <div class="py-3 px-5 mb-10 rounded-lg flex flex-col border border-white/20 bg-white/5">
+        <label class="block text-[17px] mb-2">
+            Websites where this extension is disabled.<br>
+            <p class="text-[14px] text-[#A8A8A8] leading-relaxed mb-1 pl-5">
+                NOTE — one domain name per line. You can include more URL info after the
+                domain suffix (i.e. ".com" or ".org") to narrow down what you want disabled.
+                Regex is not supported.
+            </p>
+            <div class="pl-13 text-[14px] text-[#A8A8A8] space-y-1">
+                <div>simple domain link: www.youtube.com</div>
+                <div>specific site link: https://www.youtube.com/watch (disables only video pages)</div>
+            </div>
+        </label>
+        <textarea 
+        name="disabledSites" 
+        id="disabledSites" 
+        rows="8"
+        spellcheck="false" 
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        class="w-full rounded-lg
+            px-3 py-2"
+        ></textarea>
+    </div>
+
+    <h5 class="mb-2">Misc</h5>
+    <div class="p-5 rounded-lg flex flex-col border border-white/20 bg-white/5">
+
+        <!-- Hijacked Keys Master Toggle -->
+      <label class="toggle-row flex items-center gap-3 cursor-pointer">
+        <span class="toggle">
+          <input id="presetToastEnable" type="checkbox" checked>
+          <span class="slider"></span>
+        </span>
+        <span class="toggle-text">Show Preset details in popup message</span>
+      </label>
+    </div>
 
 
     <script type="module" src="./options.js"></script>

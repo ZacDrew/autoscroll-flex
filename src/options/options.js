@@ -31,9 +31,14 @@ class SettingsController {
             const disabledSites = e.target.value.split('\n');
             updates[C.UI_ID.DISABLED_SITES] = disabledSites;
         }
+        if (e.target.id === 'presetToastEnable') {
+            
+            const presetToastEnabled = e.target.checked;
+            updates[C.STORAGE_KEY.PRESET_TOAST_ENABLED] = presetToastEnabled;
+        }
 
         await this.store.set(updates);
-        console.log('change: ', updates);
+        console.dir('change: ', updates);
     } 
 
     handleStorageChange(changes, area) {
@@ -44,13 +49,17 @@ class SettingsController {
         if (changes[C.STORAGE_KEY.DISABLED_SITES]) {
             values[C.STORAGE_KEY.DISABLED_SITES] = changes[C.STORAGE_KEY.DISABLED_SITES].newValue;
         }
+        if (changes[C.STORAGE_KEY.PRESET_TOAST_ENABLED]) {
+            values[C.STORAGE_KEY.PRESET_TOAST_ENABLED] = changes[C.STORAGE_KEY.PRESET_TOAST_ENABLED].newValue;
+        }
 
         this.setUIValues(values);
     }
 
     async setInitialUIValues() {
         const {
-            [C.STORAGE_KEY.DISABLED_SITES]: disabledSites
+            [C.STORAGE_KEY.DISABLED_SITES]: disabledSites,
+            [C.STORAGE_KEY.PRESET_TOAST_ENABLED]: presetToastEnabled
         } = await this.store.get();
 
         let values = {};
@@ -59,6 +68,7 @@ class SettingsController {
         if (disabledSites) {
             values[C.STORAGE_KEY.DISABLED_SITES] = disabledSites;
         }
+        values.presetToastEnabled = presetToastEnabled;
 
         this.setUIValues(values);
     }
@@ -71,15 +81,18 @@ class SettingsController {
 
             document.getElementById(C.UI_ID.DISABLED_SITES).value = disabledSitesText;
         }
+
+        if (C.STORAGE_KEY.PRESET_TOAST_ENABLED in values) {
+            const presetToastEnabled = values[C.STORAGE_KEY.PRESET_TOAST_ENABLED];
+            document.querySelector(`#presetToastEnable`).checked = presetToastEnabled;
+        }
     }
 }
 
 
 class SettingsStore {
     async get() {
-        return browser.storage.local.get([
-            C.STORAGE_KEY.DISABLED_SITES
-        ]);
+        return browser.storage.local.get();
     }
 
     async set(values) {

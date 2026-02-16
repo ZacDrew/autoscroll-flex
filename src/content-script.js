@@ -1,3 +1,4 @@
+
 class GlideScroller {
     constructor(parent) {
         this.parent = parent;
@@ -21,6 +22,11 @@ class GlideScroller {
         if (!this.parent.enabled) return;
 
         this.stop();
+
+        this.parent.display.showToast(`
+            Preset ${this.presetSelected + 1} \n
+            ${this.speed} px/sec
+        `);
 
         let lastTime = performance.now();
         const target = this.parent.scrollTarget;
@@ -82,7 +88,10 @@ class StepScroller {
         if (!this.parent.enabled) return;
         this.stop();
 
-        // console.log(this.distance, this.delay);
+        this.parent.display.showToast(`
+            Preset ${this.presetSelected + 1} \n
+            ${this.distance} px / ${this.delay} sec
+        `);
 
         this.intervalId = setInterval(() => {
             if (!this.parent.enabled) return;
@@ -111,8 +120,6 @@ class StepScroller {
     }
 }
 
-
-
 class AutoScroller {
     constructor() {
         this.enabled = true;
@@ -125,6 +132,7 @@ class AutoScroller {
 
         this.glide = new GlideScroller(this);
         this.step = new StepScroller(this);
+        this.display = new Display(this);
 
         this.direction = 'down';
 
@@ -163,15 +171,10 @@ class AutoScroller {
             if (key in this) {
                 this[key] = value;
             }
-            // if (key in this.glide) {
-            //     this.glide[key] = value;
-            // }
-            // if (key in this.step) {
-            //     this.step[key] = value;
-            // }
         }
         this.glide.setPreset(settings.glidePresetSelected, settings.glidePresets)
         this.step.setPreset(settings.stepPresetSelected, settings.stepPresets)
+        this.display.setToastEnabled(settings.presetToastEnabled);
         if (scrolling) this.start();
     }
 
@@ -225,6 +228,62 @@ class AutoScroller {
     }
 }
 
+class Display {
+    constructor(scroller) {
+        this.scroller = scroller;
+        this.toast = null;
+        this.timeout = null;
+        this.enabled = true;
+    }
+
+    setToastEnabled(enabled) {
+        if (enabled === undefined) return;
+        this.enabled = enabled;
+    }
+
+    createToast() {
+        this.toast = document.createElement('div');
+        this.toast.id = 'autoscroll-flex-toast';
+
+        Object.assign(this.toast.style, {
+            position: 'fixed',
+            top: '20px',
+            right: '60px',
+            zIndex: 999999,
+            padding: '0px 14px 8px 14px',
+            borderRadius: '8px',
+            background: 'rgba(0,0,0,0.8)',
+            color: '#fff',
+            fontSize: '15px',
+            fontFamily: 'system-ui, sans-serif',
+            pointerEvents: 'none',
+            opacity: '0',
+            transition: 'opacity 0.2s ease',
+            lineHeight: '1',
+            whiteSpace: 'pre-line',
+
+            display: 'flex',
+            alignItems: 'center',
+        });
+        document.body.appendChild(this.toast);
+    }
+
+    showToast(message) {
+        
+        if (!this.enabled) return;
+        if (!this.toast) this.createToast();
+
+        this.toast.textContent = message;
+        this.toast.style.opacity = '1';
+
+        clearTimeout(this.timeout);
+
+        this.timeout = setTimeout(() => {
+            this.toast.style.opacity = '0';
+        }, 2000);
+    }
+}
+
 const scroller = new AutoScroller();
 
 (async function init() {
@@ -241,7 +300,8 @@ const scroller = new AutoScroller();
         spaceEnabled,
         LREnabled,
         UDEnabled, 
-        disabledSites = DEFAULT.DISABLED_SITES
+        disabledSites = DEFAULT.DISABLED_SITES,
+        presetToastEnabled
     } = await browser.storage.local.get();
     
     scroller.setSettings({ 
@@ -256,7 +316,8 @@ const scroller = new AutoScroller();
         spaceEnabled,
         LREnabled,
         UDEnabled, 
-        disabledSites
+        disabledSites,
+        presetToastEnabled
     });
 })();
 
@@ -324,6 +385,10 @@ browser.storage.onChanged.addListener((changes, area) => {
 
     if (changes.disabledSites) {
         scroller.setEnabled(changes.disabledSites.newValue);
+    }
+
+    if (changes[STORAGE_KEY.PRESET_TOAST_ENABLED]) {
+        scroller.setSettings({ [STORAGE_KEY.PRESET_TOAST_ENABLED]: changes[STORAGE_KEY.PRESET_TOAST_ENABLED].newValue });
     }
 });
 

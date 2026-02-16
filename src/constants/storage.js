@@ -44,6 +44,8 @@ export const STORAGE_KEY = {
     SPACE_ENABLED: 'spaceEnabled',
     LR_ENABLED: 'LREnabled',
     UD_ENABLED: 'UDEnabled',
+
+    PRESET_TOAST_ENABLED: 'presetToastEnabled',
 };
 
 // default setting values
@@ -65,4 +67,6 @@ export const DEFAULT = {
     SPACE_ENABLED: true,
     LR_ENABLED: true,
     UD_ENABLED: true,
+
+    PRESET_TOAST_ENABLED: true,
 }
