@@ -1,5 +1,9 @@
 <h1> Autoscroll Flex </h1>
 
+<storng>REWRITE IN PROGRESS</strong><br>
+<storng>See repo from release v0.1.1 for a working example of the addon</strong>
+<br>
+
 This is a tool primarily designed to assist with reading vertical scrolling comics like manhwa (and sometimes manga). <br>
 Its purpose is to be a flexible autoscroll where the user can easily set the speeds and adjust them while reading without the interruption of clicking through a menu.
 
