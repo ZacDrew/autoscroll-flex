@@ -1,0 +1,26 @@
+{
+  "name": "wxt-vue-starter",
+  "description": "manifest.json description",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt -b firefox --mv2",
+    "dev:chrome": "wxt -b chrome",
+    "build": "wxt build -b firefox --mv3",
+    "build:chrome": "wxt build -b chrome",
+    "zip": "wxt zip -b firefox --mv3",
+    "zip:chrome": "wxt zip -b chrome",
+    "compile": "vue-tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "vue": "^3.5.27"
+  },
+  "devDependencies": {
+    "@wxt-dev/module-vue": "^1.0.3",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.4",
+    "wxt": "^0.20.17"
+  }
+}
