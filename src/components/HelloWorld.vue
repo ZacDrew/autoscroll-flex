@@ -11,9 +11,9 @@ const count = ref(0);
 <template>
   <h1>{{ msg }}</h1>
 
-  <div class="card">
+  <div class="bg-red-400">
     <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
+    <p class="text-red-100">
       Edit
       <code>components/HelloWorld.vue</code> to test HMR aaaaaaaaaaaaaaa
     </p>

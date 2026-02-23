@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import HelloWorld from '@/components/HelloWorld.vue';
+
 </script>
 
 <template>
@@ -10,7 +11,8 @@ import HelloWorld from '@/components/HelloWorld.vue';
     <a href="https://vuejs.org/" target="_blank">
       <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
-  </div>
+  </div class="text-red">
+  <p class="text-red-800">aaaaaaaa</p>
   <HelloWorld msg="WXT + Vue" />
 </template>
 
