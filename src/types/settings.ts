@@ -10,6 +10,7 @@ export interface StepPreset {
 }
 
 export interface Settings {
+    test: number;
     disabledSites: string[];
 
     scrollMode: ScrollMode;
@@ -29,6 +30,7 @@ export interface Settings {
 }
 
 export const defaultSettings: Settings = {
+    test: 0,
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
 
     scrollMode: 'glide',
@@ -53,7 +55,8 @@ export const defaultSettings: Settings = {
 
 export type PopupSettings = Pick<
     Settings, 
-    'disabledSites'
+    'test'
+    |'disabledSites'
     | 'scrollMode'
     | 'glidePresets'
     | 'stepPresets'
@@ -64,6 +67,20 @@ export type PopupSettings = Pick<
     | 'lrEnabled'
     | 'udEnabled'
 >
+
+export const popupKeys = [
+  'test',
+  'disabledSites',
+  'scrollMode',
+  'glidePresets',
+  'stepPresets',
+  'glidePresetSelected',
+  'stepPresetSelected',
+  'hijacksEnabled',
+  'spaceEnabled',
+  'lrEnabled',
+  'udEnabled',
+] as const;
 
 export type ContentSettings = 
     Pick<Settings, 'scrollMode'> & 
