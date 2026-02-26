@@ -9,83 +9,59 @@ export interface StepPreset {
   delay: number;
 }
 
+// Settings stored by the background
 export interface Settings {
-    test: number;
-    disabledSites: string[];
+  test: number;
+  scrolling: boolean;
+  disabledSites: string[];
 
-    scrollMode: ScrollMode;
+  scrollMode: ScrollMode;
 
-    glidePresets: GlidePreset[];
-    stepPresets: StepPreset[];
+  glidePresets: GlidePreset[];
+  stepPresets: StepPreset[];
 
-    glidePresetSelected: number;
-    stepPresetSelected: number;
+  glidePresetSelected: number;
+  stepPresetSelected: number;
 
-    hijacksEnabled: boolean;
-    spaceEnabled: boolean;
-    lrEnabled: boolean;
-    udEnabled: boolean;
+  hijacksEnabled: boolean;
+  spaceEnabled: boolean;
+  lrEnabled: boolean;
+  udEnabled: boolean;
 
-    presetToastEnabled: boolean;
+  presetToastEnabled: boolean;
 }
 
-export const defaultSettings: Settings = {
-    test: 0,
-    disabledSites: ['www.youtube.com', 'www.twitch.tv'],
+// // Settings sent to the popup
+// export interface PopupSettings {
+//   test: number;
 
-    scrollMode: 'glide',
+//   scrollingEnabled: boolean; // derived
+//   scrolling: boolean;
 
-    glidePresets: [{ speed: 100 }, { speed: 200 }, { speed: 500 }],
-    stepPresets: [
-        { distance: 500, delay: 2 },
-        { distance: 700, delay: 2 },
-        { distance: 700, delay: 1 }
-    ],
+//   scrollMode: ScrollMode;
 
-    glidePresetSelected: 0,
-    stepPresetSelected: 0,
+//   glidePresets: GlidePreset[];
+//   stepPresets: StepPreset[];
 
-    hijacksEnabled: false,
-    spaceEnabled: true,
-    lrEnabled: true,
-    udEnabled: true,
+//   glidePresetSelected: number;
+//   stepPresetSelected: number;
 
-    presetToastEnabled: true,
-};
+//   hijacksEnabled: boolean;
+//   spaceEnabled: boolean;
+//   lrEnabled: boolean;
+//   udEnabled: boolean;
+// }
 
-export type PopupSettings = Pick<
-    Settings, 
-    'test'
-    |'disabledSites'
-    | 'scrollMode'
-    | 'glidePresets'
-    | 'stepPresets'
-    | 'glidePresetSelected'
-    | 'stepPresetSelected'
-    | 'hijacksEnabled'
-    | 'spaceEnabled'
-    | 'lrEnabled'
-    | 'udEnabled'
->
+// // Settings sent to the content script
+// export interface ContentSettings {
+//   scrollingEnabled: boolean; // derived
+//   scrolling: boolean;
 
-export const popupKeys = [
-  'test',
-  'disabledSites',
-  'scrollMode',
-  'glidePresets',
-  'stepPresets',
-  'glidePresetSelected',
-  'stepPresetSelected',
-  'hijacksEnabled',
-  'spaceEnabled',
-  'lrEnabled',
-  'udEnabled',
-] as const;
+//   scrollMode: ScrollMode;
 
-export type ContentSettings = 
-    Pick<Settings, 'scrollMode'> & 
-    {
-    speed: number
-    distance: number
-    delay: number
-    }
+//   speed: number; // derived
+//   distance: number; // derived
+//   delay: number; // derived
+
+//   presetToastEnabled: boolean;
+// }

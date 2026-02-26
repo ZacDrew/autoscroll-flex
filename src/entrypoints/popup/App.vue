@@ -1,32 +1,18 @@
+// src/entrypoints/popup/App.vue
+
 <script lang="ts" setup>
 import HelloWorld from '@/components/HelloWorld.vue';
+import EnableScrolling from '@/components/popup/EnableScrolling.vue';
 
 </script>
 
 <template>
-  <div>
-    <a href="https://wxt.dev" target="_blank">
-      <img src="/autoscroll-flex-logo.svg" class="logo" alt="WXT logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div class="text-red">
-  <p class="text-red-800">aaaaaaaa</p>
-  <HelloWorld msg="WXT + Vue" />
+  <div class="bg-surface text-text font-sans">
+    <EnableScrolling />
+    <p class="text-sakura">aaaa</p>
+
+    <HelloWorld msg="WXT + Vue" />
+    
+  </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #54bc4ae0);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings';
+import { sendMessage } from '@/utils/messaging'
 
 defineProps({
   msg: String,
@@ -8,13 +9,17 @@ defineProps({
 
 const count = ref(0);
 const { state, update } = useSettings();
+function btnClicked() {
+  update('test', ++state.test)
+  sendMessage('openwindow');
+}
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="bg-blue-400">
-    <button type="button" @click="update('test', ++state.test)">count is {{ state.test }}</button>
+    <button type="button" @click="btnClicked()">count is {{ state.test }}</button>
     <p class="text-red-100">
       Edit
       <code>components/HelloWorld.vue</code> to test HMR aaaaaaaaaaaaaaa

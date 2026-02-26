@@ -1,3 +1,5 @@
+// src/entrypoints/popup/main.ts
+
 import { createApp } from 'vue';
 // import './style.css';
 import "@/assets/tailwind.css";
