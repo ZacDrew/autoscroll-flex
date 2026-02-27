@@ -5,7 +5,7 @@ import { useSettings } from '@/composables/useSettings';
 defineProps({
 
 });
-const { state, update } = useSettings();
+const { state, update } = useSettings('popup');
 
 </script>
 

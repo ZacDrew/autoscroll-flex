@@ -31,6 +31,8 @@ export interface Settings {
   presetToastEnabled: boolean;
 }
 
+export type SettingTarget = 'popup' | 'content' | 'options';
+
 // // Settings sent to the popup
 // export interface PopupSettings {
 //   test: number;

@@ -1,4 +1,4 @@
-import type { Settings } from "@/types/settings";
+import type { Settings, SettingTarget } from "@/types/settings";
 
 export const defaultSettings: Settings = {
     test: 0,
@@ -25,51 +25,24 @@ export const defaultSettings: Settings = {
     presetToastEnabled: true,
 };
 
-// export function toPopupSettings(
-//   settings: Settings,
-//   currentHost: string
-// ): PopupSettings {
-//   const scrollingEnabled = !settings.disabledSites.includes(currentHost);
+// Determine what settings each context recieves
+export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
+    test:                   [   'popup',    'content',  'options'   ],
+    scrolling:              [   'popup',    'content'               ],
+    disabledSites:          [   'popup',    'content',  'options'   ],
 
-//   return {
-//     test: settings.test,
-//     scrollingEnabled,
-//     scrolling: settings.scrolling,
+    scrollMode:             [   'popup',    'content'               ],
 
-//     scrollMode: settings.scrollMode,
+    glidePresets:           [   'popup',    'content'               ],
+    stepPresets:            [   'popup',    'content'               ],
 
-//     glidePresets: settings.glidePresets,
-//     stepPresets: settings.stepPresets,
+    glidePresetSelected:    [   'popup',    'content'               ],
+    stepPresetSelected:     [   'popup',    'content'               ],
 
-//     glidePresetSelected: settings.glidePresetSelected,
-//     stepPresetSelected: settings.stepPresetSelected,
+    hijacksEnabled:         [   'popup',                'options'   ],
+    spaceEnabled:           [   'popup',                'options'   ],
+    lrEnabled:              [   'popup',                'options'   ],
+    udEnabled:              [   'popup',                'options'   ],
 
-//     hijacksEnabled: settings.hijacksEnabled,
-//     spaceEnabled: settings.spaceEnabled,
-//     lrEnabled: settings.lrEnabled,
-//     udEnabled: settings.udEnabled,
-//   };
-// }
-
-// export function toContentSettings(
-//   settings: Settings,
-//   currentHost: string
-// ): ContentSettings {
-//   const scrollingEnabled = !settings.disabledSites.includes(currentHost);
-
-//   const glide = settings.glidePresets[settings.glidePresetSelected];
-//   const step = settings.stepPresets[settings.stepPresetSelected];
-
-//   return {
-//     scrollingEnabled,
-//     scrolling: settings.scrolling,
-
-//     scrollMode: settings.scrollMode,
-
-//     speed: glide?.speed ?? 0,
-//     distance: step?.distance ?? 0,
-//     delay: step?.delay ?? 0,
-
-//     presetToastEnabled: settings.presetToastEnabled,
-//   };
-// }
+    presetToastEnabled:     [               'content',  'options'   ],
+} as const

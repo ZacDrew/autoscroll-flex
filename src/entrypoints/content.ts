@@ -1,6 +1,9 @@
+import { ref } from 'vue'
+
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
   main() {
-    console.log('Hello content.');
+    const a = ref(0);
+    console.log('Hello content.', a);
   },
 });

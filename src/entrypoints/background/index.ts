@@ -1,7 +1,8 @@
 import { storage } from '#imports';
-import type { Settings} from "@/types/settings";
-import { defaultSettings } from '@/utils/settings-creation';
+import type { Settings, SettingTarget } from "@/types/settings";
+import { defaultSettings, settingTargets } from '@/utils/settings-creation';
 import { sendMessage, onMessage } from '@/utils/messaging';
+import { filterSettings } from '@/utils/filter-settings';
 
 export default defineBackground({
   type: 'module', 
@@ -17,30 +18,41 @@ export default defineBackground({
       await storage.setItem('local:settings', settings);
     })();
 
-    onMessage('getSettings', () => {
-      return settings;
+    onMessage('getSettings', (message) => {
+      return filterSettings(settings, message.data);
     });
 
     // update individual setting change
     onMessage(
       'updateSetting',
       async <K extends keyof Settings>(message: {
-        data: { key: K; value: Settings[K] };
+        data: { key: K; value: Settings[K]; source: SettingTarget };
       }) => {
-      const { key, value } = message.data;
+      const { key, value, source } = message.data;
       settings[key] = value;
 
       await storage.setItem('local:settings', settings);
-      console.log('update stored: ', await storage.getItem<Settings>(`local:settings`));
+      console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
 
-      // Broadcast setting change
-      sendMessage('settingUpdated', {key, value});
+      // Broadcast setting change to contexts that share the setting
+      const targets = settingTargets[key];
+      for (const target of targets) {
+        sendMessage('settingUpdated', {key, value});
+      }  
     })
 
 
 
-    let popupWindowId: number | null = null;
+    
 
+
+
+
+
+
+
+    // Popout Popup
+    let popupWindowId: number | null = null;
 
     onMessage('openwindow', async () => {
       if (popupWindowId) {
@@ -52,7 +64,7 @@ export default defineBackground({
       const win = await browser.windows.create({
         url: browser.runtime.getURL("/popup.html"),
         type: "popup",
-        width: 400,
+        width: 296,
         height: 600,
       });
       console.log("Created window:", win);

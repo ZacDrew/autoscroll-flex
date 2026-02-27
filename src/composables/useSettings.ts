@@ -1,6 +1,6 @@
 import { reactive, watch } from 'vue'
 import { onMessage, sendMessage } from '@/utils/messaging'
-import { type Settings } from '@/types/settings'
+import { SettingTarget, type Settings } from '@/types/settings'
 import { defaultSettings } from '@/utils/settings-creation';
 
 const state = reactive<Settings>({} as Settings);
@@ -12,7 +12,7 @@ function init() {
     initialized = true;
 
     // Request settings from background
-    sendMessage('getSettings').then((res) => {
+    sendMessage('getSettings', 'popup').then((res) => {
         Object.assign(state, res);
     })
 
@@ -26,17 +26,18 @@ function init() {
     })
 }
 
-// Send an updated setting to background
-async function update<K extends keyof Settings>(
-    key: K,
-    value: Settings[K]
-) {
-    state[key] = value;
-    await sendMessage('updateSetting', { key, value });
-}
-
-export function useSettings() {
+export function useSettings(source: SettingTarget) {
     init();
+
+    // Send an updated setting to background
+    async function update<K extends keyof Settings>(
+        key: K,
+        value: Settings[K]
+    ) {
+        state[key] = value;
+        await sendMessage('updateSetting', { key, value, source });
+    }
+
     return { state, update };
 }
     
