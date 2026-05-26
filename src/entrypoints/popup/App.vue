@@ -9,8 +9,6 @@ import EnableScrolling from '@/components/popup/EnableScrolling.vue';
 <template>
   <div class="bg-surface text-text font-sans">
     <EnableScrolling />
-    <p class="text-sakura">aaaa</p>
-
     <HelloWorld msg="WXT + Vue" />
     
   </div>

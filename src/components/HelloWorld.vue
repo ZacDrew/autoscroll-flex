@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings';
 import { sendMessage } from '@/utils/messaging'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 
 defineProps({
   msg: String,
@@ -20,24 +22,16 @@ function btnClicked() {
 <template>
   <h1>{{ msg }}</h1>
 
+  <Card class="p-3">
+    <p>what this look like?</p>
+    <Button>
+      Button
+    </Button>
+  </Card>
+
   <div class="bg-blue-400">
     <button type="button" @click="btnClicked()">count is {{ state.test }}</button>
-    <p class="text-red-100">
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR aaaaaaaaaaaaaaa
-    </p>
   </div>
 
-  <p>
-    Install
-    <a href="https://github.com/vuejs/language-tools" target="_blank">Volar</a>
-    in your IDE for a better DX
-  </p>
-  <p class="read-the-docs">Click on the WXT and Vue logos to learn more</p>
-</template>
 
-<style scoped>
-.read-the-docs {
-  color: #8F8;
-}
-</style>
+</template>

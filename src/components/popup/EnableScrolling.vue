@@ -10,7 +10,5 @@ const { state, update } = useSettings('popup');
 </script>
 
 <template>
-    <div class="flex rounded-lg p-2 pb-1 bg-surface-700">
-        <label>some filler text</label>
-    </div>
+
 </template>
