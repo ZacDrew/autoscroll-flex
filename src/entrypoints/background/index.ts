@@ -64,7 +64,7 @@ export default defineBackground({
       const win = await browser.windows.create({
         url: browser.runtime.getURL("/popup.html"),
         type: "popup",
-        width: 296,
+        width: 310, // 14px wider than popup
         height: 600,
       });
       console.log("Created window:", win);
