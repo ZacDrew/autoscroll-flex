@@ -13,6 +13,7 @@ export interface Protocol {
     settingUpdated<K extends keyof Settings>(data: {
         key: K
         value: Settings[K]
+        source: SettingTarget
     }): void;
 
     openwindow(): void;

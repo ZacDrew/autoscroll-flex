@@ -10,13 +10,7 @@ import ScrollTypes from '@/components/popup/ScrollTypes.vue';
 <template>
   <div class="bg-background flex h-full flex-col overflow-hidden min-w-[296px]">
     <HeaderBar />
-    <div class="p-4 flex-1 overflow-y-auto">
-      <HelloWorld msg="WXT + Vue" />
-      <ScrollTypes />
-      <ScrollTypes />
-      <ScrollTypes />
-      <ScrollTypes />
-      <ScrollTypes />
+    <div class="px-3 py-4 flex-1 overflow-y-auto">
       <ScrollTypes />
     </div>
     

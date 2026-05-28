@@ -14,7 +14,7 @@ const { state, update } = useSettings('popup');
 function btnClicked() {
   update('test', ++state.test)
   console.dir('state from popup: ', state);
-  
+
   sendMessage('openwindow');
 }
 </script>
