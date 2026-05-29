@@ -5,18 +5,22 @@ import { sendMessage } from '@/utils/messaging'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import CardTitle from '../ui/card/CardTitle.vue';
 import CardContent from '../ui/card/CardContent.vue';
 import Input from '../ui/input/Input.vue';
 import { PhX } from '@phosphor-icons/vue';
-import { useDebounceFn } from '@vueuse/core'
+import PresetCard from '@/components/popup/PresetCard.vue'
 
 
 const { state, update } = useSettings('popup');
 
-function clickPreset(index: number) {
+function clickGlidePreset(index: number) {
   // state.glidePresetSelected = index; // sets the local glide preset before hearing back from bg
   update('glidePresetSelected', index)
+}
+
+function clickStepPreset(index: number) {
+  // state.stepPresetSelected = index; // sets the local step preset before hearing back from bg
+  update('stepPresetSelected', index)
 }
 
 </script>
@@ -31,71 +35,96 @@ function clickPreset(index: number) {
 
     <Tabs default-value="glide" class="flex flex-col">
       <TabsList class="self-center">
-        <TabsTrigger value="glide" 
-          class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsTrigger value="glide" class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
           Glide
         </TabsTrigger>
-        <TabsTrigger value="step"
-          class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsTrigger value="step" class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
           Step
         </TabsTrigger>
-        <TabsTrigger value="smart"
-          class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsTrigger value="smart" class="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
           Smart
         </TabsTrigger>
       </TabsList>
 
+      <!-- Glide Presets -->
       <TabsContent value="glide" class="flex flex-col gap-1">
 
-        <Card 
-          v-for="(preset, index) in state.glidePresets" :key="index"
-          @click="clickPreset(index)"
-          class="bg-muted rounded-lg"
+        <PresetCard v-for="(preset, index) in state.glidePresets" :key="index"
+          :selected="state.glidePresetSelected === index" @click="clickGlidePreset(index)">
 
-          :class="state.glidePresetSelected === index 
-            ? 'border-primary bg-accent' 
-            : 'bg-muted'"
-          >
-          <CardContent class="p-0">
+          <div class="flex flex-col">
+            <span class="font-semibold text-sm">
+              Scroll Speed
+            </span>
 
-            <div class="flex items-stetch justify-between">
-              <div class="px-2 pb-1.5 pt-0">
+            <div class="flex items-center gap-1">
 
-                <div class="flex flex-col">
-                  <span class="font-semibold text-sm">Scroll Speed</span>
+              <Input type="number" v-model="preset.speed" @change="update('glidePresets', state.glidePresets)"
+                class="w-30 h-8 font-semibold [appearance:textfield]" />
 
-                  <div class="flex items-center gap-1">
+              <span class="text-muted-foreground text-sm">
+                px/sec
+              </span>
 
-                    <Input type="number" 
-                      v-model="preset.speed"
-                      @change="update('glidePresets', state.glidePresets)"
-                      class="w-30 h-8 font-semibold [appearance:textfield]">
-                    </Input>
+            </div>
+          </div>
 
-                    <span class="text-muted-foreground text-sm">
-                      px/sec
-                    </span>
+        </PresetCard>
+      </TabsContent>
 
-                  </div>
-                </div>
+      <!-- Step Presets -->
+      <TabsContent value="step" class="flex flex-col gap-1">
+
+        <PresetCard v-for="(preset, index) in state.stepPresets" :key="index"
+          :selected="state.stepPresetSelected === index" @click="clickStepPreset(index)">
+
+          <div class="flex gap-3">
+
+            <!-- Scroll Distance -->
+            <div class="flex flex-col">
+              <span class="font-semibold text-sm">
+                Scroll Distance
+              </span>
+
+              <div class="flex items-center gap-1">
+
+                <Input type="number" v-model="preset.distance" 
+                  @change="update('stepPresets', state.stepPresets)"
+                  class="w-20 h-8 font-semibold [appearance:textfield]" />
+
+                <span class="text-muted-foreground text-sm">
+                  px
+                </span>
 
               </div>
-              <Button class="group [&_svg]:size-auto h-auto rounded-l-none
-                rounded-r-lg border-l w-4.5 p-0 hover:bg-background">
-                <PhX :size="15" weight="bold" class="group-hover:text-red-400"/>
-              </Button>
             </div>
 
-          </CardContent>
-        </Card>
+            <!-- Scroll Interval -->
+             <div class="flex flex-col">
+              <span class="font-semibold text-sm">
+                Scroll Interval
+              </span>
 
+              <div class="flex items-center gap-1">
+
+                <Input type="number" v-model="preset.delay" 
+                  @change="update('stepPresets', state.stepPresets)"
+                  class="w-20 h-8 font-semibold [appearance:textfield]" />
+
+                <span class="text-muted-foreground text-sm">
+                sec
+                </span>
+
+              </div>
+            </div>
+
+          </div>
+
+        </PresetCard>
 
       </TabsContent>
 
-      <TabsContent value="step">
-        pop pop
-      </TabsContent>
-
+      <!-- Smart Presets -->
       <TabsContent value="smart">
         Feeling smart now?
       </TabsContent>
