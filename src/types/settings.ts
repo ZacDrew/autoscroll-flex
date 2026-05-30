@@ -1,4 +1,4 @@
-export type ScrollMode = 'glide' | 'step'
+export type ScrollMode = 'glide' | 'step' | 'smart'
 
 export interface GlidePreset {
   speed: number;

@@ -2,7 +2,8 @@
 <script setup lang="ts">
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PhX } from '@phosphor-icons/vue'
+import { PhDotsSixVertical, PhX } from '@phosphor-icons/vue'
+import { MouseLeft } from 'lucide-vue-next';
 
 defineProps<{
   selected?: boolean
@@ -11,35 +12,56 @@ defineProps<{
 defineEmits<{
   click: []
 }>()
+
+const contentHovered = ref<boolean>(false)
+
+function handleHighlights(selected: boolean, contentHovered: boolean) {
+  if (selected) {
+    return 'border border-primary';
+  } else if (contentHovered) {
+    return 'bg-accent';
+  } else {
+    return 'bg-muted';
+  }
+    
+
+}
 </script>
 
 <template>
-  <Card
-    @click="$emit('click')"
-    class="rounded-lg"
-    :class="selected
-      ? 'border-primary bg-accent'
-      : 'bg-muted'"
-  >
-    <CardContent class="p-0">
-      <div class="flex items-stretch justify-between">
+  <div class="flex items-stretch border rounded-lg" 
+    :class="handleHighlights(selected, contentHovered)">
 
-        <div class="px-2 pb-1.5 pt-0 flex-1">
-          <slot />
-        </div>
+    <div class="flex items-stretch flex-1 rounded-l-lg">
 
-        <Button
-          class="group [&_svg]:size-auto h-auto rounded-l-none
-          rounded-r-lg border-l w-4.5 p-0 hover:bg-background"
-        >
-          <PhX
-            :size="15"
-            weight="bold"
-            class="group-hover:text-red-400"
-          />
-        </Button>
-
+      <!-- Grab Section -->
+      <div class="pr-0.5 flex items-center justify-center rounded-l-lg cursor-grab" :class="selected
+        ? 'bg-accent'
+        : 'bg-transparent'" 
+        @click="" >
+        <PhDotsSixVertical :size="20" weight="bold" class="" />
       </div>
-    </CardContent>
-  </Card>
+
+      <!-- Content Section -->
+      <Card @click="$emit('click')" class="rounded-none bg-muted hover:bg-accent
+        flex-1 border-0 border-r" :class="selected
+          ? 'bg-accent'
+          : 'bg-transparent'"
+          @mouseenter="contentHovered=true" @mouseleave="contentHovered=false">
+
+        <CardContent class="p-0">
+          <div class="pr-2 pb-1.5 pt-0 flex-1">
+            <slot />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <!-- Delete Button -->
+    <Button title="Delete Preset" class="group [&_svg]:size-auto h-auto rounded-l-none
+            rounded-r-lg w-4.5 p-0 hover:bg-background" @click.stop>
+      <PhX :size="15" weight="bold" class="group-hover:text-red-400" />
+    </Button>
+
+  </div>
 </template>
