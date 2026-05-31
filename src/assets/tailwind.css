@@ -18,6 +18,11 @@ body,
   padding: 0;
 }
 
+/*  */
+[data-is-dragging] {
+  cursor: grabbing !important;
+}
+
 :root {
   --background: oklch(0.9892 0.0055 3.3343);
   --foreground: oklch(0.1991 0.0100 6.7272);

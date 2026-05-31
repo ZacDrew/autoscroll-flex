@@ -34,8 +34,9 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
 
     <div class="flex items-stretch flex-1 rounded-l-lg">
 
-      <!-- Grab Section -->
-      <div class="pr-0.5 flex items-center justify-center rounded-l-lg cursor-grab" :class="selected
+      <!-- Handle Section -->
+      <div class="drag-handle pr-0.5 flex items-center justify-center
+        rounded-l-lg " :class="selected
         ? 'bg-accent'
         : 'bg-transparent'" 
         @click="" >

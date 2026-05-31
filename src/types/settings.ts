@@ -1,10 +1,12 @@
 export type ScrollMode = 'glide' | 'step' | 'smart'
 
 export interface GlidePreset {
+  id: string;
   speed: number;
 }
 
 export interface StepPreset {
+  id: string;
   distance: number;
   delay: number;
 }
@@ -20,8 +22,8 @@ export interface Settings {
   glidePresets: GlidePreset[];
   stepPresets: StepPreset[];
 
-  glidePresetSelected: number;
-  stepPresetSelected: number;
+  glidePresetSelected: string;
+  stepPresetSelected: string;
 
   hijacksEnabled: boolean;
   spaceEnabled: boolean;

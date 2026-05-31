@@ -7,15 +7,18 @@ export const defaultSettings: Settings = {
 
     scrollMode: 'glide',
 
-    glidePresets: [{ speed: 100 }, { speed: 200 }, { speed: 500 }],
+    glidePresets: [
+        { id: crypto.randomUUID(), speed: 100 }, 
+        { id: crypto.randomUUID(), speed: 200 }, 
+        { id: crypto.randomUUID(), speed: 500 }],
     stepPresets: [
-        { distance: 500, delay: 2 },
-        { distance: 700, delay: 2 },
-        { distance: 700, delay: 1 }
+        { id: crypto.randomUUID(), distance: 500, delay: 2 },
+        { id: crypto.randomUUID(), distance: 700, delay: 2 },
+        { id: crypto.randomUUID(), distance: 700, delay: 1 }
     ],
 
-    glidePresetSelected: 0,
-    stepPresetSelected: 0,
+    glidePresetSelected: "",
+    stepPresetSelected: "",
 
     hijacksEnabled: false,
     spaceEnabled: true,

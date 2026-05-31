@@ -5,7 +5,7 @@ import { sendMessage, onMessage } from '@/utils/messaging';
 import { filterSettings } from '@/utils/filter-settings';
 
 export default defineBackground({
-  type: 'module', 
+  type: 'module',
   main() {
     console.log('Hello background!', { id: browser.runtime.id });
 
@@ -14,7 +14,7 @@ export default defineBackground({
     // Set stored settings as defaults if not yet set
     (async () => {
       const stored = (await storage.getItem<Settings>('local:settings')) || {};
-      settings = structuredClone({ ...defaultSettings, ...stored});
+      settings = structuredClone({ ...defaultSettings, ...stored });
       await storage.setItem('local:settings', settings);
     })();
 
@@ -28,20 +28,20 @@ export default defineBackground({
       async <K extends keyof Settings>(message: {
         data: { key: K; value: Settings[K]; source: SettingTarget };
       }) => {
-      const { key, value, source } = message.data;
-      settings[key] = value;
+        const { key, value, source } = message.data;
+        settings[key] = value;
 
-      await storage.setItem('local:settings', settings);
-      console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
+        await storage.setItem('local:settings', settings);
+        console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
 
-      // Broadcast setting change to contexts that share the setting
-      sendMessage('settingUpdated', {key, value, source});
-      
-    })
+        // Broadcast setting change to contexts that share the setting
+        sendMessage('settingUpdated', { key, value, source });
+
+      })
 
 
 
-    
+
 
 
 
@@ -64,21 +64,30 @@ export default defineBackground({
         type: "popup",
         width: 310, // 14px wider than popup
         height: 600,
+        left: 2188,
+        top: 640,
       });
       console.log("Created window:", win);
 
-        if (win) {
-          popupWindowId = win.id ?? null;
-        } else {
-          popupWindowId = null;
-          console.error("Failed to create popup window");
-        }
+      if (win) {
+        popupWindowId = win.id ?? null;
+      } else {
+        popupWindowId = null;
+        console.error("Failed to create popup window");
+      }
 
       browser.windows.onRemoved.addListener((id) => {
         if (id === popupWindowId) popupWindowId = null;
       });
+
+      // TODO!!!: Remove this so it doesnt move the window off someones screen
+      await browser.windows.update(popupWindowId as number, {
+        left: 2735,
+        top: 800,
+      });
     });
 
+
   }
-  
+
 });
