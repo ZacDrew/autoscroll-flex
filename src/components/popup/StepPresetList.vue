@@ -34,8 +34,7 @@ watch(
 
 <template>
 
-
-  <div class="flex flex-col gap-1" ref="glideList">
+  <div class="flex flex-col gap-1" ref="stepList">
 
     <PresetCard v-for="(preset, index) in stepPresets" :key="preset.id"
       :selected="state.stepPresetSelected === preset.id" @select="clickStepPreset(preset.id)">

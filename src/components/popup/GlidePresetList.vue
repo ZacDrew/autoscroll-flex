@@ -34,7 +34,6 @@ watch(
 
 <template>
 
-
   <div class="flex flex-col gap-1" ref="glideList">
 
     <PresetCard v-for="(preset, index) in glidePresets" :key="preset.id"
