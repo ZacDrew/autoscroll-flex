@@ -10,7 +10,8 @@ defineProps<{
 }>()
 
 defineEmits<{
-  click: []
+  (e: 'select'): void
+  (e: 'delete'): void
 }>()
 
 const contentHovered = ref<boolean>(false)
@@ -44,7 +45,7 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
       </div>
 
       <!-- Content Section -->
-      <Card @click="$emit('click')" class="rounded-none bg-muted hover:bg-accent
+      <Card @click="$emit('select')" class="rounded-none bg-muted hover:bg-accent
         flex-1 border-0 border-r" :class="selected
           ? 'bg-accent'
           : 'bg-transparent'"
@@ -59,7 +60,8 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
     </div>
 
     <!-- Delete Button -->
-    <Button title="Delete Preset" class="group [&_svg]:size-auto h-auto rounded-l-none
+    <Button title="Delete Preset" @click="$emit('delete')" 
+            class="group [&_svg]:size-auto h-auto rounded-l-none
             rounded-r-lg w-4.5 p-0 hover:bg-background" @click.stop>
       <PhX :size="15" weight="bold" class="group-hover:text-red-400" />
     </Button>
