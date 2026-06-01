@@ -7,6 +7,7 @@ import { MouseLeft } from 'lucide-vue-next';
 
 defineProps<{
   selected?: boolean
+  lastPreset?: boolean
 }>()
 
 defineEmits<{
@@ -62,7 +63,9 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
     <!-- Delete Button -->
     <Button title="Delete Preset" @click="$emit('delete')" 
             class="group [&_svg]:size-auto h-auto rounded-l-none
-            rounded-r-lg w-4.5 p-0 hover:bg-background" @click.stop>
+            rounded-r-lg w-4.5 p-0 hover:bg-background"
+            :disabled="lastPreset"  
+          >
       <PhX :size="15" weight="bold" class="group-hover:text-red-400" />
     </Button>
 

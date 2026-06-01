@@ -48,14 +48,14 @@ const { state, update } = useSettings('popup');
       </TabsList>
 
       <!-- Glide Presets -->
-      <TabsContent value="glide" class="flex flex-col gap-1" ref="glideList">
+      <TabsContent value="glide">
 
         <GlidePresetList />
 
       </TabsContent>
 
       <!-- Step Presets -->
-      <TabsContent value="step" class="flex flex-col gap-1" ref="stepList">
+      <TabsContent value="step">
 
         <StepPresetList />
 

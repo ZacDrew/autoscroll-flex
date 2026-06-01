@@ -6,14 +6,12 @@ import Label from '../ui/label/Label.vue';
 import { GlidePreset } from '@/types/settings.js';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue'
 import { animations } from "@formkit/drag-and-drop";
+import Button from '../ui/button/Button.vue';
+import { PhPlus } from '@phosphor-icons/vue';
 
 
 const { state, update } = useSettings('popup');
 
-function clickGlidePreset(id: string) {
-  // state.glidePresetSelected = index; // sets the local glide preset before hearing back from bg
-  update('glidePresetSelected', id)
-}
 
 /* Make the preset lists draggable */
 // Initialize with empty array, not state.glidePresets (which may be undefined)
@@ -29,6 +27,35 @@ watch(
   { deep: true, immediate: true }  // immediate catches the first load
 )
 
+
+function clickGlidePreset(id: string) {
+  // state.glidePresetSelected = index; // sets the local glide preset before hearing back from bg
+  update('glidePresetSelected', id)
+}
+
+function deletePreset(pos: number, preset: GlidePreset, presets: GlidePreset[]) {
+  const isSelected = preset.id === state.glidePresetSelected;
+
+  // check if the target preset is selected and also the final in the array
+  if (isSelected && (presets.length === pos + 1)) {
+    state.glidePresetSelected = presets[pos - 1].id;
+    update('glidePresetSelected', state.glidePresetSelected);
+  } 
+  else if (isSelected) {
+    state.glidePresetSelected = presets[pos + 1].id;
+    update('glidePresetSelected', state.glidePresetSelected);
+  } 
+  
+  presets.splice(pos, 1);
+  update('glidePresets', presets);
+  
+}
+
+function addPreset(presets: GlidePreset[]) {
+  presets.push({id: crypto.randomUUID(), speed: 0})
+  update('glidePresets', presets);
+}
+
 </script>
 
 
@@ -37,12 +64,15 @@ watch(
   <div class="flex flex-col gap-1" ref="glideList">
 
     <PresetCard v-for="(preset, index) in glidePresets" :key="preset.id"
-      :selected="state.glidePresetSelected === preset.id" @select="clickGlidePreset(preset.id)">
+      :selected="state.glidePresetSelected === preset.id" 
+      :lastPreset="glidePresets.length < 2"
+      @select="clickGlidePreset(preset.id)"
+      @delete="deletePreset(glidePresets.indexOf(preset), preset, glidePresets)">
 
       <!-- Scroll Speed -->
       <Label class="flex flex-col">
         <span class="font-semibold text-sm">
-          Scroll Speed {{ glidePresets.indexOf(preset) }}
+          Scroll Speed
         </span>
 
         <div class="flex items-center gap-1">
@@ -59,5 +89,12 @@ watch(
 
     </PresetCard>
   </div>
+
+  <Button variant="outline" size="default" class="px-3 mt-2 [&_svg]:size-auto"
+    @click="addPreset(glidePresets)"
+  >
+    <PhPlus :size="18" weight="bold" class="text-secondary-foreground"/>
+    Add Preset
+  </Button>
 
 </template>
