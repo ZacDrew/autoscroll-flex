@@ -1,6 +1,6 @@
 {
-  "name": "wxt-vue-starter",
-  "description": "manifest.json description",
+  "name": "Autoscroll Flex",
+  "description": "Adjustable autoscroll designed for reading manhwa and manga.",
   "private": true,
   "version": "0.2.0",
   "type": "module",

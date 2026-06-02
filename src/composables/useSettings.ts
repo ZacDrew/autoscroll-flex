@@ -3,7 +3,7 @@ import { onMessage, sendMessage } from '@/utils/messaging'
 import { SettingTarget, type Settings } from '@/types/settings'
 import { defaultSettings } from '@/utils/settings-creation';
 
-const state = reactive<Settings>({} as Settings);
+const state = reactive<Settings>(structuredClone(defaultSettings));
 let initialized = false;
 
 // TODO: make init work for background and contentscript, not just popup

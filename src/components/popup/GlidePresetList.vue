@@ -23,7 +23,9 @@ const [glideList, glidePresets] = useDragAndDrop<GlidePreset>([], {
 // keep glidePreset up to date with state.
 watch(
   () => state.glidePresets,
-  (val) => { if (val) glidePresets.value = val },
+  (val) => { 
+    if (val) glidePresets.value = val;
+   },
   { deep: true, immediate: true }  // immediate catches the first load
 )
 
@@ -58,7 +60,7 @@ function addPreset(presets: GlidePreset[]) {
 
 </script>
 
-
+// Note: using label causes two @select events to be fired and thus 2 updates
 <template>
 
   <div class="flex flex-col gap-1" ref="glideList">

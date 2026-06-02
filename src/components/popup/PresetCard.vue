@@ -41,12 +41,12 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
         rounded-l-lg " :class="selected
         ? 'bg-accent'
         : 'bg-transparent'" 
-        @click="" >
+      >
         <PhDotsSixVertical :size="20" weight="bold" class="" />
       </div>
 
       <!-- Content Section -->
-      <Card @click="$emit('select')" class="rounded-none bg-muted hover:bg-accent
+      <Card @click.stop="$emit('select')" class="rounded-none bg-muted hover:bg-accent
         flex-1 border-0 border-r" :class="selected
           ? 'bg-accent'
           : 'bg-transparent'"
@@ -61,7 +61,7 @@ function handleHighlights(selected: boolean, contentHovered: boolean) {
     </div>
 
     <!-- Delete Button -->
-    <Button title="Delete Preset" @click="$emit('delete')" 
+    <Button title="Delete Preset" @click.stop="$emit('delete')" 
             class="group [&_svg]:size-auto h-auto rounded-l-none
             rounded-r-lg w-4.5 p-0 hover:bg-background"
             :disabled="lastPreset"  

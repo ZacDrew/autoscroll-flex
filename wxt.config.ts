@@ -11,6 +11,9 @@ export default defineConfig({
   srcDir: 'src',
 
   vite: () => ({
+    build: {
+      sourcemap: true,
+    },
     plugins: [tailwindcss()],
     resolve: {
     alias: {
