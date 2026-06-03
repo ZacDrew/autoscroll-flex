@@ -9,13 +9,16 @@ import ToggleGroupItem from '../ui/toggle-group/ToggleGroupItem.vue';
 
 const { state, update } = useSettings('popup');
 
-let direction = computed({
+let scrollingAndDirection = computed({
   get: () => {
-    return state.direction;
+    if (state.direction && state.scrolling) return state.direction;
+
+    return undefined;
   },
   
   set: (dir) => {
-    update('direction', dir)
+    dir ? update('scrolling', true) : update('scrolling', false);
+    update('direction', dir);
   }
 });
 
@@ -35,7 +38,7 @@ let direction = computed({
 
       <ToggleGroup
         type="single" orientation="vertical"
-        v-model="direction"
+        v-model="scrollingAndDirection"
         class="flex flex-col w-full h-wull gap-0"
       >
         <!-- up button -->
