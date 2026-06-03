@@ -23,7 +23,7 @@ function onWheel(event: WheelEvent) {
 </script>
 
 <template>
-  <div class="bg-background flex h-full flex-col overflow-hidden min-w-[296px]">
+  <div class="bg-background flex h-full flex-col overflow-hidden min-w-[296px] min-h-[600px]">
 
     <HeaderBar />
 

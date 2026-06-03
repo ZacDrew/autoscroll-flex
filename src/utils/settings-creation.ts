@@ -3,6 +3,7 @@ import type { Settings, SettingTarget } from "@/types/settings";
 export const defaultSettings: Settings = {
     test: 0,
     scrolling: false,
+    direction: undefined,
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
 
     scrollMode: 'glide',
@@ -34,6 +35,7 @@ export const defaultSettings: Settings = {
 export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
     test:                   [   'popup',    'content',  'options'   ],
     scrolling:              [   'popup',    'content'               ],
+    direction:              [   'popup',    'content'               ],
     disabledSites:          [   'popup',    'content',  'options'   ],
 
     scrollMode:             [   'popup',    'content'               ],

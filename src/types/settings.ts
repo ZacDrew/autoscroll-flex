@@ -15,6 +15,7 @@ export interface StepPreset {
 export interface Settings {
   test: number;
   scrolling: boolean;
+  direction: 'up' | 'down' | undefined;
   disabledSites: string[];
 
   scrollMode: ScrollMode;

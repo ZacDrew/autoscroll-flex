@@ -8,6 +8,9 @@ export default defineBackground({
   type: 'module',
   main() {
     console.log('Hello background!', { id: browser.runtime.id });
+    console.log('browser:', import.meta.env.BROWSER);
+
+    const isFirefox = import.meta.env.BROWSER === 'firefox';
 
     let settings: Settings;
 
@@ -63,9 +66,9 @@ export default defineBackground({
         url: browser.runtime.getURL("/popup.html"),
         type: "popup",
         width: 310, // 14px wider than popup
-        height: 600,
-        left: 2188,
-        top: 640,
+        height: 638, // 38px longer than popup
+        left: 1800,
+        top: 470,
       });
       console.log("Created window:", win);
 
@@ -81,10 +84,12 @@ export default defineBackground({
       });
 
       // TODO!!!: Remove this so it doesnt move the window off someones screen
-      await browser.windows.update(popupWindowId as number, {
-        left: 2735,
-        top: 800,
-      });
+      if (isFirefox) {
+        await browser.windows.update(popupWindowId as number, {
+          left: 2735,
+          top: 800,
+        });
+      }
     });
 
 

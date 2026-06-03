@@ -1,9 +1,19 @@
 import { ref } from 'vue'
+import { useSettings } from '@/composables/useSettings';
+
 
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
   main() {
-    const a = ref(0);
-    console.log('Hello content.', a);
+    const { state, update } = useSettings('content');
+
+    console.log('Hello content. scrolling:', state.scrolling);
+
+    
+
+
+
+
+
   },
 });

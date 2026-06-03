@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "wxt -b firefox --mv3",
-    "dev:chrome": "wxt -b chrome",
+    "dev:chrome": "wxt -b chrome --mv3",
     "build": "wxt build -b firefox --mv3",
     "build:chrome": "wxt build -b chrome",
     "zip": "wxt zip -b firefox --mv3",

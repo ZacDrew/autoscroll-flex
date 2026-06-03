@@ -9,6 +9,15 @@ import ToggleGroupItem from '../ui/toggle-group/ToggleGroupItem.vue';
 
 const { state, update } = useSettings('popup');
 
+let direction = computed({
+  get: () => {
+    return state.direction;
+  },
+  
+  set: (dir) => {
+    update('direction', dir)
+  }
+});
 
 </script>
 
@@ -17,15 +26,16 @@ const { state, update } = useSettings('popup');
 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 z-9999">
 
   <!-- tag -->
-  <div class="flex justify-center p-0 rounded-t-full bg-card outline"
+  <div class="flex justify-center h-28 w-32 p-0 rounded-t-full bg-card outline"
     :hidden="state.controlsHidden">
 
     <!-- circle -->
-    <div class="relative w-24 h-24 mx-4 mt-2 mb-2 p-0 rounded-full flex flex-col
-      items-start justify-center bg-card outline-2 z-50">
+    <div class="relative w-24 h-24 mt-2 mb-0 mx-0 p-0 rounded-full flex flex-col
+      items-start justify-center bg-card outline-2 z-50 pointer-events-none">
 
       <ToggleGroup
         type="single" orientation="vertical"
+        v-model="direction"
         class="flex flex-col w-full h-wull gap-0"
       >
         <!-- up button -->
@@ -33,7 +43,7 @@ const { state, update } = useSettings('popup');
           value="up"
           title="Scroll Up" variant="default"
           class="group relative w-24 h-12 rounded-t-full [&_svg]:size-auto! p-0
-            hover:bg-accent"
+            bg-secondary hover:bg-accent pointer-events-auto"
         >
           <PhCaretUp :size="45" weight="bold"
             class="self-center absolute top-1.5 group-data-[state=on]:text-primary"
@@ -44,7 +54,7 @@ const { state, update } = useSettings('popup');
           value="down"
           title="Scroll Down" variant="default"
           class="group relative w-24 h-12 rounded-b-full [&_svg]:size-auto! p-0
-            hover:bg-accent"
+            bg-secondary hover:bg-accent pointer-events-auto"
         >
           <PhCaretDown :size="45" weight="bold"
             class="self-center absolute bottom-1.5 group-data-[state=on]:text-primary"
