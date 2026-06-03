@@ -6,6 +6,11 @@ import HeaderBar from '@/components/popup/HeaderBar.vue';
 import ScrollModes from '@/components/popup/ScrollModes.vue';
 import SrcollControls from '@/components/popup/SrcollControls.vue';
 import Button from '@/components/ui/button/Button.vue';
+import { useSettings } from '@/composables/useSettings';
+
+
+const { state, update } = useSettings('popup');
+
 
 const scrollContainer = ref<HTMLElement | null>(null)
 
@@ -22,7 +27,8 @@ function onWheel(event: WheelEvent) {
 
     <HeaderBar />
 
-    <div class="px-3 py-4 flex-1 overflow-y-auto pb-34"
+    <div class="px-3 py-4 flex-1 overflow-y-auto"
+      :class="state.controlsHidden ? 'pb-7' : 'pb-32'"
       ref="scrollContainer"
     >
       <ScrollModes />

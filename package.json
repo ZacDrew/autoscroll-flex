@@ -23,7 +23,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^1.0.0",
-    "reka-ui": "^2.9.8",
+    "reka-ui": "^2.9.9",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.2.0",
     "tailwindcss-animate": "^1.0.7",

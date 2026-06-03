@@ -30,6 +30,8 @@ export interface Settings {
   lrEnabled: boolean;
   udEnabled: boolean;
 
+  controlsHidden: boolean;
+
   presetToastEnabled: boolean;
 }
 

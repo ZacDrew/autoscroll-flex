@@ -25,6 +25,8 @@ export const defaultSettings: Settings = {
     lrEnabled: true,
     udEnabled: true,
 
+    controlsHidden: false,
+
     presetToastEnabled: true,
 };
 
@@ -46,6 +48,8 @@ export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
     spaceEnabled:           [   'popup',                'options'   ],
     lrEnabled:              [   'popup',                'options'   ],
     udEnabled:              [   'popup',                'options'   ],
+
+    controlsHidden:         [   'popup'                             ],
 
     presetToastEnabled:     [               'content',  'options'   ],
 } as const
