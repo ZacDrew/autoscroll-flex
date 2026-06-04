@@ -6,30 +6,27 @@ import { defaultSettings } from '@/utils/settings-creation';
 const state = reactive<Settings>(structuredClone(defaultSettings));
 let initialized = false;
 
-// TODO: make init work for background and contentscript, not just popup
-// see 'popup' in lines 16 and 26
-function init() {
+function init(source: SettingTarget) {
     if (initialized) return;
     initialized = true;
 
     // Request settings from background
-    sendMessage('getSettings', 'popup').then((res) => {
+    sendMessage('getSettings', source).then((res) => {
         Object.assign(state, res);
     })
 
     // Listen for setting change from background
     onMessage('settingUpdated', 
         async <K extends keyof Settings>(message: {
-        data: { key: K; value: Settings[K]; source: SettingTarget };
+        data: { key: K; value: Settings[K]; originalSource: SettingTarget };
       }) => {
-        const { key, value, source } = message.data;
-        // if (source !== 'popup') return
+        const { key, value, originalSource } = message.data;
         state[key] = value;
     })
 }
 
 export function useSettings(source: SettingTarget) {
-    init();
+    init(source);
 
     // Send an updated setting to background
     async function update<K extends keyof Settings>(

@@ -38,7 +38,7 @@ export default defineBackground({
         console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
 
         // Broadcast setting change to contexts that share the setting
-        sendMessage('settingUpdated', { key, value, source });
+        sendMessage('settingUpdated', { key, value, originalSource: source });
 
       })
 
