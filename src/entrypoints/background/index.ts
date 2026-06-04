@@ -4,6 +4,7 @@ import { defaultSettings, settingTargets } from '@/utils/settings-creation';
 import { sendMessage, onMessage } from '@/utils/messaging';
 import { filterSettings } from '@/utils/filter-settings';
 
+
 export default defineBackground({
   type: 'module',
   main() {
@@ -37,16 +38,30 @@ export default defineBackground({
         await storage.setItem('local:settings', settings);
         console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
 
+        // TODO fix: only send settings to contexts share it
         // Broadcast setting change to contexts that share the setting
+        // for Popup and Options:
         sendMessage('settingUpdated', { key, value, originalSource: source });
 
+        // for content scripts:
+        const tabs = await browser.tabs.query({});
+
+        const tabsWithIds = tabs.filter((tab) => tab.id != null)
+
+        for (const tab of tabsWithIds) {
+          if (tab.id == null) continue;
+          try {
+            await sendMessage(
+              'settingUpdated',
+              { key, value, originalSource: source },
+              tab.id
+            );
+          } catch (err) {
+            console.log(`Failed to send to tab ${tab.id}`)
+          }
+        }
+
       })
-
-
-
-
-
-
 
 
 

@@ -12,6 +12,8 @@ function init(source: SettingTarget) {
 
     // Request settings from background
     sendMessage('getSettings', source).then((res) => {
+        console.log('recieved settings:', res);
+
         Object.assign(state, res);
     })
 
@@ -20,6 +22,8 @@ function init(source: SettingTarget) {
         async <K extends keyof Settings>(message: {
         data: { key: K; value: Settings[K]; originalSource: SettingTarget };
       }) => {
+        // console.log(source, 'received settingUpdated', message.data);
+
         const { key, value, originalSource } = message.data;
         state[key] = value;
     })

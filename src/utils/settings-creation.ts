@@ -9,17 +9,17 @@ export const defaultSettings: Settings = {
     scrollMode: 'glide',
 
     glidePresets: [
-        { id: crypto.randomUUID(), speed: 100 }, 
-        { id: crypto.randomUUID(), speed: 200 }, 
-        { id: crypto.randomUUID(), speed: 500 }],
+        { id: '3391103b-086b-45b6-b5c3-4addf11246c9', speed: 100 }, 
+        { id: 'eb6584ee-e07a-43fe-b625-5508191a0603', speed: 200 }, 
+        { id: '867dbfe2-7dc8-4eb9-b858-c59ad3b2f9bf', speed: 500 }],
     stepPresets: [
-        { id: crypto.randomUUID(), distance: 500, delay: 2 },
-        { id: crypto.randomUUID(), distance: 700, delay: 2 },
-        { id: crypto.randomUUID(), distance: 700, delay: 1 }
+        { id: '384caeab-f252-4990-917b-19fee4d5740b', distance: 500, delay: 2 },
+        { id: '486dcc02-801d-43bd-ab22-22a367ba3f22', distance: 700, delay: 2 },
+        { id: '78048f10-ccb7-4b5a-bbab-e433ed6455fb', distance: 700, delay: 1 }
     ],
 
-    glidePresetSelected: "",
-    stepPresetSelected: "",
+    glidePresetSelected: "3391103b-086b-45b6-b5c3-4addf11246c9",
+    stepPresetSelected: "384caeab-f252-4990-917b-19fee4d5740b",
 
     hijacksEnabled: false,
     spaceEnabled: true,
@@ -46,10 +46,10 @@ export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
     glidePresetSelected:    [   'popup',    'content'               ],
     stepPresetSelected:     [   'popup',    'content'               ],
 
-    hijacksEnabled:         [   'popup',                'options'   ],
-    spaceEnabled:           [   'popup',                'options'   ],
-    lrEnabled:              [   'popup',                'options'   ],
-    udEnabled:              [   'popup',                'options'   ],
+    hijacksEnabled:         [   'popup',    'content',  'options'   ],
+    spaceEnabled:           [   'popup',    'content',  'options'   ],
+    lrEnabled:              [   'popup',    'content',  'options'   ],
+    udEnabled:              [   'popup',    'content',  'options'   ],
 
     controlsHidden:         [   'popup'                             ],
 
