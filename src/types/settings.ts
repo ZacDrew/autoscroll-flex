@@ -14,9 +14,10 @@ export interface StepPreset {
 // Settings stored by the background
 export interface Settings {
   test: number;
-  scrolling: boolean;
+  scrolling: boolean;                     // To be removed
   direction: 'up' | 'down' | undefined;
   disabledSites: string[];
+  activeTab: globalThis.Browser.tabs.Tab | undefined;
 
   scrollMode: ScrollMode;
 

@@ -5,6 +5,7 @@ export const defaultSettings: Settings = {
     scrolling: false,
     direction: undefined,
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
+    activeTab: undefined,
 
     scrollMode: 'glide',
 
@@ -37,6 +38,7 @@ export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
     scrolling:              [   'popup',    'content'               ],
     direction:              [   'popup',    'content'               ],
     disabledSites:          [   'popup',    'content',  'options'   ],
+    activeTab:              [   'popup',    'content'               ],
 
     scrollMode:             [   'popup',    'content'               ],
 

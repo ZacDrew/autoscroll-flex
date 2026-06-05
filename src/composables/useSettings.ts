@@ -6,6 +6,13 @@ import { defaultSettings } from '@/utils/settings-creation';
 const state = reactive<Settings>(structuredClone(defaultSettings));
 let initialized = false;
 
+// Ready mechanism
+let resolveReady!: () => void;
+const stateReady = new Promise<void>((resolve) => {
+    resolveReady = resolve;
+});
+
+
 function init(source: SettingTarget) {
     if (initialized) return;
     initialized = true;
@@ -15,6 +22,9 @@ function init(source: SettingTarget) {
         console.log('recieved settings:', res);
 
         Object.assign(state, res);
+
+        // Initial settings are now loaded
+        resolveReady();
     })
 
     // Listen for setting change from background
@@ -45,6 +55,6 @@ export function useSettings(source: SettingTarget) {
         });
     }
 
-    return { state, update };
+    return { state, update, stateReady };
 }
     

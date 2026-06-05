@@ -1,12 +1,23 @@
 import { SettingTarget } from '@/types/settings';
 import { onMessage, sendMessage } from '@/utils/messaging'
+import { useSettings } from '@/composables/useSettings';
+
+
+const { state, update, stateReady } = useSettings('popup');
 
 const scrollingStatus = reactive({ scrolling: false });
 let initialized = false;
 
+let activeTab: globalThis.Browser.tabs.Tab | undefined;
+const isDetched = window.location.pathname.endsWith('detached.html');
+
+
 export function handleScrollingStatus(currentContext: SettingTarget) {
     if (!initialized) {
         initialized = true;
+
+        console.log('pathname:', window.location.pathname);
+        console.log('href:', window.location.href);
 
         if (currentContext !== 'content') {
             (async () => {
@@ -15,11 +26,18 @@ export function handleScrollingStatus(currentContext: SettingTarget) {
                 //     currentWindow: true,
                 // });
 
-                const { activeTab } = await sendMessage('getActiveTab')
+                // if running in deteched window, get active tab from local storage
+                if (isDetched) {
+                    await stateReady;
+                    activeTab = state.activeTab;
+                } else {
+                    ({ activeTab } = await sendMessage('getActiveTab'));
 
-                console.log('tabid:', activeTab.id);
+                    update('activeTab', activeTab);
+                }
 
                 if (!activeTab?.id) return;
+                console.log('tabid:', activeTab.id);
 
                 // fetch scrolling status from contentscript
                 sendMessage('getScrollingStatus', undefined, activeTab.id)
@@ -51,7 +69,9 @@ export function handleScrollingStatus(currentContext: SettingTarget) {
             //     active: true,
             //     currentWindow: true,
             // });
-            const { activeTab } = await sendMessage('getActiveTab')
+            // const { activeTab } = await sendMessage('getActiveTab')
+
+            if (!activeTab?.id) return;
 
 
             await sendMessage(
