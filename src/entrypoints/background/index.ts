@@ -57,13 +57,21 @@ export default defineBackground({
               tab.id
             );
           } catch (err) {
-            console.log(`Failed to send to tab ${tab.id}`)
+            // console.log(`Failed to send to tab ${tab.id}`)
           }
         }
 
-      })
+    })
 
+    // Send currently active tab to a context
+    onMessage('getActiveTab', async () => {
+      let [activeTab] = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
 
+      return { activeTab };
+    })
 
 
 

@@ -1,24 +1,36 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings';
+import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
 import Button from '../ui/button/Button.vue';
 import { PhCaretDown, PhCaretLineDown, PhCaretLineUp, PhCaretUp } from '@phosphor-icons/vue';
 import Toggle from '../ui/toggle/Toggle.vue';
 import ToggleGroup from '../ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '../ui/toggle-group/ToggleGroupItem.vue';
+import { onMessage, sendMessage } from '@/utils/messaging'
 
 const { state, update } = useSettings('popup');
 
+const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('popup');
+
+
 let scrollingAndDirection = computed({
   get: () => {
-    if (state.direction && state.scrolling) return state.direction;
+    if (state.direction && scrollingStatus.scrolling) return state.direction;
 
     return undefined;
   },
   
   set: (dir) => {
-    dir ? update('scrolling', true) : update('scrolling', false);
+    // dir ? update('scrolling', true) : update('scrolling', false);
+    if(dir) {
+      updateScrollingStatus(true);
+    } else {
+      updateScrollingStatus(false);
+    }
+    console.log('scrollingStatus:', scrollingStatus.scrolling);
     update('direction', dir);
+
   }
 });
 

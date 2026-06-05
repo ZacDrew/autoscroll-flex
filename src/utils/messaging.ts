@@ -15,6 +15,14 @@ export interface Protocol {
         value: Settings[K]
         originalSource: SettingTarget
     }): void;
+    
+    getScrollingStatus(): { scrolling: boolean };
+
+    sendScrollingStatus(data: {
+        scrolling: boolean
+    }): void;
+
+    getActiveTab(): { activeTab: globalThis.Browser.tabs.Tab };
 
     openwindow(): void;
 }

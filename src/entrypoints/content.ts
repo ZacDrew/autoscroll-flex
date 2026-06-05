@@ -1,12 +1,20 @@
 import { ref } from 'vue'
 import { useSettings } from '@/composables/useSettings';
 import { useEventListener, useRafFn } from '@vueuse/core';
+import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
+import { onMessage, sendMessage } from '@/utils/messaging'
+
+
 
 
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
   main() {
+
+
     const { state, update } = useSettings('content');
+    const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
+
 
     const speed = computed(() =>
       state.glidePresets.find(
@@ -64,7 +72,7 @@ export default defineContentScript({
 
         yPos += speed.value * (delta / 1000);
 
-        scrollTarget.scrollTo(0, yPos);
+        scrollTarget.scrollTop = yPos;
       },
       { immediate: false }
       )
@@ -77,24 +85,33 @@ export default defineContentScript({
         resume();
       }
 
-      return { pause, start, isActive }
+      function stop() {
+        pause();
+      }
+
+      return { start, stop, isActive }
     }
 
-    const { pause, start, isActive } = glideScroller();
+    const { start, stop, isActive } = glideScroller();
+
+    onMessage('getScrollingStatus', () => {
+      console.dir('request recieved. scrollingStatus:', scrollingStatus);
+      return structuredClone(toRaw(scrollingStatus));;
+    })
 
 
     watch(
-      () => [state.scrolling, state.direction],
+      () => scrollingStatus.scrolling,
 
-      ([scrolling, direction]) => {
+      (scrolling) => {
+
+        // console.log('messaged scrolling:', scrollingStatus.scrolling)
 
         if (scrolling) {
-          console.log('start scrolling')
           start();
         } 
         else {
-          console.log('stop scrolling')
-          pause();
+          stop();
         }
       }
     )
@@ -105,7 +122,7 @@ export default defineContentScript({
       (event) => {
         mouseTarget = event.target;
         // console.log(mouseTarget);
-        console.log('scrolling: ', state.scrolling);
+        // console.log('scrolling: ', state.scrolling);
       },
       {
         passive: true
@@ -114,9 +131,8 @@ export default defineContentScript({
 
     useEventListener(document, 'visibilitychange', () => {
       if (document.hidden) {
-        pause();
-        update('scrolling', false);
-        update('direction', undefined)
+        stop();
+        updateScrollingStatus(false)
       }
     })
 
