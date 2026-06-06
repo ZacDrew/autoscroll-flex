@@ -37,6 +37,8 @@ export interface Settings {
   presetToastEnabled: boolean;
 }
 
+// export type PartnerTab = globalThis.Browser.tabs.Tab | undefined;
+
 export type SettingTarget = 'popup' | 'content' | 'options';
 
 // // Settings sent to the popup

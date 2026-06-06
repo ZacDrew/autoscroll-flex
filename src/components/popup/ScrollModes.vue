@@ -24,9 +24,10 @@ const { state, update } = useSettings('popup');
 <template>
   
   
-  <h4 class="scroll-m-18 text-center text-[17px] font-semibold tracking-tight mb-1 ml-3">
+  <div class="scroll-m-18 text-center text-[17px] font-semibold tracking-tight 
+    mb-1 ml-3 mt-2">
     Scroll Mode
-  </h4>
+  </div>
   
   <Card class="p-2">
 

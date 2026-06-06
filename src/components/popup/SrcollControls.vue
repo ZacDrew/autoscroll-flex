@@ -8,10 +8,13 @@ import Toggle from '../ui/toggle/Toggle.vue';
 import ToggleGroup from '../ui/toggle-group/ToggleGroup.vue';
 import ToggleGroupItem from '../ui/toggle-group/ToggleGroupItem.vue';
 import { onMessage, sendMessage } from '@/utils/messaging'
+import { handleEnabled } from '@/composables/handleEnabled.js';
 
 const { state, update } = useSettings('popup');
 
 const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('popup');
+
+const { siteEnabled } = handleEnabled();
 
 
 let scrollingAndDirection = computed({
@@ -52,6 +55,7 @@ let scrollingAndDirection = computed({
         type="single" orientation="vertical"
         v-model="scrollingAndDirection"
         class="flex flex-col w-full h-wull gap-0"
+        :disabled="!siteEnabled"
       >
         <!-- up button -->
         <ToggleGroupItem 

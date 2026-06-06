@@ -2,6 +2,7 @@
 
 <script lang="ts" setup>
 import HelloWorld from '@/components/HelloWorld.vue';
+import DisabledWarning from '@/components/popup/DisabledWarning.vue';
 import HeaderBar from '@/components/popup/HeaderBar.vue';
 import ScrollModes from '@/components/popup/ScrollModes.vue';
 import SrcollControls from '@/components/popup/SrcollControls.vue';
@@ -26,8 +27,9 @@ function onWheel(event: WheelEvent) {
   <div class="bg-background flex h-full flex-col overflow-hidden min-w-[296px] min-h-[600px]">
 
     <HeaderBar />
+    <DisabledWarning />
 
-    <div class="px-3 py-4 flex-1 overflow-y-auto"
+    <div class="px-3 flex-1 overflow-y-auto"
       :class="state.controlsHidden ? 'pb-7' : 'pb-32'"
       ref="scrollContainer"
     >

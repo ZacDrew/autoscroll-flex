@@ -32,28 +32,33 @@ export const defaultSettings: Settings = {
     presetToastEnabled: true,
 };
 
+// Global variable to keep track of the tab partnered to a popup or detached
+export const currentInstance = {
+    partnerTab: undefined as globalThis.Browser.tabs.Tab | undefined,
+}
+
 // Determine what settings each context recieves
 export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
-    test:                   [   'popup',    'content',  'options'   ],
-    scrolling:              [   'popup',    'content'               ],
-    direction:              [   'popup',    'content'               ],
-    disabledSites:          [   'popup',    'content',  'options'   ],
-    activeTab:              [   'popup',    'content'               ],
+    test:                   [ 'popup',    'content',    'options'  ],
+    scrolling:              [ 'popup',    'content'                ],
+    direction:              [ 'popup',    'content'                ],
+    disabledSites:          [ 'popup',    'content',    'options'  ],
+    activeTab:              [ 'popup',    'content'                ],
 
-    scrollMode:             [   'popup',    'content'               ],
+    scrollMode:             [ 'popup',    'content'                ],
 
-    glidePresets:           [   'popup',    'content'               ],
-    stepPresets:            [   'popup',    'content'               ],
+    glidePresets:           [ 'popup',    'content'                ],
+    stepPresets:            [ 'popup',    'content'                ],
 
-    glidePresetSelected:    [   'popup',    'content'               ],
-    stepPresetSelected:     [   'popup',    'content'               ],
+    glidePresetSelected:    [ 'popup',    'content'                ],
+    stepPresetSelected:     [ 'popup',    'content'                ],
 
-    hijacksEnabled:         [   'popup',    'content',  'options'   ],
-    spaceEnabled:           [   'popup',    'content',  'options'   ],
-    lrEnabled:              [   'popup',    'content',  'options'   ],
-    udEnabled:              [   'popup',    'content',  'options'   ],
+    hijacksEnabled:         [ 'popup',    'content',    'options'  ],
+    spaceEnabled:           [ 'popup',    'content',    'options'  ],
+    lrEnabled:              [ 'popup',    'content',    'options'  ],
+    udEnabled:              [ 'popup',    'content',    'options'  ],
 
-    controlsHidden:         [   'popup'                             ],
+    controlsHidden:         [ 'popup'                              ],
 
-    presetToastEnabled:     [               'content',  'options'   ],
+    presetToastEnabled:     [             'content',    'options'  ],
 } as const

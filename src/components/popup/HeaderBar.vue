@@ -1,44 +1,15 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useSettings } from '@/composables/useSettings';
 import Button from '../ui/button/Button.vue';
-
 import { PhGear, PhArrowSquareOut, PhSun } from "@phosphor-icons/vue";
 import Toggle from '../ui/toggle/Toggle.vue';
+import { handleEnabled } from '@/composables/handleEnabled.js';
 
-const { state, update } = useSettings('popup');
-let domain = ref('')
-
-// computed value to keep track of disabled domains
-let domainEnabled = computed({
-  get: () => {
-    return !state.disabledSites?.includes(domain.value);
-  },
-  
-  set: (enabled) => {
-    if (enabled) {
-      update(
-        'disabledSites', 
-        state.disabledSites.filter( storedDomain => storedDomain !== domain.value)
-      )
-    } else {
-      update('disabledSites', [...state.disabledSites, domain.value])
-    }
-  }
-});
-
-onMounted(async () => {
-  const [tab] = await browser.tabs.query({
-    active: true,
-    currentWindow: true,
-  })
-
-  domain.value = new URL(tab.url!).hostname
-})
+const { siteKey, siteEnabled } = handleEnabled();
 
 function popoutWindow() {
   sendMessage('openwindow');
 }
+
 </script>
 
 <template>
@@ -50,7 +21,7 @@ function popoutWindow() {
       <Toggle variant="outline" class="group flex flex-col items-start
                 justify-between gap-y-0 gap-x-1 px-1 py-0.5 h-auto max-w-35 truncate
                 hover:bg-background data-[state=on]:bg-background"
-                v-model="domainEnabled"
+                v-model="siteEnabled"
                 :disabled="false"
       >
 
@@ -61,8 +32,8 @@ function popoutWindow() {
           />
           <span class="text-sm font-medium">Enable</span>
         </div>
-        <span class="text-xs text-muted-foreground">
-          {{ domain }}
+        <span class="text-xs text-muted-foreground self-center">
+          {{ siteKey }}
         </span>
 
       </Toggle>
