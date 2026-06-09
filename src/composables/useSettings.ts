@@ -1,6 +1,6 @@
 import { reactive, watch, toRaw, ref } from 'vue'
 import { onMessage, sendMessage } from '@/utils/messaging'
-import { SettingTarget, type Settings } from '@/types/settings'
+import { Context, type Settings } from '@/types/settings'
 import { defaultSettings } from '@/utils/settings-creation';
 
 const state = reactive<Settings>(structuredClone(defaultSettings));
@@ -13,7 +13,7 @@ const stateReady = new Promise<void>((resolve) => {
 });
 
 
-function init(source: SettingTarget) {
+function init(source: Context) {
     if (initialized) return;
     initialized = true;
 
@@ -30,7 +30,7 @@ function init(source: SettingTarget) {
     // Listen for setting change from background
     onMessage('settingUpdated', 
         async <K extends keyof Settings>(message: {
-        data: { key: K; value: Settings[K]; originalSource: SettingTarget };
+        data: { key: K; value: Settings[K]; originalSource: Context };
       }) => {
         // console.log(source, 'received settingUpdated', message.data);
 
@@ -39,7 +39,7 @@ function init(source: SettingTarget) {
     })
 }
 
-export function useSettings(source: SettingTarget) {
+export function useSettings(source: Context) {
     init(source);
 
     // Send an updated setting to background

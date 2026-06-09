@@ -2,30 +2,35 @@ import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings'
 import { getPartnerTab } from '@/composables/getPartnerTab';
 
-let siteKey = '';
-
+const { state, update, stateReady } = useSettings('popup');
 
 export async function getSiteKey() {
 
     const partnerTab = await getPartnerTab();
 
-    if (!partnerTab?.url) {
-        throw new Error('Partner tab not found');
-    }
+    const siteKey = computed(() => {
 
-    const url = new URL(partnerTab.url!)
+        if (!partnerTab.value?.url) {
+            return '';
+            // throw new Error('Partner tab not found');
+        }
 
-    // local files
-    if (url.protocol === 'file:') siteKey = 'file://';
+        const url = new URL(partnerTab.value.url!)
 
-    if (url.protocol === 'moz-extension:') siteKey = 'moz-extension://';
+        // local files
+        if (url.protocol === 'file:') return 'file://';
 
-    if (url.protocol === 'about:') siteKey = 'about:';
+        if (url.protocol === 'moz-extension:') return 'moz-extension://';
 
-    // standard URLs
-    if (url.protocol === 'http:' || url.protocol === 'https:') {
-        siteKey = url.hostname;
-    }
+        if (url.protocol === 'about:') return 'about:';
+
+        // standard URLs
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+            return url.hostname;
+        }
+
+        return '';
+    })
 
     return siteKey;
 }

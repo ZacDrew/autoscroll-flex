@@ -1,5 +1,5 @@
 import { storage } from '#imports';
-import type { Settings, SettingTarget } from "@/types/settings";
+import type { Settings, Context } from "@/types/settings";
 import { defaultSettings, settingTargets } from '@/utils/settings-creation';
 import { sendMessage, onMessage } from '@/utils/messaging';
 import { filterSettings } from '@/utils/filter-settings';
@@ -30,7 +30,7 @@ export default defineBackground({
     onMessage(
       'updateSetting',
       async <K extends keyof Settings>(message: {
-        data: { key: K; value: Settings[K]; source: SettingTarget };
+        data: { key: K; value: Settings[K]; source: Context };
       }) => {
         const { key, value, source } = message.data;
         settings[key] = value;
@@ -61,7 +61,7 @@ export default defineBackground({
           }
         }
 
-    })
+      })
 
     // Send currently active tab to a context
     onMessage('getActiveTab', async () => {
@@ -73,15 +73,56 @@ export default defineBackground({
       return { activeTab };
     })
 
+    // update partnerTab everytime tab changes
+    browser.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
+      const tab = await browser.tabs.get(tabId)
+
+      console.log('Active tab changed:', tab.url, tab)
+      console.log('Window changed:', windowId)
+
+      if (windowId !== detachedWindowId) {
+        // console.log('okay, yay!', windowId, detachedWindowId);
+
+        settings['partnerTab'] = tab;
+        await storage.setItem('local:settings', settings);
+
+        // send to popup/detachable
+        sendMessage('settingUpdated', 
+          { key: 'partnerTab', value: tab, originalSource: 'background' }
+        ).catch( () => {});
+
+      }
+    })
+
+    // update partner tab object when active tab url changes
+    browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+      if (
+        changeInfo.status === 'complete' &&
+        tab.active &&
+        tab.windowId !== detachedWindowId
+      ) {
+        console.log('Visible tab updated:', tab.url)
+
+        settings['partnerTab'] = tab;
+        await storage.setItem('local:settings', settings);
+
+        // send to popup/detachable
+        sendMessage('settingUpdated', 
+          { key: 'partnerTab', value: tab, originalSource: 'background' }
+        ).catch( () => {} );
+
+      }
+    })
 
 
-    // Popout Popup
-    let popupWindowId: number | null = null;
+
+    // detached Popup
+    let detachedWindowId: number | null = null;
 
     onMessage('openwindow', async () => {
-      if (popupWindowId) {
+      if (detachedWindowId) {
         // Focus existing window
-        await browser.windows.update(popupWindowId, { focused: true });
+        await browser.windows.update(detachedWindowId, { focused: true });
         return;
       }
 
@@ -96,19 +137,19 @@ export default defineBackground({
       console.log("Created window:", win);
 
       if (win) {
-        popupWindowId = win.id ?? null;
+        detachedWindowId = win.id ?? null;
       } else {
-        popupWindowId = null;
+        detachedWindowId = null;
         console.error("Failed to create popup window");
       }
 
       browser.windows.onRemoved.addListener((id) => {
-        if (id === popupWindowId) popupWindowId = null;
+        if (id === detachedWindowId) detachedWindowId = null;
       });
 
       // TODO!!!: Remove this so it doesnt move the window off someones screen
       if (isFirefox) {
-        await browser.windows.update(popupWindowId as number, {
+        await browser.windows.update(detachedWindowId as number, {
           left: 2735,
           top: 800,
         });

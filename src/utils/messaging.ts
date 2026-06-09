@@ -1,19 +1,19 @@
 import { defineExtensionMessaging } from '@webext-core/messaging'
-import type { Settings, SettingTarget } from '@/types/settings'
+import type { Settings, Context } from '@/types/settings'
 
 export interface Protocol {
-    getSettings(data: SettingTarget): Partial<Settings>;
+    getSettings(data: Context): Partial<Settings>;
 
     updateSetting<K extends keyof Settings>(data: {
         key: K
         value: Settings[K]
-        source: SettingTarget
+        source: Context
     }): void;
 
     settingUpdated<K extends keyof Settings>(data: {
         key: K
         value: Settings[K]
-        originalSource: SettingTarget
+        originalSource: Context
     }): void;
     
     getScrollingStatus(): { scrolling: boolean };

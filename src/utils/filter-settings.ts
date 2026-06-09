@@ -1,4 +1,4 @@
-import { Settings, SettingTarget } from "@/types/settings";
+import { Settings, Context } from "@/types/settings";
 
 
 function assignSetting<K extends keyof Settings>(
@@ -9,7 +9,7 @@ function assignSetting<K extends keyof Settings>(
     result[key] = settings[key];
 }
 
-export function filterSettings(settings: Settings, target: SettingTarget)
+export function filterSettings(settings: Settings, target: Context)
     : Partial<Settings> {
     const result: Partial<Settings> = {}
 
@@ -30,7 +30,7 @@ export function filterSettings(settings: Settings, target: SettingTarget)
 // working alternative
 
 // function getSettingsForContext<
-//   T extends SettingTarget
+//   T extends Context
 // >(target: T) {
 //   const result = {} as {
 //     [K in keyof Settings as T extends typeof settingTargets[K][number]

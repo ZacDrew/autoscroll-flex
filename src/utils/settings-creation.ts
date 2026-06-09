@@ -1,11 +1,11 @@
-import type { Settings, SettingTarget } from "@/types/settings";
+import type { Settings, Context } from "@/types/settings";
 
 export const defaultSettings: Settings = {
     test: 0,
     scrolling: false,
     direction: undefined,
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
-    activeTab: undefined,
+    partnerTab: undefined,
 
     scrollMode: 'glide',
 
@@ -32,18 +32,13 @@ export const defaultSettings: Settings = {
     presetToastEnabled: true,
 };
 
-// Global variable to keep track of the tab partnered to a popup or detached
-export const currentInstance = {
-    partnerTab: undefined as globalThis.Browser.tabs.Tab | undefined,
-}
-
 // Determine what settings each context recieves
-export const settingTargets: Record<keyof Settings, SettingTarget[]> = {
+export const settingTargets: Record<keyof Settings, Context[]> = {
     test:                   [ 'popup',    'content',    'options'  ],
     scrolling:              [ 'popup',    'content'                ],
     direction:              [ 'popup',    'content'                ],
     disabledSites:          [ 'popup',    'content',    'options'  ],
-    activeTab:              [ 'popup',    'content'                ],
+    partnerTab:             [ 'popup',    'content'                ],
 
     scrollMode:             [ 'popup',    'content'                ],
 

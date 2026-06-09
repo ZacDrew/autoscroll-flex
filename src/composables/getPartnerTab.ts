@@ -1,4 +1,4 @@
-import { SettingTarget } from '@/types/settings';
+import { Context } from '@/types/settings';
 import { onMessage, sendMessage } from '@/utils/messaging'
 import { useSettings } from '@/composables/useSettings';
 
@@ -21,29 +21,44 @@ see below comment
 settings:
 locked: bool
 partnerTab: when locked, bg doesn't update it.
+
+
+also, keep domain of tab updated so that if a tab changes websites,
+the domain name in the enable button will also update
 */
 
 const { state, update, stateReady } = useSettings('popup');
 
-let partnerTab: globalThis.Browser.tabs.Tab | undefined;
-const isDetched = window.location.pathname.endsWith('detached.html');
-
 export async function getPartnerTab() {
-    // if running in deteched window, get active tab from local storage
-    if (isDetched) {
-        await stateReady;
-        partnerTab = state.activeTab;
-    
-    // if running in popup
-    } else {
-        const response = await sendMessage('getActiveTab'); // from background
-        partnerTab = response.activeTab;
 
-        update('activeTab', partnerTab);
-    }
+    await stateReady;
+
+    const partnerTab = computed(() => {
+        return state.partnerTab
+    });
 
     return partnerTab;
 }
+
+// let partnerTab: globalThis.Browser.tabs.Tab | undefined;
+// const isDetched = window.location.pathname.endsWith('detached.html');
+
+// export async function getPartnerTab() {
+//     // if running in deteched window, get active tab from local storage
+//     if (isDetched) {
+//         await stateReady;
+//         partnerTab = state.partnerTab;
+    
+//     // if running in popup
+//     } else {
+//         const response = await sendMessage('getActiveTab'); // from background
+//         partnerTab = response.activeTab;
+
+//         update('partnerTab', partnerTab);
+//     }
+
+//     return partnerTab;
+// }
 
 /*
 alternatively, for a dynamic domain detached window:

@@ -17,7 +17,7 @@ export interface Settings {
   scrolling: boolean;                     // To be removed
   direction: 'up' | 'down' | undefined;
   disabledSites: string[];
-  activeTab: globalThis.Browser.tabs.Tab | undefined;
+  partnerTab: globalThis.Browser.tabs.Tab | undefined;
 
   scrollMode: ScrollMode;
 
@@ -39,7 +39,7 @@ export interface Settings {
 
 // export type PartnerTab = globalThis.Browser.tabs.Tab | undefined;
 
-export type SettingTarget = 'popup' | 'content' | 'options';
+export type Context = 'popup' | 'content' | 'options' | 'background';
 
 // // Settings sent to the popup
 // export interface PopupSettings {
