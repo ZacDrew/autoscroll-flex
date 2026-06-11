@@ -3,7 +3,7 @@ import { useSettings } from '@/composables/useSettings';
 import { useEventListener, useRafFn } from '@vueuse/core';
 import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
 import { onMessage, sendMessage } from '@/utils/messaging'
-
+import { findScrollTarget } from '@/utils/content/find-scroll-target';
 
 
 
@@ -30,38 +30,9 @@ export default defineContentScript({
     let yPos: number = window.scrollY;
 
 
-
-    function findScrollableParent(el: Element | null):
-      Element | Document['scrollingElement'] {
-
-      while (el && el !== document.body) {
-        const style = getComputedStyle(el);
-
-        if (
-          (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
-          el.scrollHeight > el.clientHeight
-        ) {
-          return el;
-        }
-
-        el = el.parentElement;
-      }
-      return document.scrollingElement;
-    }
-
-    function findScrollTarget() {
-
-      if (mouseTarget instanceof Element) {
-        const target = findScrollableParent(mouseTarget);
-        if (target) scrollTarget = target;
-      }
-      else {
-        scrollTarget = document.scrollingElement;
-      }
-    }
-
-
     function glideScroller() {
+
+      let direction = 1;
 
       const { pause, resume, isActive } = useRafFn(({ delta }) => {
 
@@ -70,7 +41,9 @@ export default defineContentScript({
           return;
         };
 
-        yPos += speed.value * (delta / 1000);
+        state.direction === 'down' ? direction = 1 : direction = -1;
+
+        yPos += direction * speed.value * (delta / 1000);
 
         scrollTarget.scrollTop = yPos;
       },
@@ -79,7 +52,7 @@ export default defineContentScript({
 
       function start() {
 
-        findScrollTarget();
+        scrollTarget = findScrollTarget(mouseTarget);
         yPos = scrollTarget?.scrollTop ?? 0;
 
         resume();
