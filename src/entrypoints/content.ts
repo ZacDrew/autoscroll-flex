@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useSettings } from '@/composables/useSettings';
-import { useEventListener, useRafFn } from '@vueuse/core';
+import { useEventListener, useIntervalFn, useRafFn } from '@vueuse/core';
 import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
 import { onMessage, sendMessage } from '@/utils/messaging'
 import { findScrollTarget } from '@/utils/content/find-scroll-target';
@@ -16,11 +16,23 @@ export default defineContentScript({
     const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
 
 
-    const speed = computed(() =>
-      state.glidePresets.find(
+    const speed = computed(() => {
+      return state.glidePresets.find(
         preset => preset.id === state.glidePresetSelected
-      )?.speed ?? 0
-    )
+      )?.speed ?? 0;
+    })
+
+    const stepPreset = computed(() => {
+      let distance = state.stepPresets.find(
+        preset => preset.id == state.stepPresetSelected
+      )?.distance ?? 0;
+
+      let delay = state.stepPresets.find(
+        preset => preset.id == state.stepPresetSelected
+      )?.delay ?? 1;
+
+      return { distance, delay };
+    })
 
     console.log('Hello content. scrolling:', state.scrolling);
 
@@ -50,7 +62,7 @@ export default defineContentScript({
       { immediate: false }
       )
 
-      function start() {
+      function startGlide() {
 
         scrollTarget = findScrollTarget(mouseTarget);
         yPos = scrollTarget?.scrollTop ?? 0;
@@ -58,14 +70,62 @@ export default defineContentScript({
         resume();
       }
 
-      function stop() {
+      function stopGlide() {
         pause();
       }
 
-      return { start, stop, isActive }
+      return { startGlide, stopGlide, GlideisActive: isActive }
     }
 
-    const { start, stop, isActive } = glideScroller();
+    
+    function stepScroller() {
+
+      const { pause, resume, isActive } = useIntervalFn( () => {
+        
+      }, 
+      100
+      )
+    }
+
+
+
+
+
+
+
+
+
+    function AutoScroller() {
+
+      const { startGlide, stopGlide, GlideisActive } = glideScroller();
+
+      function startScroll() {
+        
+        stopScroll();
+        
+        if (state.scrollMode === 'glide') {
+          startGlide();
+        }
+        else if (state.scrollMode === 'step') {
+          // startStep();
+        }
+        else if (state.scrollMode === 'smart') {
+          // do something
+        }
+      }
+
+      function stopScroll() {
+        stopGlide();
+        // stopStep();
+      }
+
+      return { startScroll, stopScroll }
+
+    }
+
+    const { startScroll, stopScroll } = AutoScroller();
+
+    
 
     onMessage('getScrollingStatus', () => {
       console.dir('request recieved. scrollingStatus:', scrollingStatus);
@@ -77,15 +137,22 @@ export default defineContentScript({
       () => scrollingStatus.scrolling,
 
       (scrolling) => {
-
         // console.log('messaged scrolling:', scrollingStatus.scrolling)
 
         if (scrolling) {
-          start();
+          startScroll(); 
         } 
         else {
-          stop();
+          stopScroll();
         }
+      }
+    )
+
+    watch(
+      () => state.scrollMode,
+      () => {
+        if (!scrollingStatus.scrolling) return;
+        startScroll();
       }
     )
 
@@ -104,7 +171,7 @@ export default defineContentScript({
 
     useEventListener(document, 'visibilitychange', () => {
       if (document.hidden) {
-        stop();
+        stopScroll();
         updateScrollingStatus(false)
       }
     })
