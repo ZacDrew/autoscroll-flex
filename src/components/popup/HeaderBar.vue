@@ -50,7 +50,9 @@ function popoutWindow() {
         </Button>
 
         <!-- settings button -->
-        <Button title="Settings" variant="outline" size="icon" class="[&_svg]:size-auto">
+        <Button title="Settings" variant="outline" size="icon" class="[&_svg]:size-auto"
+          @click="browser.runtime.openOptionsPage()"
+          >
           <PhGear :size="26" />
         </Button>
       </div>

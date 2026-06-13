@@ -28,11 +28,11 @@ let scrollingAndDirection = computed({
     // dir ? update('scrolling', true) : update('scrolling', false);
     if(dir) {
       updateScrollingStatus(true);
+      update('direction', dir);
     } else {
       updateScrollingStatus(false);
     }
     console.log('scrollingStatus:', scrollingStatus.scrolling);
-    update('direction', dir);
 
   }
 });
