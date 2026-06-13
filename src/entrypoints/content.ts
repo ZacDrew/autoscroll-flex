@@ -4,6 +4,7 @@ import { useEventListener, useIntervalFn, useRafFn } from '@vueuse/core';
 import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
 import { onMessage, sendMessage } from '@/utils/messaging'
 import { findScrollTarget } from '@/utils/content/find-scroll-target';
+import { handleEnabled } from '@/composables/handleEnabled.js';
 
 
 
@@ -14,6 +15,7 @@ export default defineContentScript({
 
     const { state, update } = useSettings('content');
     const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
+    const { siteEnabled } = handleEnabled();
 
 
     const speed = computed(() => {
@@ -22,16 +24,18 @@ export default defineContentScript({
       )?.speed ?? 0;
     })
 
-    const stepPreset = computed(() => {
-      let distance = state.stepPresets.find(
+    const distance = computed(() => {
+      return state.stepPresets.find(
         preset => preset.id == state.stepPresetSelected
       )?.distance ?? 0;
+    })
 
+    const delay = computed(() => {
       let delay = state.stepPresets.find(
         preset => preset.id == state.stepPresetSelected
       )?.delay ?? 1;
 
-      return { distance, delay };
+      return delay * 1000;
     })
 
     console.log('Hello content. scrolling:', state.scrolling);
@@ -59,7 +63,7 @@ export default defineContentScript({
 
         scrollTarget.scrollTop = yPos;
       },
-      { immediate: false }
+        { immediate: false }
       )
 
       function startGlide() {
@@ -74,40 +78,57 @@ export default defineContentScript({
         pause();
       }
 
-      return { startGlide, stopGlide, GlideisActive: isActive }
+      return { startGlide, stopGlide, glideIsActive: isActive }
     }
 
-    
+
     function stepScroller() {
 
-      const { pause, resume, isActive } = useIntervalFn( () => {
-        
-      }, 
-      100
+      let direction = 1;
+
+      const { pause, resume, isActive } = useIntervalFn(() => {
+
+        state.direction === 'down' ? direction = 1 : direction = -1;
+
+        scrollTarget?.scrollBy({
+          top: direction * distance.value,
+          behavior: "smooth"
+        })
+      },
+        delay
       )
+
+      function startStep() {
+
+        scrollTarget = findScrollTarget(mouseTarget);
+        yPos = scrollTarget?.scrollTop ?? 0;
+
+        resume();
+      }
+
+      function stopStep() {
+        pause();
+      }
+
+      return { startStep, stopStep, stepIsActive: isActive }
     }
-
-
-
-
-
-
-
 
 
     function AutoScroller() {
 
-      const { startGlide, stopGlide, GlideisActive } = glideScroller();
+      const { startGlide, stopGlide, glideIsActive } = glideScroller();
+      const { startStep, stopStep, stepIsActive } = stepScroller();
 
       function startScroll() {
-        
+        if (!siteEnabled.value) return;       
+
         stopScroll();
-        
+
         if (state.scrollMode === 'glide') {
           startGlide();
         }
         else if (state.scrollMode === 'step') {
-          // startStep();
+          startStep();
         }
         else if (state.scrollMode === 'smart') {
           // do something
@@ -116,7 +137,7 @@ export default defineContentScript({
 
       function stopScroll() {
         stopGlide();
-        // stopStep();
+        stopStep();
       }
 
       return { startScroll, stopScroll }
@@ -125,7 +146,7 @@ export default defineContentScript({
 
     const { startScroll, stopScroll } = AutoScroller();
 
-    
+
 
     onMessage('getScrollingStatus', () => {
       console.dir('request recieved. scrollingStatus:', scrollingStatus);
@@ -140,19 +161,31 @@ export default defineContentScript({
         // console.log('messaged scrolling:', scrollingStatus.scrolling)
 
         if (scrolling) {
-          startScroll(); 
-        } 
+          startScroll();
+        }
         else {
           stopScroll();
         }
       }
     )
 
+    // restart scrolling if mode changes
     watch(
       () => state.scrollMode,
       () => {
         if (!scrollingStatus.scrolling) return;
         startScroll();
+      }
+    )
+
+    // stop scrolling if website disabled
+    watch(
+      () => siteEnabled.value,
+      () => {
+        if (!siteEnabled.value) {
+          stopScroll();
+          updateScrollingStatus(false);
+        }
       }
     )
 
@@ -172,7 +205,7 @@ export default defineContentScript({
     useEventListener(document, 'visibilitychange', () => {
       if (document.hidden) {
         stopScroll();
-        updateScrollingStatus(false)
+        updateScrollingStatus(false);
       }
     })
 
