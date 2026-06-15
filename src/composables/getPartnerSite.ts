@@ -4,33 +4,35 @@ import { getPartnerTab } from '@/composables/getPartnerTab';
 
 const { state, update, stateReady } = useSettings('popup');
 
-export async function getSiteKey() {
+export async function getPartnerSite() {
 
     const partnerTab = await getPartnerTab();
 
-    const siteKey = computed(() => {
+    const partnerSite = computed(() => {
 
         if (!partnerTab.value?.url) {
-            return '';
+            return { key: '', href: '' };
             // throw new Error('Partner tab not found');
         }
 
         const url = new URL(partnerTab.value.url!)
+        const href = url.href
+        let key = '';
 
         // local files
-        if (url.protocol === 'file:') return 'file://';
+        if (url.protocol === 'file:') key = 'file://';
 
-        if (url.protocol === 'moz-extension:') return 'moz-extension://';
+        if (url.protocol === 'moz-extension:') key = 'moz-extension://';
 
-        if (url.protocol === 'about:') return 'about:';
+        if (url.protocol === 'about:') key = 'about:';
 
         // standard URLs
         if (url.protocol === 'http:' || url.protocol === 'https:') {
-            return url.hostname;
+            key = url.hostname;
         }
 
-        return '';
+        return { key, href }
     })
 
-    return siteKey;
+    return partnerSite;
 }

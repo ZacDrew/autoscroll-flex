@@ -4,11 +4,20 @@ import { PhGear, PhArrowSquareOut, PhSun } from "@phosphor-icons/vue";
 import Toggle from '../ui/toggle/Toggle.vue';
 import { handleEnabled } from '@/composables/handleEnabled.js';
 
-const { siteKey, siteEnabled } = handleEnabled();
+const { partnerSite, siteEnabled, disabledCause } = handleEnabled();
 
 function popoutWindow() {
   sendMessage('openwindow');
 }
+
+const toggleDisabled = computed(() => {
+  if (disabledCause.value.reason === 'custom' 
+    || disabledCause.value.reason === 'mozilla'
+  ) {
+    return true;
+  }
+  return false;
+})
 
 </script>
 
@@ -22,7 +31,7 @@ function popoutWindow() {
                 justify-between gap-y-0 gap-x-1 px-1 py-0.5 h-auto max-w-35 truncate
                 hover:bg-background data-[state=on]:bg-background"
                 v-model="siteEnabled"
-                :disabled="false"
+                :disabled="toggleDisabled"
       >
 
         <div class="flex items-center gap-1.5">
@@ -33,16 +42,16 @@ function popoutWindow() {
           <span class="text-sm font-medium">Enable</span>
         </div>
         <span class="text-xs text-muted-foreground self-center">
-          {{ siteKey }}
+          {{ partnerSite.key }}
         </span>
 
       </Toggle>
 
       <div class="flex items-center gap-1">
         <!-- light/dark mode button -->
-        <Button title="Toggle light/dark theme" variant="ghost" size="icon" class="[&_svg]:size-auto">
+        <!-- <Button title="Toggle light/dark theme" variant="ghost" size="icon" class="[&_svg]:size-auto">
           <PhSun :size="20" />
-        </Button>
+        </Button> -->
 
         <!-- popout button -->
         <Button title="Popout window" @click="popoutWindow()" variant="ghost" size="icon" class="[&_svg]:size-auto">

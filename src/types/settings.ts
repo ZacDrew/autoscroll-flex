@@ -37,9 +37,9 @@ export interface Settings {
   presetToastEnabled: boolean;
 }
 
-// export type PartnerTab = globalThis.Browser.tabs.Tab | undefined;
-
 export type Context = 'popup' | 'content' | 'options' | 'background';
+
+export type DisabledReason = 'domain' | 'custom' | 'mozilla' | 'none';
 
 // // Settings sent to the popup
 // export interface PopupSettings {

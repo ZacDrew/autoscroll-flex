@@ -10,7 +10,18 @@ import Textarea from '../ui/textarea/Textarea.vue';
 
 const { state, update } = useSettings('options');
 
+const disabledSites = computed({
+  get: () => {
+    return state.disabledSites.join('\n');
+  },
+  set: (sites: string) => {
+    state.disabledSites = sites.split('\n');
+  }
+})
 
+function handleDisabledSiteChange() {
+  update('disabledSites', state.disabledSites);
+}
 
 </script>
 
@@ -18,7 +29,7 @@ const { state, update } = useSettings('options');
 
   <div class="scroll-m-18 text-xl font-semibold tracking-tight 
     mb-1 ml-3 mt-2">
-    BlockList
+    Website Blocklist
   </div>
 
   <Card>
@@ -39,8 +50,15 @@ const { state, update } = useSettings('options');
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <Textarea placeholder="Type a domain here (e.g. www.youtube.com)" 
-        
+      <Textarea 
+        placeholder="Type a domain here (e.g. www.youtube.com)"
+        rows="8"
+        spellcheck="false" 
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        v-model="disabledSites"
+        @change="handleDisabledSiteChange"
       >
       </Textarea>
     </CardContent>

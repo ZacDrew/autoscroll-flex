@@ -17,12 +17,12 @@ const { state, update } = useSettings('options');
 </script>
 
 <template>
-  <header class="max-w-150 mx-auto">
+  <div class="max-w-150 mx-auto">
 
     <Header/>
     <Blocklist/>
     
     
-  </header>
+  </div>
 </template>
 
