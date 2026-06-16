@@ -34,8 +34,10 @@ export function handleEnabled() {
 
         let reason: DisabledReason = 'none';
         let offendingLink = '';
+
         const customMatch = state.disabledSites.find(
             site => partnerSite.href.includes(site))
+            
         const standardMatch = state.disabledSites?.includes(partnerSite.key);
 
         // check for disabled domain
