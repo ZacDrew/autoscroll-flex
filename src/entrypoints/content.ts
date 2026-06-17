@@ -140,26 +140,107 @@ export default defineContentScript({
         stopStep();
       }
 
-      return { startScroll, stopScroll }
+      const scrollingActive = computed(() => {
+        return glideIsActive.value || stepIsActive.value;
+      })
+
+      function toggleScroll() {
+        if (scrollingStatus.scrolling) {
+          stopScroll();
+          updateScrollingStatus(false);
+        }
+        else {
+          startScroll();
+          updateScrollingStatus(true);
+        }
+      }
+
+      return { startScroll, stopScroll, toggleScroll, scrollingActive }
 
     }
 
-    const { startScroll, stopScroll } = AutoScroller();
+    const { startScroll, stopScroll, toggleScroll, scrollingActive } = AutoScroller();
 
 
 
+    // Listen for static hotkeys
+    useEventListener(window, 'keydown', (e) => {
+      if (!siteEnabled || !state.staticHotkeysEnabled) return;
+
+      // prevent use of hotkeys if typing
+      const target = e.target
+      if (
+        target instanceof HTMLElement &&
+        (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
+        target.isContentEditable
+        )
+      ) {
+        return;
+      }
+
+      // spacebar
+      if (e.code === 'Space' && state.spaceEnabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        toggleScroll();
+      }
+
+      if (scrollingStatus.scrolling && state.lrEnabled) {
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const selectedPresetId = computed({
+          get: () => {
+            if (state.scrollMode === 'glide') return state.glidePresetSelected;
+            if (state.scrollMode === 'step') return state.stepPresetSelected;
+          },
+          set: (id: string) => {
+            if (state.scrollMode === 'glide') {
+              state.glidePresetSelected = id;
+              update('glidePresetSelected', id)
+            }
+            if (state.scrollMode === 'step') {
+              state.stepPresetSelected = id;
+              update('stepPresetSelected', id)
+
+            };
+          }
+        })
+
+        const selectedPresets = computed(() => {
+          if (state.scrollMode === 'glide') return state.glidePresets;
+          if (state.scrollMode === 'step') return state.stepPresets;
+        })
+
+        // TODO: give these computed refs their own composable
+
+        if (e.key === 'ArrowLeft') {
+          
+          
+        }
+      }
+    })
+
+
+
+
+    // Send current scrolling status when popup opens
     onMessage('getScrollingStatus', () => {
       console.dir('request recieved. scrollingStatus:', scrollingStatus);
       return structuredClone(toRaw(scrollingStatus));;
     })
 
-
+    // watch for when scrolling is activated/de-activated
     watch(
       () => scrollingStatus.scrolling,
-
       (scrolling) => {
-        // console.log('messaged scrolling:', scrollingStatus.scrolling)
-
+        console.log('messaged scrolling status:', scrollingStatus.scrolling)
+        console.log('scrolling active:', scrollingActive.value)
         if (scrolling) {
           startScroll();
         }
@@ -189,8 +270,7 @@ export default defineContentScript({
       }
     )
 
-
-
+    // Record mouse target
     useEventListener(document, 'mouseover',
       (event) => {
         mouseTarget = event.target;
@@ -202,6 +282,7 @@ export default defineContentScript({
       }
     )
 
+    // Listen for when page is hidden
     useEventListener(document, 'visibilitychange', () => {
       if (document.hidden) {
         stopScroll();

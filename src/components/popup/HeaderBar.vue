@@ -28,7 +28,8 @@ const toggleDisabled = computed(() => {
 
       <!-- enable/disable extension toggle -->
       <Toggle variant="outline" class="group flex flex-col items-start
-                justify-between gap-y-0 gap-x-1 px-1 py-0.5 h-auto max-w-35 truncate
+                justify-between gap-y-0 gap-x-1 px-1 py-0.5 h-auto max-w-35 
+                min-w-25 truncate
                 hover:bg-background data-[state=on]:bg-background"
                 v-model="siteEnabled"
                 :disabled="toggleDisabled"

@@ -14,7 +14,6 @@ import Input from '../ui/input/Input.vue';
 const { state, update } = useSettings('options');
 
 
-
 </script>
 
 <template>
@@ -27,14 +26,20 @@ const { state, update } = useSettings('options');
     </div>
 
     <Card>
-      <CardContent class="mt-4 ml- mr-">
+      <CardContent class="mt-6 ml- mr-">
 
         <!-- Enable static hotkeys master switch-->
         <div class="flex items-center justify-between">
           <Label for="enableStaticHotkeys" class="flex-1 cursor-pointer px-2 font-semibold">
             Use built-in hotkeys
           </Label>
-          <Switch id="enableStaticHotkeys" />
+          <Switch id="enableStaticHotkeys" 
+            :model-value="state.staticHotkeysEnabled"
+            @update:model-value="(value) => {
+              state.staticHotkeysEnabled = value;
+              update('staticHotkeysEnabled', value);
+            }"
+          />
         </div>
 
         <Separator class="mt-3 mb-5" />
@@ -46,9 +51,17 @@ const { state, update } = useSettings('options');
           <!-- Spacebar toggle -->
           <div class="flex items-center justify-between">
             <Label for="spaceEnabled" class="flex-1 cursor-pointer font-semibold">
-              Toggle autoScroll with spacebar
+              Toggle autoscroll with spacebar
             </Label>
-            <Switch id="spaceEnabled" />
+            <Switch
+              id="spaceEnabled" 
+              :disabled="!state.staticHotkeysEnabled"
+              :model-value="state.spaceEnabled"
+              @update:model-value="(value) => {
+                state.spaceEnabled = value;
+                update('spaceEnabled', value);
+              }"
+            />
           </div>
 
           <Separator class="my-3" />
@@ -58,7 +71,15 @@ const { state, update } = useSettings('options');
             <Label for="lrEnabled" class="flex-1 cursor-pointer font-semibold">
               Cycle presets using left/right arrows
             </Label>
-            <Switch id="lrEnabled" />
+            <Switch
+              id="lrEnabled" 
+              :disabled="!state.staticHotkeysEnabled"
+              :model-value="state.lrEnabled"
+              @update:model-value="(value) => {
+                state.lrEnabled = value;
+                update('lrEnabled', value);
+              }"
+            />
           </div>
 
           <Separator class="my-3" />
@@ -68,7 +89,15 @@ const { state, update } = useSettings('options');
             <Label for="udEnabled" class="flex-1 cursor-pointer font-semibold">
               Change direction using up/down arrows
             </Label>
-            <Switch id="udEnabled" />
+            <Switch
+              id="udEnabled" 
+              :disabled="!state.staticHotkeysEnabled"
+              :model-value="state.udEnabled"
+              @update:model-value="(value) => {
+                state.udEnabled = value;
+                update('udEnabled', value);
+              }"
+            />
           </div>
 
           <Separator class="my-3" />
@@ -78,21 +107,52 @@ const { state, update } = useSettings('options');
             <Label for="fastForward" class="flex-1 cursor-pointer font-semibold">
               Fast forward
             </Label>
-            <Switch id="fastForward" />
+            <Switch
+              id="fastForward" 
+              :disabled="!state.staticHotkeysEnabled"
+              :model-value="state.ffEnabled"
+              @update:model-value="(value) => {
+                state.ffEnabled = value;
+                update('ffEnabled', value);
+              }"
+            />
           </div>
-
           <div class="flex justify-between">
             <CardDescription class="mt-2">
               Hold down a directional arrow to quickly scroll up or down.
             </CardDescription>
             <div title="Fast forward speed" 
               class="flex items-baseline gap-1 mt-3 ml-5">
-              <Input  class="w-20" />
+              <Input  class="w-20" 
+                v-model="state.ffSpeed" 
+                @change="update('ffSpeed', state.ffSpeed)"
+              />
               <span class="text-muted-foreground text-sm whitespace-nowrap">
               px/sec
               </span>
             </div>
           </div>
+
+          <Separator class="my-3" />
+
+          <!-- Middle Click activation toggle -->
+          <div class="flex items-center justify-between">
+            <Label for="middleClick" class="flex-1 cursor-pointer font-semibold">
+              Toggle autoscroll using mouse middle click
+            </Label>
+            <Switch
+              id="middleClick" 
+              :disabled="!state.staticHotkeysEnabled"
+              :model-value="state.middleClickHijack"
+              @update:model-value="(value) => {
+                state.middleClickHijack = value;
+                update('middleClickHijack', value);
+              }"
+            />
+          </div>
+          <CardDescription class="mt-2">
+            This prevents use of the browsers default autoscroll.
+          </CardDescription>
 
 
         </div>

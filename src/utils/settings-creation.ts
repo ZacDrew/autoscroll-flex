@@ -22,10 +22,13 @@ export const defaultSettings: Settings = {
     glidePresetSelected: "3391103b-086b-45b6-b5c3-4addf11246c9",
     stepPresetSelected: "384caeab-f252-4990-917b-19fee4d5740b",
 
-    hijacksEnabled: false,
+    staticHotkeysEnabled: false,
+    middleClickHijack: false,
     spaceEnabled: true,
     lrEnabled: true,
     udEnabled: true,
+    ffEnabled: true,
+    ffSpeed: 1200,
 
     controlsHidden: false,
 
@@ -48,10 +51,13 @@ export const settingTargets: Record<keyof Settings, Context[]> = {
     glidePresetSelected:    [ 'popup',    'content'                ],
     stepPresetSelected:     [ 'popup',    'content'                ],
 
-    hijacksEnabled:         [ 'popup',    'content',    'options'  ],
+    staticHotkeysEnabled:   [ 'popup',    'content',    'options'  ],
     spaceEnabled:           [ 'popup',    'content',    'options'  ],
+    middleClickHijack:      [ 'popup',    'content',    'options'  ],
     lrEnabled:              [ 'popup',    'content',    'options'  ],
     udEnabled:              [ 'popup',    'content',    'options'  ],
+    ffEnabled:              [ 'popup',    'content',    'options'  ],
+    ffSpeed:              [ 'popup',    'content',    'options'  ],
 
     controlsHidden:         [ 'popup'                              ],
 

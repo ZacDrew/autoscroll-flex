@@ -27,10 +27,13 @@ export interface Settings {
   glidePresetSelected: string;
   stepPresetSelected: string;
 
-  hijacksEnabled: boolean;
+  staticHotkeysEnabled: boolean;
   spaceEnabled: boolean;
+  middleClickHijack: boolean;
   lrEnabled: boolean;
   udEnabled: boolean;
+  ffEnabled: boolean;
+  ffSpeed: number;
 
   controlsHidden: boolean;
 
