@@ -6,7 +6,7 @@ import { DisabledReason } from '@/types/settings';
 const { state, update, stateReady } = useSettings('popup');
 
 // const siteKey = ref<string>('')
-const partnerSite = reactive({ key: '', href: '' })
+const partnerSite = reactive({ key: 'none', href: 'none' })
 let initialized = false;
 
 // Watch for when partnerSite updates

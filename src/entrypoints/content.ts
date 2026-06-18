@@ -5,6 +5,8 @@ import { handleScrollingStatus } from '@/composables/handleScrollingStatus';
 import { onMessage, sendMessage } from '@/utils/messaging'
 import { findScrollTarget } from '@/utils/content/find-scroll-target';
 import { handleEnabled } from '@/composables/handleEnabled.js';
+import { handleCurrentPreset } from '@/composables/handleCurrentPreset';
+import { start } from 'node:repl';
 
 
 
@@ -120,9 +122,12 @@ export default defineContentScript({
       const { startStep, stopStep, stepIsActive } = stepScroller();
 
       function startScroll() {
-        if (!siteEnabled.value) return;       
+        console.log('siteEnabled:', siteEnabled.value);
 
-        stopScroll();
+        console.dir('partnerTab url:', state.partnerTab?.url)
+        if (!siteEnabled.value) return;
+
+        stopScroll();         
 
         if (state.scrollMode === 'glide') {
           startGlide();
@@ -161,11 +166,66 @@ export default defineContentScript({
 
     const { startScroll, stopScroll, toggleScroll, scrollingActive } = AutoScroller();
 
+    const { selectedPresetId, presets } = handleCurrentPreset('content');
 
+
+    let ffDirection = 'down';
+
+    function fastForwardScroller(
+      startScroll: () => void, 
+      stopScroll: () => void) 
+      {
+
+      let direction = 1
+
+      const { pause, resume, isActive } = useRafFn(({ delta }) => {
+
+        if (!scrollTarget) {
+          console.log('no scrollTarget');
+          return;
+        };
+
+        ffDirection === 'down' ? direction = 1 : direction = -1;
+
+        yPos += direction * state.ffSpeed * (delta / 1000);
+
+        scrollTarget.scrollTop = yPos;
+      },
+        { immediate: false }
+      )
+
+      function startFastForward(direction: string,) {
+
+        stopScroll();
+
+        ffDirection = direction;
+        scrollTarget = findScrollTarget(mouseTarget);
+        yPos = scrollTarget?.scrollTop ?? 0;
+
+        resume();
+      }
+
+      function stopFastForward() {
+        pause();
+        startScroll();
+      }
+
+      return { startFastForward, stopFastForward, fastForwardIsActive: isActive }
+    }
+
+    const { startFastForward, stopFastForward } = fastForwardScroller(
+      startScroll,
+      stopScroll
+    )
+
+
+
+    let directionHeld = false;
+    let holdTimer: number | null = null
 
     // Listen for static hotkeys
     useEventListener(window, 'keydown', (e) => {
-      if (!siteEnabled || !state.staticHotkeysEnabled) return;
+      if (!siteEnabled.value || !state.staticHotkeysEnabled) return;
 
       // prevent use of hotkeys if typing
       const target = e.target
@@ -180,7 +240,7 @@ export default defineContentScript({
       }
 
       // spacebar
-      if (e.code === 'Space' && state.spaceEnabled) {
+      if (e.code === 'Space' && state.spaceEnabled && !directionHeld) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -188,46 +248,129 @@ export default defineContentScript({
         toggleScroll();
       }
 
+      // left/right arrows
       if (scrollingStatus.scrolling && state.lrEnabled) {
 
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        const selectedPresetId = computed({
-          get: () => {
-            if (state.scrollMode === 'glide') return state.glidePresetSelected;
-            if (state.scrollMode === 'step') return state.stepPresetSelected;
-          },
-          set: (id: string) => {
-            if (state.scrollMode === 'glide') {
-              state.glidePresetSelected = id;
-              update('glidePresetSelected', id)
-            }
-            if (state.scrollMode === 'step') {
-              state.stepPresetSelected = id;
-              update('stepPresetSelected', id)
+        if (!presets.value) return;
+        const selectedPresetIndex = presets.value.findIndex(
+          preset => preset.id === selectedPresetId.value
+        );
+        const numOfPresests = presets.value.length;
 
-            };
-          }
-        })
-
-        const selectedPresets = computed(() => {
-          if (state.scrollMode === 'glide') return state.glidePresets;
-          if (state.scrollMode === 'step') return state.stepPresets;
-        })
-
-        // TODO: give these computed refs their own composable
-
+        // left arrow key
         if (e.key === 'ArrowLeft') {
-          
-          
+
+          if (selectedPresetIndex > 0) {
+            selectedPresetId.value = presets.value[selectedPresetIndex - 1].id
+          }
+          else {
+            selectedPresetId.value = presets.value[numOfPresests - 1].id
+          }
+        }
+        // right arrow key
+        if (e.key === 'ArrowRight') {
+
+          if (selectedPresetIndex < numOfPresests -1) {
+            selectedPresetId.value = presets.value[selectedPresetIndex + 1].id
+          }
+          else {
+            selectedPresetId.value = presets.value[0].id
+          }
+        }
+      }
+
+      // up/down arrows (fastforward)
+      if (scrollingStatus.scrolling && state.ffEnabled) {
+        
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')
+          return
+
+        const direction = e.key === 'ArrowUp' ? 'up' : 'down'
+
+        if (e.repeat) return;
+
+        directionHeld = false;
+
+        holdTimer = window.setTimeout(() => {
+          directionHeld = true;
+          console.log('held:', direction);
+          startFastForward(direction);
+        }, 200)
+      }
+
+    })
+
+    
+    useEventListener(window, 'keyup', (e) => {
+      if (!siteEnabled || !state.staticHotkeysEnabled) return;
+
+      // prevent use of hotkeys if typing
+      const target = e.target
+      if (
+        target instanceof HTMLElement &&
+        (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
+        target.isContentEditable
+        )
+      ) {
+        return;
+      }
+      
+      if (scrollingStatus.scrolling) {
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        // up/down arrow keys (change direction)
+        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')
+          return
+
+        if (holdTimer) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+
+        if (!directionHeld && state.udEnabled) {
+          const direction = e.key === 'ArrowUp' ? 'up' : 'down';
+          update('direction', direction);
+        }
+
+        if (directionHeld && state.ffEnabled) {
+          stopFastForward();
+        }
+
+        directionHeld = false
+      }
+    })
+
+
+    useEventListener(window, 'mousedown', (e) => {
+      if (!siteEnabled.value || !state.staticHotkeysEnabled) return;
+
+
+      // middle click
+      if (e.button === 1 ) {
+        if (state.middleClickHijack && !directionHeld) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+
+          toggleScroll();
         }
       }
     })
 
 
-
+    // TODO: add a manual scroll detection.
 
     // Send current scrolling status when popup opens
     onMessage('getScrollingStatus', () => {
@@ -242,7 +385,9 @@ export default defineContentScript({
         console.log('messaged scrolling status:', scrollingStatus.scrolling)
         console.log('scrolling active:', scrollingActive.value)
         if (scrolling) {
+          console.log('before startScroll()');
           startScroll();
+          console.log('after startScroll()');
         }
         else {
           stopScroll();
