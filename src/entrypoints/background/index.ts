@@ -90,22 +90,16 @@ export default defineBackground({
         // send to popup/detachable
         sendMessage('settingUpdated', 
           { key: 'partnerTab', value: tab, originalSource: 'background' }
+        ).catch( () => {});
+
+        // send partnertab to newly active tab
+        sendMessage(
+          'settingUpdated', 
+          { key: 'partnerTab', value: tab, originalSource: 'background' },
+          tab.id
         ).catch( () => {
           console.log('partner tab update not getting through to tab');
         });
-
-        /* TODO NOTE:
-          a pages partnerTab value is only ever set once (when it loads) so if
-          a tab is loaded while you are on another tab, its partner tab will
-          be set to whatever your looking at while its loaded and won't ever update.
-
-          results in the enabled site function being completely broken
-
-          FIX THIS
-          by updating the partnerTab values in all(?) contents, or maybe just 
-          whatever one is newly activated
-        */
-
       }
     })
 
