@@ -28,7 +28,7 @@ export const defaultSettings: Settings = {
     lrEnabled: true,
     udEnabled: true,
     ffEnabled: true,
-    ffSpeed: 1200,
+    ffSpeed: 4000,
 
     controlsHidden: false,
 

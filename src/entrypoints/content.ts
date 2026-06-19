@@ -6,13 +6,22 @@ import { onMessage, sendMessage } from '@/utils/messaging'
 import { findScrollTarget } from '@/utils/content/find-scroll-target';
 import { handleEnabled } from '@/composables/handleEnabled.js';
 import { handleCurrentPreset } from '@/composables/handleCurrentPreset';
-import { start } from 'node:repl';
+
+// for shadow root
+// import { createApp } from 'vue'
+// import "@/assets/tailwind.css";
+// import App from './iframe/App.vue'
+// document.documentElement.classList.add("dark");
 
 
 
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
-  main() {
+
+  // for shadow root
+  // cssInjectionMode: 'ui',
+
+  main(ctx) {
 
 
     const { state, update } = useSettings('content');
@@ -20,6 +29,51 @@ export default defineContentScript({
     const { siteEnabled } = handleEnabled();
 
 
+    // const ui = await createShadowRootUi(ctx, {
+    //   name: 'example-ui',
+    //   position: 'inline',
+    //   anchor: 'body',
+    //   onMount: (container) => {
+    //     // Define how your UI will be mounted inside the container
+    //     const app = createApp(App);
+    //     app.mount(container);
+    //     return app;
+    //   },
+    //   onRemove: (app) => {
+    //     // Unmount the app when the UI is removed
+    //     app?.unmount();
+    //   },
+    // });
+
+    // // 4. Mount the UI
+    // ui.mount();
+
+
+    // iFrame
+    const uif = createIframeUi(ctx, {
+      page: '/iframe.html',
+      position: 'inline',
+      anchor: 'body',
+
+      onMount(wrapper, iframe) {
+        // iframe.style.pointerEvents = 'none'
+        iframe.style.position = 'fixed'
+        iframe.style.top = '0'
+        iframe.style.right = '0'
+        iframe.style.width = '300px'
+        iframe.style.height = '200px'
+        iframe.style.zIndex = '999999'
+        iframe.style.background = 'transparent'
+        iframe.style.backgroundColor = 'transparent'
+        iframe.style.border = 'none'
+        
+      },
+    })
+    uif.mount();
+
+
+
+    
     const speed = computed(() => {
       return state.glidePresets.find(
         preset => preset.id === state.glidePresetSelected
@@ -356,6 +410,9 @@ export default defineContentScript({
     useEventListener(window, 'mousedown', (e) => {
       if (!siteEnabled.value || !state.staticHotkeysEnabled) return;
 
+      // Ignore middle-clicks on links and buttons
+      const target = e.target as Element | null;
+      if (target?.closest('a, button')) return;
 
       // middle click
       if (e.button === 1 ) {
@@ -369,8 +426,21 @@ export default defineContentScript({
       }
     })
 
+    // manual scroll detection.
+    let scrollTimeout: number | undefined
+    useEventListener(window, 'wheel', () => {
 
-    // TODO: add a manual scroll detection.
+      if (scrollingStatus.scrolling) {
+        clearTimeout(scrollTimeout)
+        stopScroll();
+        
+        scrollTimeout = window.setTimeout(() => {
+          startScroll();
+        }, 100)
+      }
+    })
+
+
 
     // Send current scrolling status when popup opens
     onMessage('getScrollingStatus', () => {
