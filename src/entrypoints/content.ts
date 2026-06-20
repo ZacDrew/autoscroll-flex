@@ -7,19 +7,9 @@ import { findScrollTarget } from '@/utils/content/find-scroll-target';
 import { handleEnabled } from '@/composables/handleEnabled.js';
 import { handleCurrentPreset } from '@/composables/handleCurrentPreset';
 
-// for shadow root
-// import { createApp } from 'vue'
-// import "@/assets/tailwind.css";
-// import App from './iframe/App.vue'
-// document.documentElement.classList.add("dark");
-
-
 
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
-
-  // for shadow root
-  // cssInjectionMode: 'ui',
 
   main(ctx) {
 
@@ -28,51 +18,29 @@ export default defineContentScript({
     const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
     const { siteEnabled } = handleEnabled();
 
+    let sendToIframe: ((data: any) => void) | null = null;
 
-    // const ui = await createShadowRootUi(ctx, {
-    //   name: 'example-ui',
-    //   position: 'inline',
-    //   anchor: 'body',
-    //   onMount: (container) => {
-    //     // Define how your UI will be mounted inside the container
-    //     const app = createApp(App);
-    //     app.mount(container);
-    //     return app;
-    //   },
-    //   onRemove: (app) => {
-    //     // Unmount the app when the UI is removed
-    //     app?.unmount();
-    //   },
-    // });
-
-    // // 4. Mount the UI
-    // ui.mount();
-
-
-    // iFrame
-    const uif = createIframeUi(ctx, {
-      page: '/iframe.html',
+    // Toast iframe
+    const ui = createIframeUi(ctx, {
+      page: '/toast.html',
       position: 'inline',
       anchor: 'body',
 
       onMount(wrapper, iframe) {
-        // iframe.style.pointerEvents = 'none'
+        iframe.style.pointerEvents = 'none'
         iframe.style.position = 'fixed'
         iframe.style.top = '0'
         iframe.style.right = '0'
-        iframe.style.width = '300px'
-        iframe.style.height = '200px'
+        iframe.style.width = '250px'
+        iframe.style.height = '100px'
         iframe.style.zIndex = '999999'
         iframe.style.background = 'transparent'
         iframe.style.backgroundColor = 'transparent'
         iframe.style.border = 'none'
-        
       },
     })
-    uif.mount();
-
-
-
+    ui.mount();
+    
     
     const speed = computed(() => {
       return state.glidePresets.find(

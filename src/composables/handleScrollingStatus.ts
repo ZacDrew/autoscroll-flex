@@ -1,11 +1,14 @@
 import { Context } from '@/types/settings';
 import { onMessage, sendMessage } from '@/utils/messaging'
 import { getPartnerTab } from '@/composables/getPartnerTab';
+import { useSettings } from '@/composables/useSettings';
 
 /*
 handleScrollingStatus() is a shared function used by both contentscript and popup/detached
 to set up a messaging line to keep track of and update the scrolling status.
 */
+
+const { update } = useSettings('popup'); // TODO: change 'popup' to a value like 'none'
 
 const isDetched = window.location.pathname.endsWith('detached.html');
 
@@ -21,13 +24,16 @@ function init(currentContext: Context) {
     if (initialized) return;
     initialized = true;
 
-    // retrieve initial scrolling status from content script
-    if (currentContext !== 'content') {
-        (async () => {
 
-            partnerTab = await getPartnerTab();
+    (async () => {
 
-            if (!partnerTab.value?.id) return;
+        partnerTab = await getPartnerTab();
+        console.log(currentContext, ' partner tab:', partnerTab.value?.id)
+        if (!partnerTab.value?.id) return;
+
+        // retrieve initial scrolling status from content script
+        if (currentContext !== 'content') {
+
             // console.log('tabid:', partnerTab.id);
 
             // fetch scrolling status from contentscript
@@ -39,9 +45,9 @@ function init(currentContext: Context) {
                     console.log('No content script available to recieve message')
                 })
 
-        })();
-    }
-
+        }
+    })();
+            
     // listen for new scrolling status from another context
     onMessage('sendScrollingStatus', async (message: {
         data: { scrolling: boolean }
@@ -51,7 +57,7 @@ function init(currentContext: Context) {
         // if (window.location.pathname.endsWith('detached.html')) {
         //     console.log('detached got scrolling status update');
         // }
-        // console.log('something got scrolling status update');
+        console.log(currentContext, ' got scrolling status update');
     })
 }
 
@@ -71,6 +77,7 @@ export function handleScrollingStatus(currentContext: Context) {
 
     async function updateScrollingStatus(scrolling: boolean) {
 
+        update('scrolling', scrolling); // update settings for toast to use
         scrollingStatus.scrolling = scrolling;
 
         // if sending to contentscript, include tabid of target
@@ -83,7 +90,11 @@ export function handleScrollingStatus(currentContext: Context) {
                 'sendScrollingStatus',
                 structuredClone(toRaw(scrollingStatus)),
                 partnerTab.value.id
-            )
+            ).catch((err) => {
+                console.log(err)
+                console.log('failed to send scroll status to tab')
+                console.log('partnerTab id:', partnerTab.value?.id);
+            })
 
         } 
         // else {

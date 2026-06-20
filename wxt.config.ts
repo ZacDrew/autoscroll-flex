@@ -9,7 +9,7 @@ export default defineConfig({
     permissions: ['storage', 'activeTab'],
     web_accessible_resources: [
       {
-        resources: ['iframe.html'],
+        resources: ['toast.html'],
         matches: ['<all_urls>', 'file:///*'],
       }
     ]

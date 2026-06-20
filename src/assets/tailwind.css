@@ -194,3 +194,13 @@ body,
     @apply bg-background text-foreground;
   }
 }
+
+/* center text of sonner */
+[data-sonner-toast] [data-content] {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+/* [data-sonner-toast] [data-styled="true"] {
+  background: var(--background)
+} */

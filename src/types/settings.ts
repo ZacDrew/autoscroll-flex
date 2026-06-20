@@ -40,7 +40,7 @@ export interface Settings {
   presetToastEnabled: boolean;
 }
 
-export type Context = 'popup' | 'content' | 'options' | 'background';
+export type Context = 'popup' | 'content' | 'options' | 'background' | 'toast';
 
 export type DisabledReason = 'domain' | 'custom' | 'mozilla' | 'none';
 
