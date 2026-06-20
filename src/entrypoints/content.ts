@@ -27,6 +27,12 @@ export default defineContentScript({
       anchor: 'body',
 
       onMount(wrapper, iframe) {
+
+        const isDark =
+          document.documentElement.classList.contains('dark') ||
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+
+
         iframe.style.pointerEvents = 'none'
         iframe.style.position = 'fixed'
         iframe.style.top = '0'
@@ -37,6 +43,15 @@ export default defineContentScript({
         iframe.style.background = 'transparent'
         iframe.style.backgroundColor = 'transparent'
         iframe.style.border = 'none'
+        iframe.style.colorScheme = 'light dark'
+
+        // if (isDark) {
+        //   console.log('isDark:', isDark);
+        //   iframe.style.colorScheme = 'dark'
+        // }
+        // else {
+        //   iframe.style.colorScheme = 'normal'
+        // }
       },
     })
     ui.mount();

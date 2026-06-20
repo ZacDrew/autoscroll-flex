@@ -80,3 +80,12 @@ watch(
     />
   </div>
 </template>
+
+<style>
+html,
+body,
+#app {
+  background: transparent;
+  margin: 0;
+}
+</style>
