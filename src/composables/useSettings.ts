@@ -19,7 +19,7 @@ function init(source: Context) {
 
     // Request settings from background
     sendMessage('getSettings', source).then((res) => {
-        console.log('recieved settings:', res);
+        console.log(source, 'recieved settings:', res);
 
         Object.assign(state, res);
 

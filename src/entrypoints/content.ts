@@ -11,10 +11,10 @@ import { handleCurrentPreset } from '@/composables/handleCurrentPreset';
 export default defineContentScript({
   matches: ['<all_urls>', 'file:///*'],
 
-  main(ctx) {
+  async main(ctx) {
 
 
-    const { state, update } = useSettings('content');
+    const { state, update, stateReady } = useSettings('content');
     const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
     const { siteEnabled } = handleEnabled();
 
@@ -28,11 +28,6 @@ export default defineContentScript({
 
       onMount(wrapper, iframe) {
 
-        const isDark =
-          document.documentElement.classList.contains('dark') ||
-          window.matchMedia('(prefers-color-scheme: dark)').matches
-
-
         iframe.style.pointerEvents = 'none'
         iframe.style.position = 'fixed'
         iframe.style.top = '0'
@@ -45,16 +40,23 @@ export default defineContentScript({
         iframe.style.border = 'none'
         iframe.style.colorScheme = 'light dark'
 
-        // if (isDark) {
-        //   console.log('isDark:', isDark);
-        //   iframe.style.colorScheme = 'dark'
-        // }
-        // else {
-        //   iframe.style.colorScheme = 'normal'
-        // }
       },
     })
-    ui.mount();
+
+    await stateReady;
+    watch(
+      () => state.presetToastEnabled,
+      (enabled) => {
+        if (enabled) {
+          ui.mount();
+        }
+        else {
+          ui.remove();
+        }
+        console.log('toast enabled:', state.presetToastEnabled);
+      },
+      { immediate: true }
+    )
     
     
     const speed = computed(() => {
@@ -77,7 +79,6 @@ export default defineContentScript({
       return delay * 1000;
     })
 
-    console.log('Hello content. scrolling:', state.scrolling);
 
     let mouseTarget: EventTarget | null = null;
     let scrollTarget: Element | null = null;

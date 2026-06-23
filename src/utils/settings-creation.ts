@@ -57,9 +57,9 @@ export const settingTargets: Record<keyof Settings, Context[]> = {
     lrEnabled:              [ 'popup',    'content',    'options'  ],
     udEnabled:              [ 'popup',    'content',    'options'  ],
     ffEnabled:              [ 'popup',    'content',    'options'  ],
-    ffSpeed:              [ 'popup',    'content',    'options'  ],
+    ffSpeed:                [ 'popup',    'content',    'options'  ],
 
     controlsHidden:         [ 'popup'                              ],
 
-    presetToastEnabled:     [             'content',    'options'  ],
+    presetToastEnabled:     [ 'popup',    'content',    'options'  ],
 } as const

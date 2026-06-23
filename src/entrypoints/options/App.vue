@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import HelloWorld from '@/components/HelloWorld.vue';
 import Blocklist from '@/components/options/Blocklist.vue';
+import Display from '@/components/options/Display.vue';
 import Header from '@/components/options/Header.vue';
 import StaticHotkeys from '@/components/options/StaticHotkeys.vue';
 import DisabledWarning from '@/components/popup/DisabledWarning.vue';
@@ -18,14 +19,17 @@ const { state, update } = useSettings('options');
 </script>
 
 <template>
-  <div class="max-w-150 mx-auto">
+  <div class="max-w-150 mx-auto pb-40">
 
     <Header/>
 
     <div class="flex flex-col gap-y-4">
       <Blocklist/>
       <StaticHotkeys/>
+      <Display/>
     </div>
+
   </div>
+
 </template>
 
