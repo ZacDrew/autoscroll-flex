@@ -2,19 +2,19 @@ import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings';
 import { getPartnerSite } from '@/composables/getPartnerSite.js';
 import { DisabledReason } from '@/types/settings';
+import { Context } from '@/types/settings';
 
-const { state, update, stateReady } = useSettings('popup');
 
 // const siteKey = ref<string>('')
 const partnerSite = reactive({ key: 'none', href: 'none' })
 let initialized = false;
 
 // Watch for when partnerSite updates
-async function initPartnerSite() {
+async function initPartnerSite(context: Context) {
     if (initialized) return;
     initialized = true;
 
-    const computedPartnerSite = await getPartnerSite();
+    const computedPartnerSite = await getPartnerSite(context);
 
     watchEffect(() => {
         // siteKey.value = computedPartnerSite.value.key;
@@ -26,9 +26,11 @@ async function initPartnerSite() {
 }
 
 
-export function handleEnabled() {
+export function handleEnabled(context: Context) {
 
-    initPartnerSite();
+    const { state, update, stateReady } = useSettings(context);
+
+    initPartnerSite(context);
 
     const disabledCause = computed(() => {
 

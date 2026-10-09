@@ -1,12 +1,15 @@
 import { ref } from 'vue';
 import { useSettings } from '@/composables/useSettings'
 import { getPartnerTab } from '@/composables/getPartnerTab';
+import { Context } from '@/types/settings';
 
-const { state, update, stateReady } = useSettings('popup');
 
-export async function getPartnerSite() {
 
-    const partnerTab = await getPartnerTab();
+export async function getPartnerSite(context: Context) {
+
+    const { state, update, stateReady } = useSettings(context);
+
+    const partnerTab = await getPartnerTab(context);
 
     const partnerSite = computed(() => {
 

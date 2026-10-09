@@ -8,7 +8,7 @@ handleScrollingStatus() is a shared function used by both contentscript and popu
 to set up a messaging line to keep track of and update the scrolling status.
 */
 
-const { update } = useSettings('popup'); // TODO: change 'popup' to a value like 'none'
+
 
 const isDetched = window.location.pathname.endsWith('detached.html');
 
@@ -27,7 +27,7 @@ function init(currentContext: Context) {
 
     (async () => {
 
-        partnerTab = await getPartnerTab();
+        partnerTab = await getPartnerTab(currentContext);
         console.log(currentContext, ' partner tab:', partnerTab.value?.id)
         if (!partnerTab.value?.id) return;
 
@@ -62,6 +62,8 @@ function init(currentContext: Context) {
 }
 
 export function handleScrollingStatus(currentContext: Context) {
+
+    const { update } = useSettings(currentContext);
 
     init(currentContext);
 

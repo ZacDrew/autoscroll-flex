@@ -27,9 +27,10 @@ also, keep domain of tab updated so that if a tab changes websites,
 the domain name in the enable button will also update
 */
 
-const { state, update, stateReady } = useSettings('popup');
 
-export async function getPartnerTab() {
+export async function getPartnerTab(context: Context) {
+
+const { state, update, stateReady } = useSettings(context);
 
     await stateReady;
 

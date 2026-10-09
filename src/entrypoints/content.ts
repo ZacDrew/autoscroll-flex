@@ -16,7 +16,7 @@ export default defineContentScript({
 
     const { state, update, stateReady } = useSettings('content');
     const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('content');
-    const { siteEnabled } = handleEnabled();
+    const { siteEnabled } = handleEnabled('content');
 
     let sendToIframe: ((data: any) => void) | null = null;
 
