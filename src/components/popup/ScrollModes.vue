@@ -37,15 +37,15 @@ const { state, update } = useSettings('popup');
         [&>button[data-state=active]]:bg-primary 
         [&>button[data-state=active]]:text-primary-foreground">
 
-        <TabsTrigger title="Select Glide Scroll" value="glide">
+        <TabsTrigger title="Select Glide Scroll" value="glide" class="px-7">
           Glide
         </TabsTrigger>
-        <TabsTrigger title="Select Step Scroll" value="step">
+        <TabsTrigger title="Select Step Scroll" value="step" class="px-7">
           Step
         </TabsTrigger>
-        <TabsTrigger title="Select Smart Scroll" value="smart">
+        <!-- <TabsTrigger title="Select Smart Scroll" value="smart">
           Smart
-        </TabsTrigger>
+        </TabsTrigger> -->
       </TabsList>
 
       <!-- Glide Presets -->
