@@ -80,7 +80,8 @@ function addPreset(presets: GlidePreset[]) {
         <div class="flex items-center gap-1">
 
           <Input type="number" v-model="preset.speed" @change="update('glidePresets', state.glidePresets)"
-            class="w-30 h-8 font-semibold [appearance:textfield]" />
+            class="w-30 h-8 font-semibold [appearance:textfield]" 
+            @click.stop/>
 
           <span class="text-muted-foreground text-sm">
             px/sec

@@ -80,7 +80,8 @@ function addPreset(presets: StepPreset[]) {
           <div class="flex items-center gap-1">
 
             <Input type="number" v-model="preset.distance" @change="update('stepPresets', state.stepPresets)"
-              class="min-w-15 max-w-19 h-8 font-semibold [appearance:textfield]" />
+              class="min-w-15 max-w-19 h-8 font-semibold [appearance:textfield]" 
+              @click.stop/>
 
             <span class="text-muted-foreground text-sm">
               px
@@ -98,7 +99,8 @@ function addPreset(presets: StepPreset[]) {
           <div class="flex items-center gap-1">
 
             <Input type="number" v-model="preset.delay" @change="update('stepPresets', state.stepPresets)"
-              class="w-15 h-8 font-semibold [appearance:textfield]" />
+              class="w-15 h-8 font-semibold [appearance:textfield]" 
+              @click.stop/>
 
             <span class="text-muted-foreground text-sm">
               sec
