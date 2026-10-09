@@ -38,8 +38,9 @@ export default defineBackground({
         await storage.setItem('local:settings', settings);
         console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
 
-        // TODO fix: only send settings to contexts share it
+        // TODO fix: only send settings to contexts share the setting
         // Broadcast setting change to contexts that share the setting
+        
         // for Popup and Options:
         sendMessage('settingUpdated', { key, value, originalSource: source })
         .catch(() => {});

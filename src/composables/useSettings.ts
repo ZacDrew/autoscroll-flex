@@ -35,7 +35,15 @@ function init(source: Context) {
         // console.log(source, 'received settingUpdated', message.data);
 
         const { key, value, originalSource } = message.data;
-        state[key] = value;
+
+        // check that the recieved setting is used in this context before updating the state.
+        // console.log(`update recieved (context: ${source})`)
+        const contextsThatUseKey = settingTargets[key];
+        if (contextsThatUseKey.includes(source)) {
+            // console.log(`update logged (context: ${source})`)
+            state[key] = value;
+        }
+        
     })
 }
 
