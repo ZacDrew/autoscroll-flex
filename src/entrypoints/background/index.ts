@@ -3,6 +3,7 @@ import type { Settings, Context } from "@/types/settings";
 import { defaultSettings, settingTargets } from '@/utils/settings-creation';
 import { sendMessage, onMessage } from '@/utils/messaging';
 import { filterSettings } from '@/utils/filter-settings';
+import { sendContentSetting } from '@/utils/send-content-setting';
 
 
 export default defineBackground({
@@ -15,12 +16,28 @@ export default defineBackground({
 
     let settings: Settings;
 
-    // Set stored settings as defaults if not yet set
     (async () => {
+      // Set stored settings as defaults if not yet set
       const stored = (await storage.getItem<Settings>('local:settings')) || {};
       settings = structuredClone({ ...defaultSettings, ...stored });
       await storage.setItem('local:settings', settings);
     })();
+    
+    // If just updated, migrate disabled sites list to new location in storage
+    browser.runtime.onInstalled.addListener(async (details) => {
+      if (details.reason === 'update' && details.previousVersion === '0.1.1') {
+
+        console.log(`updating from version: ${details.previousVersion}`)
+        
+        const previousDisabledSites = await storage.getItem<Array<string>>('local:disabledSites');
+
+        if (previousDisabledSites) {
+          settings.disabledSites = previousDisabledSites;
+          await storage.setItem('local:settings', settings);
+          sendContentSetting('disabledSites', previousDisabledSites, 'content');
+        }
+      }
+    })
 
     onMessage('getSettings', (message) => {
       return filterSettings(settings, message.data);
@@ -46,22 +63,7 @@ export default defineBackground({
         .catch(() => {});
 
         // for content scripts:
-        const tabs = await browser.tabs.query({});
-
-        const tabsWithIds = tabs.filter((tab) => tab.id != null)
-
-        for (const tab of tabsWithIds) {
-          if (tab.id == null) continue;
-          try {
-            await sendMessage(
-              'settingUpdated',
-              { key, value, originalSource: source },
-              tab.id
-            );
-          } catch (err) {
-            // console.log(`Failed to send to tab ${tab.id}`)
-          }
-        }
+        sendContentSetting(key, value, source);
 
       })
 
@@ -107,7 +109,8 @@ export default defineBackground({
     // update partner tab object when active tab url changes
     browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       if (
-        changeInfo.status === 'complete' &&
+        // changeInfo.status === 'complete' &&
+        changeInfo.url &&
         tab.active &&
         tab.windowId !== detachedWindowId
       ) {
