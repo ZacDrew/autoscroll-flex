@@ -19,7 +19,7 @@ function init(source: Context) {
 
     // Request settings from background
     sendMessage('getSettings', source).then((res) => {
-        console.log(source, 'recieved settings:', res);
+        // console.dir(`${source} recieved settings: ${res}`);
 
         Object.assign(state, res);
 
@@ -32,15 +32,12 @@ function init(source: Context) {
         async <K extends keyof Settings>(message: {
         data: { key: K; value: Settings[K]; originalSource: Context };
       }) => {
-        // console.log(source, 'received settingUpdated', message.data);
 
         const { key, value, originalSource } = message.data;
 
         // check that the recieved setting is used in this context before updating the state.
-        // console.log(`update recieved (context: ${source})`)
         const contextsThatUseKey = settingTargets[key];
         if (contextsThatUseKey.includes(source)) {
-            // console.log(`update logged (context: ${source})`)
             state[key] = value;
         }
         

@@ -9,7 +9,6 @@ import { sendContentSetting } from '@/utils/send-content-setting';
 export default defineBackground({
   type: 'module',
   main() {
-    console.log('Hello background!', { id: browser.runtime.id });
     console.log('browser:', import.meta.env.BROWSER);
 
     const isFirefox = import.meta.env.BROWSER === 'firefox';
@@ -53,10 +52,7 @@ export default defineBackground({
         settings[key] = value;
 
         await storage.setItem('local:settings', settings);
-        console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
-
-        // TODO fix: only send settings to contexts share the setting
-        // Broadcast setting change to contexts that share the setting
+        // console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
         
         // for Popup and Options:
         sendMessage('settingUpdated', { key, value, originalSource: source })
@@ -160,13 +156,14 @@ export default defineBackground({
         if (id === detachedWindowId) detachedWindowId = null;
       });
 
-      // TODO!!!: Remove this so it doesnt move the window off someones screen
-      if (isFirefox) {
-        await browser.windows.update(detachedWindowId as number, {
-          left: 2735,
-          top: 800,
-        });
-      }
+      // TODO!!!: comment this out so it doesnt accidently move the window off users screen
+
+      // if (isFirefox) {
+      //   await browser.windows.update(detachedWindowId as number, {
+      //     left: 2735,
+      //     top: 800,
+      //   });
+      // }
     });
 
 

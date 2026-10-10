@@ -39,7 +39,6 @@ function showToast() {
   }
 
   title = title + '\u00A0'.repeat(10) + description;
-  console.log(title)
 
   toast(
     title,

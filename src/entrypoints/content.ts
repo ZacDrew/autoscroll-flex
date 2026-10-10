@@ -53,7 +53,7 @@ export default defineContentScript({
         else {
           ui.remove();
         }
-        console.log('toast enabled:', state.presetToastEnabled);
+        // console.log('toast enabled:', state.presetToastEnabled);
       },
       { immediate: true }
     )
@@ -93,7 +93,7 @@ export default defineContentScript({
       const { pause, resume, isActive } = useRafFn(({ delta }) => {
 
         if (!scrollTarget) {
-          console.log('no scrollTarget');
+          // console.log('no scrollTarget');
           return;
         };
 
@@ -160,9 +160,9 @@ export default defineContentScript({
       const { startStep, stopStep, stepIsActive } = stepScroller();
 
       function startScroll() {
-        console.log('siteEnabled:', siteEnabled.value);
+        // console.log('siteEnabled:', siteEnabled.value);
 
-        console.dir('partnerTab url:', state.partnerTab?.url)
+        // console.dir('partnerTab url:', state.partnerTab?.url)
         if (!siteEnabled.value) return;
 
         stopScroll();         
@@ -339,7 +339,6 @@ export default defineContentScript({
 
         holdTimer = window.setTimeout(() => {
           directionHeld = true;
-          console.log('held:', direction);
           startFastForward(direction);
         }, 200)
       }
@@ -428,7 +427,7 @@ export default defineContentScript({
 
     // Send current scrolling status when popup opens
     onMessage('getScrollingStatus', () => {
-      console.dir('request recieved. scrollingStatus:', scrollingStatus);
+      // console.dir('request recieved. scrollingStatus:', scrollingStatus);
       return structuredClone(toRaw(scrollingStatus));;
     })
 
@@ -436,12 +435,10 @@ export default defineContentScript({
     watch(
       () => scrollingStatus.scrolling,
       (scrolling) => {
-        console.log('messaged scrolling status:', scrollingStatus.scrolling)
-        console.log('scrolling active:', scrollingActive.value)
+        // console.log('messaged scrolling status:', scrollingStatus.scrolling)
+        // console.log('scrolling active:', scrollingActive.value)
         if (scrolling) {
-          console.log('before startScroll()');
           startScroll();
-          console.log('after startScroll()');
         }
         else {
           stopScroll();

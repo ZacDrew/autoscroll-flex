@@ -22,7 +22,7 @@ async function initPartnerSite(context: Context) {
     });
 
     // console.log('siteKey:', siteKey.value)
-    console.log('partnerSite key:', partnerSite.key)
+    // console.log('partnerSite key:', partnerSite.key)
 }
 
 

@@ -28,7 +28,7 @@ function init(currentContext: Context) {
     (async () => {
 
         partnerTab = await getPartnerTab(currentContext);
-        console.log(currentContext, ' partner tab:', partnerTab.value?.id)
+        // console.log(currentContext, ' partner tab:', partnerTab.value?.id)
         if (!partnerTab.value?.id) return;
 
         // retrieve initial scrolling status from content script
@@ -54,10 +54,7 @@ function init(currentContext: Context) {
     }) => {
         Object.assign(scrollingStatus, message.data);
 
-        // if (window.location.pathname.endsWith('detached.html')) {
-        //     console.log('detached got scrolling status update');
-        // }
-        console.log(currentContext, ' got scrolling status update');
+        // console.log(currentContext, 'got scrolling status update');
     })
 }
 
@@ -66,16 +63,6 @@ export function handleScrollingStatus(currentContext: Context) {
     const { update } = useSettings(currentContext);
 
     init(currentContext);
-
-    // if (currentContext == 'popup' && !isDetched) {
-    //     test = test + 1;
-    //     console.log('in popup');
-    //     testRef.letter = 'b'
-        
-    // }
-
-    // console.log('test:', test)
-    // console.log('testRef:', testRef.letter)
 
     async function updateScrollingStatus(scrolling: boolean) {
 

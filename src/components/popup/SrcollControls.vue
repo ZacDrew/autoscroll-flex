@@ -14,7 +14,7 @@ const { state, update } = useSettings('popup');
 
 const { scrollingStatus, updateScrollingStatus } = handleScrollingStatus('popup');
 
-const { siteEnabled } = handleEnabled();
+const { siteEnabled } = handleEnabled('popup');
 
 
 let scrollingAndDirection = computed({
