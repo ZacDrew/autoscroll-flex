@@ -12,7 +12,12 @@ export default defineConfig({
         resources: ['toast.html'],
         matches: ['<all_urls>', 'file:///*'],
       }
-    ]
+    ],
+    browser_specific_settings: {
+      gecko: {
+        id: 'autoscroll-flex@example.com'
+      }
+    }
   },
   srcDir: 'src',
 
