@@ -6,6 +6,8 @@ import { handleEnabled } from '@/composables/handleEnabled.js';
 
 const { partnerSite, siteEnabled, disabledCause } = handleEnabled('popup');
 
+const isDetached = window.location.pathname.endsWith('detached.html');
+
 function popoutWindow() {
   sendMessage('openwindow');
 }
@@ -55,12 +57,14 @@ const toggleDisabled = computed(() => {
         </Button> -->
 
         <!-- popout button -->
-        <Button title="Popout window" @click="popoutWindow()" variant="ghost" size="icon" class="[&_svg]:size-auto">
+        <Button v-if="!isDetached"
+          title="Popout window" @click="popoutWindow()" variant="ghost" size="icon" class="[&_svg]:size-auto">
           <PhArrowSquareOut :size="20" />
         </Button>
 
         <!-- settings button -->
-        <Button title="Settings" variant="outline" size="icon" class="[&_svg]:size-auto"
+        <Button 
+          title="Settings" variant="outline" size="icon" class="[&_svg]:size-auto"
           @click="browser.runtime.openOptionsPage()"
           >
           <PhGear :size="26" />
