@@ -283,6 +283,8 @@ export default defineContentScript({
         e.stopPropagation();
         e.stopImmediatePropagation();
 
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+
         toggleScroll();
       }
 
@@ -403,6 +405,8 @@ export default defineContentScript({
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
+
+          if (scrollTimeout) clearTimeout(scrollTimeout);
 
           toggleScroll();
         }

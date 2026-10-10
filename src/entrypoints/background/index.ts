@@ -22,7 +22,7 @@ export default defineBackground({
       await storage.setItem('local:settings', settings);
     })();
     
-    // If just updated, migrate disabled sites list to new location in storage
+    // If addon just updated, migrate disabled sites list to new location in storage
     browser.runtime.onInstalled.addListener(async (details) => {
       if (details.reason === 'update' && details.previousVersion === '0.1.1') {
 
