@@ -1,7 +1,4 @@
 <h1> Autoscroll Flex </h1>
-
-<storng>REWRITE IN PROGRESS</strong><br>
-<storng>See repo from release v0.1.1 for a working example of the addon</strong>
 <br>
 
 This is a tool primarily designed to assist with reading vertical scrolling comics like manhwa (and sometimes manga). <br>
@@ -33,6 +30,9 @@ Its purpose is to be a flexible autoscroll where the user can easily set the spe
 <br>
 
 <h2>Local Installation</h2>
+NOTE: This method is for developers. For general use, download via your browser's extension store.
+<br>
+<br>
 Download and unzip folder into desired location. <br>
 <br>
 Within the root directory (the unzipped folder) run:
@@ -43,7 +43,7 @@ npm install
 ```
 npm run build
 ```
-All files should be compiled into the "dist" folder. <br>
+All files should be compiled into the ".output" folder. <br>
 <br>
 To load into firefox as a temporary addon, type `about:debugging` into the URL bar and go to "this firefox" 
 on the side menu. <br>
