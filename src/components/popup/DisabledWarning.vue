@@ -3,7 +3,7 @@ import { handleEnabled } from '@/composables/handleEnabled.js';
 import Card from '../ui/card/Card.vue';
 import CardContent from '../ui/card/CardContent.vue';
 
-const { partnerSite, siteEnabled, disabledCause } = handleEnabled();
+const { partnerSite, siteEnabled, disabledCause } = handleEnabled('popup');
 
 const message = computed(() => {
 

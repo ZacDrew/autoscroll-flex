@@ -4,7 +4,7 @@ import { PhGear, PhArrowSquareOut, PhSun } from "@phosphor-icons/vue";
 import Toggle from '../ui/toggle/Toggle.vue';
 import { handleEnabled } from '@/composables/handleEnabled.js';
 
-const { partnerSite, siteEnabled, disabledCause } = handleEnabled();
+const { partnerSite, siteEnabled, disabledCause } = handleEnabled('popup');
 
 function popoutWindow() {
   sendMessage('openwindow');

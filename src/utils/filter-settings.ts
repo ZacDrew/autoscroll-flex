@@ -25,26 +25,3 @@ export function filterSettings(settings: Settings, target: Context)
     }
     return result;
 }
-
-
-// working alternative
-
-// function getSettingsForContext<
-//   T extends Context
-// >(target: T) {
-//   const result = {} as {
-//     [K in keyof Settings as T extends typeof settingTargets[K][number]
-//       ? K
-//       : never]: Settings[K]
-//   }
-
-//   for (const key in settings) {
-//     const typedKey = key as keyof Settings
-
-//     if (settingTargets[typedKey].includes(target)) {
-//       ;(result as any)[typedKey] = settings[typedKey]
-//     }
-//   }
-
-//   return result
-// }
