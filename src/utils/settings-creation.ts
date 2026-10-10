@@ -3,7 +3,7 @@ import type { Settings, Context } from "@/types/settings";
 export const defaultSettings: Settings = {
     test: 0,
     scrolling: false,
-    direction: undefined,
+    direction: 'down', // previously undefined
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
     partnerTab: undefined,
 
