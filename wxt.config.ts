@@ -15,7 +15,10 @@ export default defineConfig({
     ],
     browser_specific_settings: {
       gecko: {
-        id: 'autoscroll-flex@example.com'
+        id: 'autoscroll-flex@example.com',
+        "data_collection_permissions": {
+          "required": ["none"]
+      }
       }
     }
   },
