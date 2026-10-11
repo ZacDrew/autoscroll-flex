@@ -18,6 +18,7 @@ export interface Settings {
   direction: 'up' | 'down' | undefined;
   disabledSites: string[];
   partnerTab: globalThis.Browser.tabs.Tab | undefined;
+  activeContentUrl: string | undefined;
 
   scrollMode: ScrollMode;
 

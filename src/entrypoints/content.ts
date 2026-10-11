@@ -188,6 +188,9 @@ export default defineContentScript({
       })
 
       function toggleScroll() {
+        // store current url for the toast
+        update('activeContentUrl', window.location.href);
+        
         if (scrollingStatus.scrolling) {
           stopScroll();
           updateScrollingStatus(false);

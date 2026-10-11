@@ -6,6 +6,7 @@ export const defaultSettings: Settings = {
     direction: 'down', // previously undefined
     disabledSites: ['www.youtube.com', 'www.twitch.tv'],
     partnerTab: undefined,
+    activeContentUrl: undefined,
 
     scrollMode: 'glide',
 
@@ -42,6 +43,7 @@ export const settingTargets: Record<keyof Settings, Context[]> = {
     direction:              [ 'popup',    'content'                ],
     disabledSites:          [ 'popup',    'content',    'options'  ],
     partnerTab:             [ 'popup',    'content'                ],
+    activeContentUrl:       [ 'popup',    'content'                ],
 
     scrollMode:             [ 'popup',    'content'                ],
 

@@ -9,7 +9,20 @@ import { toast, Toaster } from 'vue-sonner';
 const { state, update } = useSettings('content');
 const { selectedPresetId, presets } = handleCurrentPreset('content');
 
-function showToast() {
+async function showToast() {
+
+
+  const tab = state.partnerTab;
+  if (tab?.url !== state.activeContentUrl) return;
+
+  // if (tab?.url) {
+  //   const url = new URL(tab.url);
+  //   const hostname = url.hostname;
+
+  //   console.log('Current website:', hostname);
+  // }
+
+
 
   const selectedPresetIndex = presets.value?.findIndex(
       preset => preset.id === selectedPresetId.value
