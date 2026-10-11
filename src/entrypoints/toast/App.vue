@@ -11,18 +11,9 @@ const { selectedPresetId, presets } = handleCurrentPreset('content');
 
 async function showToast() {
 
-
+  // check active tab
   const tab = state.partnerTab;
   if (tab?.url !== state.activeContentUrl) return;
-
-  // if (tab?.url) {
-  //   const url = new URL(tab.url);
-  //   const hostname = url.hostname;
-
-  //   console.log('Current website:', hostname);
-  // }
-
-
 
   const selectedPresetIndex = presets.value?.findIndex(
       preset => preset.id === selectedPresetId.value
