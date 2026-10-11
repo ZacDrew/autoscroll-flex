@@ -53,7 +53,7 @@ export default defineBackground({
         settings[key] = value;
 
         await storage.setItem('local:settings', settings);
-        console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
+        // console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
         
         // for Popup and Options:
         sendMessage('settingUpdated', { key, value, originalSource: source })
