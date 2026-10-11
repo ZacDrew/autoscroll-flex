@@ -4,6 +4,7 @@ import { defaultSettings, settingTargets } from '@/utils/settings-creation';
 import { sendMessage, onMessage } from '@/utils/messaging';
 import { filterSettings } from '@/utils/filter-settings';
 import { sendContentSetting } from '@/utils/send-content-setting';
+import { updatePartnerTab } from '@/utils/update-partner-tab';
 
 
 export default defineBackground({
@@ -52,7 +53,7 @@ export default defineBackground({
         settings[key] = value;
 
         await storage.setItem('local:settings', settings);
-        // console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
+        console.dir('update stored: ', await storage.getItem<Settings>(`local:settings`));
         
         // for Popup and Options:
         sendMessage('settingUpdated', { key, value, originalSource: source })
@@ -75,30 +76,13 @@ export default defineBackground({
 
     // update partnerTab everytime tab changes
     browser.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
-      const tab = await browser.tabs.get(tabId)
+      updatePartnerTab(settings, windowId, detachedWindowId);
+    })
 
-      console.log('Active tab changed:', tab.url, tab)
-      console.log('Window changed:', windowId)
-
-      if (windowId !== detachedWindowId) {
-        // console.log('okay, yay!', windowId, detachedWindowId);
-
-        settings['partnerTab'] = tab;
-        await storage.setItem('local:settings', settings);
-
-        // send to popup/detachable
-        sendMessage('settingUpdated', 
-          { key: 'partnerTab', value: tab, originalSource: 'background' }
-        ).catch( () => {});
-
-        // send partnertab to newly active tab
-        sendMessage(
-          'settingUpdated', 
-          { key: 'partnerTab', value: tab, originalSource: 'background' },
-          tab.id
-        ).catch( () => {
-          console.log('partner tab update not getting through to tab');
-        });
+    // update partner tab when browser window changes
+    browser.windows.onFocusChanged.addListener((windowId) => {
+      if (windowId !== browser.windows.WINDOW_ID_NONE) {
+        updatePartnerTab(settings, windowId, detachedWindowId)
       }
     })
 
